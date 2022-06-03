@@ -56,6 +56,7 @@ class Loading extends Widget {
   postInitialize(): void {
     this.label = t9n.title;
     this.theme = getWidgetTheme(elementIDs.esriThemeID) as 'light'|'dark';
+    
     intl.onLocaleChange(function(locale) {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
     });
