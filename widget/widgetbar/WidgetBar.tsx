@@ -44,7 +44,7 @@ interface WidgetBarParams extends __esri.WidgetProperties {
   localeList?: Array<string>;
   mapView: MapView;
   graphicsLayer: GraphicsLayer;
-  widgetBarRootURL: './src/widgets/widgetbar/';
+  widgetBarRootURL: string;
 }
 
 @subclass("dnrr.forestry.widgets.widgetbar")
