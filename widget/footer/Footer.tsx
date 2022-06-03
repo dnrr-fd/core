@@ -10,8 +10,11 @@ import { getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web'
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
 import * as css_dark from './assets/css/dark/footer.module.css';
 import * as css_light from './assets/css/light/footer.module.css';
+import * as t9n_en from './assets/t9n/en.json'
+import * as t9n_fr from './assets/t9n/fr.json'
 
 var css_theme = css_dark;
+var t9n = t9n_en;
 var _expanded = false;
 
 const css_esri = {
@@ -40,25 +43,7 @@ const elementIDs = {
   footer_copyrightID: "footer_copyrightID",
 };
 
-const rootURL = './';
-
 var _links: tsx.JSX.Element;
-
-const loader = {
-  pattern: `${rootURL}assets/`,
-  async fetchMessageBundle(bundleId: string, locale: any) {
-    const [, filename] = bundleId.split("/t9n/");
-
-    const knownLocale = intl.normalizeMessageBundleLocale(locale);
-    const bundlePath = `${rootURL}assets/t9n/${filename}_${knownLocale}.json`;
-    console.log(`Loading Bundle: ${bundlePath}`);
-
-    const response = await fetch(bundlePath)
-    return response.json();
-  }
-}
-
-intl.registerMessageBundleLoader(loader);
 
 interface FooterParams extends __esri.WidgetProperties {
   afterFooterCloseFocusElement?: string|HTMLElement;
@@ -117,23 +102,6 @@ class Footer extends Widget {
     link: Link
   };
 
-  @property()
-  @messageBundle(`${rootURL}assets/t9n/footer`)
-  messages!: {
-    button: {
-      label: string,
-      collapselabel: string
-    },
-    bodytext: {
-      text: string,
-      contactemail: Email
-    },
-    copyright: {
-      text: string,
-      link: Link
-    }
-  };
-  
   //--------------------------------------------------------------------------
   //  Public Methods
   //--------------------------------------------------------------------------
@@ -141,7 +109,7 @@ class Footer extends Widget {
   postInitialize(): void {
     var self = this;
 
-    this.label = this.messages.button.label;
+    this.label = t9n.button.label;
 
     //Set the initial theme
     this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme) as 'light'|'dark';
@@ -152,6 +120,7 @@ class Footer extends Widget {
     // Watch for changes
     intl.onLocaleChange(function(locale) {
       self.locale = locale;
+      t9n = (locale === 'fr' ? t9n_fr : t9n_en);
     });
 
     this.watch("theme", function(theme_new: string, theme_old: string){
@@ -172,9 +141,9 @@ class Footer extends Widget {
       <div id={elementIDs.footerModalID} afterCreate={this.setFooter} bind={this}>
         <div id={elementIDs.footerID} class={this.classes(css_theme.default.widget_footer, css_theme.default.widget_footer_transition, css_esri.esri_widget)}>
           <div id={elementIDs.footer_buttonBarID} class={css_theme.default.widget_footer_button_bar}>
-            <div id={elementIDs.footer_buttonID} class={this.classes(css_theme.default.widget_footer_button, css_esri.esri_widget_button)} role="button" aria-label={this.messages.button.collapselabel} title={this.messages.button.collapselabel} tabindex='0' onclick={this._footerButton_click.bind(this)} onkeypress={this._footerButton_keypress.bind(this)}>
+            <div id={elementIDs.footer_buttonID} class={this.classes(css_theme.default.widget_footer_button, css_esri.esri_widget_button)} role="button" aria-label={t9n.button.collapselabel} title={t9n.button.collapselabel} tabindex='0' onclick={this._footerButton_click.bind(this)} onkeypress={this._footerButton_keypress.bind(this)}>
               <span id={elementIDs.footer_button_iconID} aria-hidden="true" class={this.classes(css_esri.esri_expand_icon_expanded, css_esri.esri_icon_expand, css_theme.default.widget_footer_transform_90_down)}></span>
-              <span class={css_esri.esri_icon_font_fallback_text}>{this.messages.button.label}</span>
+              <span class={css_esri.esri_icon_font_fallback_text}>{t9n.button.label}</span>
             </div>
           </div>
           <div id={elementIDs.footer_foregroundID} class={css_theme.default.widget_footer_fg}>
@@ -182,13 +151,13 @@ class Footer extends Widget {
               <p>{this.title}</p>
             </div>
             <div id={elementIDs.footer_bodytextID} class={css_theme.default.widget_footer_bodytext}>
-              <p>{`${this.bodytext?.text? this.bodytext.text: this.messages.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: this.messages.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: this.messages.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: this.messages.bodytext.contactemail.displayedemailtext} target='_top' tabindex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: this.messages.bodytext.contactemail.displayedemailtext}</a>}</p>
+              <p>{`${this.bodytext?.text? this.bodytext.text: t9n.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: t9n.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: t9n.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext} target='_top' tabindex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext}</a>}</p>
             </div>
             <div id={elementIDs.footer_linksID} class={this.classes(css_theme.default.widget_footer_links)}>
               {_links}
             </div>
             <div id={elementIDs.footer_copyrightID} class={this.classes(css_theme.default.widget_footer_copyright)}>
-              <a class={this.classes(css_theme.default.widget_footer_copyright__anchor)} href={this.copyright?.link.url? this.copyright.link.url: this.messages.copyright.link.url} title={this.copyright?.link.title? this.copyright.link.title: this.messages.copyright.link.title} target={this.copyright?.link.target? this.copyright.link.target: this.messages.copyright.link.target}>{this.copyright?.link.title? this.copyright.link.title: this.messages.copyright.link.title}</a>
+              <a class={this.classes(css_theme.default.widget_footer_copyright__anchor)} href={this.copyright?.link.url? this.copyright.link.url: t9n.copyright.link.url} title={this.copyright?.link.title? this.copyright.link.title: t9n.copyright.link.title} target={this.copyright?.link.target? this.copyright.link.target: t9n.copyright.link.target}>{this.copyright?.link.title? this.copyright.link.title: t9n.copyright.link.title}</a>
             </div>
           </div>
           <div class={css_theme.default.widget_footer_bg_bg1}></div>
@@ -315,8 +284,8 @@ class Footer extends Widget {
       var footerHeight = footer_node.clientHeight as number;
 
       if (typeof expanded === "object") {
-        footerButton_node.title = this.messages.button.label;
-        footerButton_node.setAttribute('aria-label', this.messages.button.label);
+        footerButton_node.title = t9n.button.label;
+        footerButton_node.setAttribute('aria-label', t9n.button.label);
         footer_node.setAttribute('style', `transform: translate(0px, ${footerHeight}px);`);
         footerModal_node.classList.remove(css_theme.default.widget_footer_modal);
         footerIcon_node.classList.add(css_esri.esri_icon_expand);
@@ -333,8 +302,8 @@ class Footer extends Widget {
         }
       } else {
         if (expanded === false) {
-          footerButton_node.title = this.messages.button.collapselabel;
-          footerButton_node.setAttribute('aria-label', this.messages.button.collapselabel);
+          footerButton_node.title = t9n.button.collapselabel;
+          footerButton_node.setAttribute('aria-label', t9n.button.collapselabel);
           footer_node.setAttribute('style', `transform: translate(0px, 0px);`);
           footerModal_node.classList.add(css_theme.default.widget_footer_modal);
           footer_node.classList.add(css_theme.default.widget_footer_box_shadow);
@@ -347,8 +316,8 @@ class Footer extends Widget {
           getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
         }
         else {
-          footerButton_node.title = this.messages.button.label;
-          footerButton_node.setAttribute('aria-label', this.messages.button.label);
+          footerButton_node.title = t9n.button.label;
+          footerButton_node.setAttribute('aria-label', t9n.button.label);
           footer_node.setAttribute('style', `transform: translate(0px, ${footerHeight}px);`);
           footerModal_node.classList.remove(css_theme.default.widget_footer_modal);
           footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
