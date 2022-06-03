@@ -1,7 +1,6 @@
 // @ts-check
 import { property, subclass } from '@arcgis/core/core/accessorSupport/decorators';
 import Accessor from '@arcgis/core/core/Accessor';
-import {Buffer} from "buffer";
 
 @subclass('CookieClasses.CookieLabel')
 export class CookieLabel {
@@ -73,7 +72,6 @@ export class CookiesVM extends Cookie {
         if (this.value === undefined) {
             return false;
         } else {
-            // let enc_string = Buffer.from(this.value? this.value: "null").toString('base64');
             let enc_string = this.value? this.value: "null";
             const d = new Date();
             d.setTime(d.getTime() + (this.expiry * 24 * 60 * 60 * 1000));
@@ -95,7 +93,6 @@ export class CookiesVM extends Cookie {
             }
             if (c.indexOf(name) == 0) {
                 let enc_string = c.substring(name.length, c.length);
-                // let dec_string = Buffer.from(enc_string, 'base64').toString('utf-8');
                 let dec_string = enc_string;
                 this.accepted = true;
                 if (dec_string === "null") {

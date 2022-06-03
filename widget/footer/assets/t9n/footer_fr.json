@@ -1,0 +1,25 @@
+{
+    "button": {
+        "label": "Informations et Liens",
+        "collapselabel": "Réduire"
+    },
+    "bodytext": {
+        "text": "Ceci est une communication officielle du Gouvernement de la Nouvelle-Écosse - Division des Forêts. Nous nous efforçons de nous assurer que toutes les informations que nous fournissons sont exactes au moment de leur publication. Si vous avez des inquiétudes, veuillez contacter",
+        "contactemail": {
+            "id": "contactemail",
+            "displayedemailtext": "Forestry.WebSupport@NovaScotia.ca",
+            "subjectline": "Assistance site Web",
+            "messagetext": "Veuillez saisir votre demande d'assistance:",
+            "emailaddress": "forestry.websupport@novascotia.ca"
+        }
+    },
+    "copyright": {
+        "text": "string",
+        "link": {
+            "id": "copyright",
+            "title": "Droit d'Auteur de la Couronne © Gouvernement de la Nouvelle-Écosse",
+            "target": "_blank",
+            "url": "https://novascotia.ca/copyright/"
+        }
+    }
+}

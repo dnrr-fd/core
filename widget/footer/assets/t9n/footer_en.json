@@ -1,0 +1,25 @@
+{
+    "button": {
+        "label": "Information and Links",
+        "collapselabel": "Collapse"
+    },
+    "bodytext": {
+        "text": "This is an official communication by the Government of Nova Scotia - Forestry Division. We strive to ensure all information we provide is accurate as of the time it is published. If you have any issues or concerns, please contact",
+        "contactemail": {
+            "id": "contactemail",
+            "displayedemailtext": "Forestry.WebSupport@NovaScotia.ca",
+            "subjectline": "Forestry Website Support",
+            "messagetext": "Please enter your support query:",
+            "emailaddress": "forestry.websupport@novascotia.ca"
+        }
+    },
+    "copyright": {
+        "text": "string",
+        "link": {
+            "id": "copyright",
+            "title": "Crown Copyright © Government of Nova Scotia",
+            "target": "_blank",
+            "url": "https://novascotia.ca/copyright/"
+        }
+    }
+}
