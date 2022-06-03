@@ -5,9 +5,9 @@ import esriConfig from "@arcgis/core/config.js";
 import Portal from "@arcgis/core/portal/Portal";
 import PortalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/PortalBasemapsSource";
 import { widgetBarRootURL, widgetBarWidgetCloseFocusElement } from "./WidgetBar"
-import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, Centroid, BasemapGalleryWidget, SketchWidget, PrintWidget, SupportWidget } from "../widget/class/_WidgetBar";
-import { LegendStyle } from "../widget/class/_Legend";
-import { CookiesVM } from "../widget/class/_Cookie";
+import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, Centroid, BasemapGalleryWidget, SketchWidget, PrintWidget, SupportWidget } from "../class/_WidgetBar";
+import { LegendStyle } from "../class/_Legend";
+import { CookiesVM } from "../class/_Cookie";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
 
 import Expand from "@arcgis/core/widgets/Expand";
@@ -24,8 +24,8 @@ import Point from "@arcgis/core/geometry/Point";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Extent from "@arcgis/core/geometry/Extent";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
-import Support from "../widget/support/Support";
-import Button from "../widget/Button/Button";
+import Support from "../support/Support";
+import Button from "../Button/Button";
 
 export var legendWidget = null as Expand|null;
 export var bookmarksWidget = null as Expand|null;

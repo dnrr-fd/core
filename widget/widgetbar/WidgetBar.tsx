@@ -6,9 +6,9 @@ import * as intl from "@arcgis/core/intl";
 import MapView from "@arcgis/core/views/MapView";
 
 import { createWidgetsForWidgetBar, removeWidgetsFromWidgetBar } from './WidgetBarViewModel';
-import { WidgetBarWidget } from '../widget/class/_WidgetBar';
+import { WidgetBarWidget } from '../class/_WidgetBar';
 import { getElementPosition, getWidgetTheme } from '@dnrr_fd/util/web'
-import { CookiesVM } from "../widget/class/_Cookie";
+import { CookiesVM } from "../class/_Cookie";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 
