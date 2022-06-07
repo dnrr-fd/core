@@ -69,7 +69,7 @@ let Cookies = class Cookies extends Widget {
             throw 'Killing Cookies Widget.';
         }
         // Dynamically create switches for the cookies.
-        switches = this.cookiesVM.map(cookie => tsx("div", { class: css.default.widget_cookies_all_switch__holder },
+        switches = this.cookiesVM.map(cookie => tsx("div", { key: `${cookie.id}_key`, class: css.default.widget_cookies_all_switch__holder },
             tsx("div", { class: css.default.widget_cookies_all_switch__label },
                 tsx("span", null, cookie.label)),
             tsx("div", { class: css.default.widget_cookies_all_switch__toggle },

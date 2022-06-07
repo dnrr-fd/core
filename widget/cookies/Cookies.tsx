@@ -131,7 +131,7 @@ class Cookies extends Widget {
 
     // Dynamically create switches for the cookies.
     switches = this.cookiesVM.map(cookie =>
-      <div class={css.default.widget_cookies_all_switch__holder}>
+      <div key={`${cookie.id}_key`} class={css.default.widget_cookies_all_switch__holder}>
         <div class={css.default.widget_cookies_all_switch__label}>
           <span>{cookie.label}</span>
         </div>

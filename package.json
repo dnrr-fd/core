@@ -1,6 +1,6 @@
 {
   "name": "@dnrr_fd/core",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Core modules to use with JavaScript 4.x",
   "main": "index.js",
   "scripts": {
