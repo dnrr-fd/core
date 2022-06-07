@@ -1,0 +1,208 @@
+.widget_header {
+  /* font-family: 'Roboto', sans-serif; */
+  color: rgb(0,88,164);
+  overflow: hidden;
+  width: 100%;
+  height: 75px;
+  z-index: 1;
+}
+.widget_header_modal {
+  position: fixed;
+  z-index: 9995;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+.widget_header_transition {
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -ms-transition: all 0.4s;
+  -o-transition: all 0.4s;
+}
+.widget_header_transition__none{
+  transition: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+}
+.widget_header_bg {
+  z-index: 1;
+}
+.widget_header_fg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: table;
+  z-index: 5;
+}
+
+.widget_header_visible__none {
+  display: none!important;
+}
+.widget_header_visible__hidden {
+  visibility: hidden!important;
+}
+
+.widget_header_content {
+  padding: 20px;
+  width: 50%;
+  margin-right: auto;
+  margin-left: auto;
+  overflow: auto;
+}
+.widget_header_title{
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 20px;
+}
+@media screen and (max-width: 992px) {
+  .widget_header_content {
+    padding: 15px;
+    width: 80%;
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+}
+@media screen and (max-width: 600px) {
+  .widget_header_content {
+    padding: 10px;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: unset;
+    margin-left: unset;
+  }
+  .widget_header_title{
+    display: none;
+  }
+}
+.widget_header_title__div,
+.widget_header_subtitle__div {
+  text-align: left;
+}
+.widget_header_logo_img {
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+  width: 150px;
+  height: 70px;
+}
+.widget_header_bg_bg1 {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 75px;
+  top: 0px;
+  background-image: linear-gradient(-60deg, rgba(41,171,250,0.2) 16%, rgba(255, 255, 255, 0) 15%);
+}
+.widget_header_bg_bg2 {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: 45px;
+  top: 30px;
+  background-image: linear-gradient(-60deg, rgba(41,171,250,0.4) 36%, rgba(255, 255, 255, 0) 35%);
+}
+.widget_header_bg_bg3 {
+  position: absolute;
+  z-index: 4;
+  width: 100%;
+  height: 30px;
+  top: 45px;
+  background-image: linear-gradient(-60deg, rgba(41,171,250,0.4) 41%, rgba(255, 255, 255, 0) 40%);
+}
+
+.widget_header_links,
+.widget_header_menu,
+.widget_header_logo_title {
+  display: table-cell;
+  vertical-align: middle;
+}
+.widget_header_menu {
+  padding-left: 10px;
+}
+.widget_header_link {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.widget_header_logo {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: left;
+  padding-left: 30px;
+}
+.widget_header_logo_a:focus,
+.widget_header_logo_a:focus-visible {
+  outline: none!important;
+}
+.widget_header_logo_a {
+  display: inline-block;
+  z-index: 6;
+}
+.widget_header_title_title{
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.widget_header_title_subtitle{
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.widget_header_links_menu{
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 30px;
+  padding-right: 15px;
+  width: 0px;
+}
+.widget_header_links_menu__button {
+  z-index: 96!important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+}
+
+
+.widget_header_sitemenu {
+  display: block;
+  z-index: 96!important;
+  height: calc(100% - 75px);
+  height: -o-calc(100% - 75px); /* opera */
+  height: -webkit-calc(100% - 75px); /* google, safari */
+  height: -moz-calc(100% - 75px); /* firefox */
+  padding: 20px;
+}
+.widget_header_sitemenu_box_shadow {
+  box-shadow: 0px -2px 6px rgb(50 50 50 / 60%);
+}
+.widget_header_sitemenu__content {
+  right: 0px;
+  position: absolute;
+}
+.widget_header_sitemenu_fieldset {
+  border: 0px;
+  padding: 0px 0px 14px 0px;
+  margin: -2px;
+}
+.widget_header_sitemenu_fieldset_legend {
+  cursor: default;
+}
+.widget_header_submenu_link {
+  padding-top: 2px;  
+  padding-bottom: 2px;  
+}
+.widget_header_submenu_links {
+  padding-bottom: 12px;  
+}
+.widget_header_submenu_themes {
+  padding-top: 8px;  
+}
+.widget_header_submenu_languages {
+  padding-top: 8px;  
+}
+.widget_header_link__enabled {
+  padding: 2px 4px;
+}

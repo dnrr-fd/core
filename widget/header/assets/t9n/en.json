@@ -1,0 +1,20 @@
+{
+    "sitemenu": {
+        "label": "Menu",
+        "collapse": "Collapse",
+        "menu": {
+            "title": "Site Menu",
+            "theme": {
+                "grouplabel": "Theme Setting:"
+            },
+            "linkslabel": "Links",
+            "aboutlabel": "About Website",
+            "languages": {
+                "label": "Available Languages:",
+                "warning": "You are about to re-load the application in a different language. Continue?"
+            },
+            "signin": "Sign In",
+            "signout": "Sign Out"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "sitemenu": {
+        "label": "Menu",
+        "collapse": "Réduire",
+        "menu": {
+            "title": "Menu du Site",
+            "theme": {
+                "grouplabel": "Réglage du Thème:"
+            },
+            "linkslabel": "Liens:",
+            "aboutlabel": "À propos du site Web",
+            "languages":  {
+                "label": "Langues Disponibles:",
+                "warning": "Vous êtes sur le point de recharger l'application dans une autre langue. Continuer?"
+            },
+            "signin": "Connectez-vous",
+            "signout": "Déconnectez-vous"
+        }
+    }
+}
