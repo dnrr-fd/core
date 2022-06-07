@@ -1,0 +1,281 @@
+.widget_cookies_all {
+  margin-left: -8px; /* Bug? */
+}
+.widget_cookies_all_visible__none {
+  display: none;
+}
+.widget_cookies_all_transition {
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -ms-transition: all 0.4s;
+  -o-transition: all 0.4s;
+}
+.widget_cookies_all_links__button {
+  background-color: transparent;
+  border: unset;
+  padding: 0px 0px 1px 0px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+.widget_cookies_all_header {
+  display: grid;
+  width: 100%;
+  padding: 0px 10px 0px 10px;
+}
+.widget_cookies_all_header__div {
+  display: inline-block;
+  border-bottom: solid 1px #d2d2d2;
+}
+.widget_cookies_all_header_heading__div {
+  float: left;
+  padding: 20px 10px 20px 10px;
+}
+.widget_cookies_all_header_heading__div h1{
+  margin: 0px;
+}
+.widget_cookies_all_header_close__div {
+  float: right;
+  padding: 20px 10px 10px 10px;
+}
+.widget_cookies_all_header_close__button {
+  color: inherit;
+  cursor: pointer;
+}
+.widget_cookies_all_content_message__div {
+  text-align: justify;
+}
+.widget_cookies_all_buttons__disabled {
+  cursor: not-allowed!important;
+  pointer-events: all;
+}
+/* Switches */
+.widget_cookies_all_switch__container {
+  width: 100%;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.widget_cookies_all_switch__holder {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  padding: 3px;
+  margin-right: 40px;
+}
+.widget_cookies_all_switch__label {
+  margin-right: 5px;
+}
+.widget_cookies_all_switch__toggle {
+  height: 28px;
+  border-radius: 2px;
+  
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  z-index: -2;
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"] + label {
+  font-family: 'CalciteWebCoreIcons'!important;
+  position: relative;
+  display: inline-block;
+  width: 82px;
+  height: 28px;
+  border-radius: 2px;
+  margin: 0;
+  cursor: pointer;
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"] + label::before {
+  position: absolute;
+  font-weight: bolder;
+  font-size: 18px;
+  text-align: center;
+  line-height: 23px;
+  top: 2px;
+  left: 2px;
+  width: 36px;
+  height: 22px;
+  border-radius: 2px;
+  transition: .1s ease-in-out;
+  content: '';
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"]:checked + label::before {
+  left: 50%;
+  content: '';
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"]:focus-visible + label {
+  outline: -webkit-focus-ring-color auto 1px;
+}
+.widget_cookies_all_switch__toggle {
+  color: #f5f5f5;
+  background-color: #f5f5f5;
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"] + label {
+  box-shadow: inset 2px 2px 4px rgb(0 0 0 / 25%);
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"] + label::before {
+  background-color: rgb(0 0 0 / 25%);
+  border: 1px solid rgb(0 0 0 / 3%);
+  box-shadow: 2px 2px 4px rgb(0 0 0 / 30%);
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"]:hover + label::before {
+  background-color: rgb(0 0 0 / 30%);
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"]:checked + label::before {
+  background-color: rgb(0 180 60 / 100%);
+  border: 1px solid rgb(0 126 43 / 10%);
+  box-shadow: 2px 2px 4px rgb(0 126 43 / 55%);
+}
+.widget_cookies_all_switch__toggle input[type="checkbox"]:checked:hover + label::before {
+  background-color: rgb(0 165 55);
+}
+
+
+/* Main Section */
+.widget_cookies_main_content {
+  margin-left: 25%;
+  margin-right: 25%;
+  cursor: default;
+  border: solid 1px #d2d2d2;
+}
+.widget_cookies_main_modal {
+  position: fixed;
+  z-index: 9997;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+.widget_cookies_main_content__bottom,
+.widget_cookies_main_content__top {
+  position: fixed;
+  z-index: 9998;
+}
+.widget_cookies_main_content__top {
+  top: 100px;
+}
+.widget_cookies_main_content__bottom {
+  bottom: 100px;
+}
+@media screen and (max-width: 992px) {
+  .widget_cookies_main_content {
+    margin-left: 15%;
+    margin-right: 15%;
+    padding: 15px;
+  }
+  .widget_cookies_main_content__top {
+    top: 25px;
+  }
+  .widget_cookies_main_content__bottom {
+    bottom: 25px;
+  }
+}
+@media screen and (max-width: 600px) {
+  .widget_cookies_main_content {
+    width: 100%;
+    left: 0px;
+    margin-left: unset;
+    margin-right: unset;
+    padding: 10px;
+    border-right: unset;
+    border-bottom: unset;
+    border-left: unset;
+  }
+  .widget_cookies_main_content__top {
+    top: 0px;
+  }
+  .widget_cookies_main_content__bottom {
+    bottom: 0px;
+  }
+}
+.widget_cookies_main_subcontent__div {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px 10px 10px;
+}
+.widget_cookies_main_buttons__div {
+  width: 100%;
+  margin-left: 10px;
+}
+.widget_cookies_main_buttons_accept__button {
+  margin-bottom: 10px;
+}
+
+/* Settings Section */
+.widget_cookies_settings_modal {
+  position: fixed; /* Stay in place */
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.widget_cookies_settings_content {
+  margin-top: 50px;
+  margin-left: 20%;
+  width: 60%;
+  height: fit-content;
+  border: solid 1px #d2d2d2;
+}
+@media screen and (max-width: 992px) {
+  .widget_cookies_settings_content {
+    padding: 15px;
+    margin-top: 25px;
+    margin-left: 10%;
+    width: 80%;
+  }
+}
+@media screen and (max-width: 600px) {
+  .widget_cookies_settings_content {
+    padding: 10px;
+    margin-top: 0px;
+    margin-left: unset;
+    width: 100%;
+    height: 100%;
+  }
+}
+.widget_cookies_settings_content__div {
+  padding: 0px 10px 0px 10px;
+}
+.widget_cookies_settings_subcontent_contact__div,
+.widget_cookies_settings_content_privacy__div {
+  padding: 0px 40px 0px 40px;
+}
+.widget_cookies_settings_subcontent {
+  overflow-y: auto;
+  max-height: 400px;
+  margin: 0px 10px 0px 10px;
+}
+.widget_cookies_settings_subcontent_title {
+  text-align: center;
+}
+.widget_cookies_settings_subcontent__div {
+  padding: 0px 10px 10px 10px;
+  border-top: 1px solid #d2d2d2;
+  border-left: 1px solid #d2d2d2;
+  border-right: 1px solid #d2d2d2;
+}
+.widget_cookies_settings_buttons {
+  padding: 00px 10px 0px 10px;
+}
+.widget_cookies_settings_buttons__div {
+  width: 100%;
+  display: inline-block;
+  padding: 10px 0px 5px 0px;
+  border-top: 1px solid #d2d2d2;
+}
+.widget_cookies_settings_buttons_accept__div,
+.widget_cookies_settings_buttons_reject__div {
+  margin-right: 10px;
+  float: left;
+}
+.widget_cookies_settings_buttons_save__div {
+  float: right;
+}

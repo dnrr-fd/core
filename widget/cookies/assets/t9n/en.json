@@ -1,0 +1,24 @@
+{
+    "title": "Cookies",
+    "title_mainDialog": "This Site Uses Cookies",
+    "closeButtonLabel_mainDialog": "Close Cookie Dialog",
+    "message_mainDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "manageButtonText_mainDialog": "Manage Preferences",
+
+    "agreeButtonText_allDialogs": "Accept All",
+    "rejectButtonText_allDialogs": "Reject All",
+    "saveButtonText_allDialogs": "Save Settings",
+
+    "header_settingsDialog": "Cookie Settings",
+    "closeButtonLabel_settingsDialog": "Close Cookie Settings",
+    "title_settingsDialog": "Cookie Usage",
+    "message_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "privacyPolicyButtonText_settingsDialog": "Privacy Policy",
+    "privacyPolicyText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "cookieAccepted_settingsDialog": "Accepted",
+    "cookieRejected_settingsDialog": "Rejected",
+    "subtitle_settingsDialog": "More Information",
+    "submessage_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "contactUsButtonText_settingsDialog": "Contact Us",
+    "contactUsText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. "
+}

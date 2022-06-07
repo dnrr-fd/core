@@ -1,0 +1,24 @@
+{
+    "title": "Cookies",
+    "title_mainDialog": "Ce Site Utilise des Cookies",
+    "closeButtonLabel_mainDialog": "Fermer la Boîte de Dialogue des Cookies",
+    "message_mainDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "manageButtonText_mainDialog": "Gérer les Préférences",
+
+    "agreeButtonText_allDialogs": "Accepter Tout",
+    "rejectButtonText_allDialogs": "Rejeter Tout",
+    "saveButtonText_allDialogs": "Sauvegarder",
+
+    "header_settingsDialog": "Paramètres des Cookies",
+    "closeButtonLabel_settingsDialog": "Fermer les Paramètres des Cookies",
+    "title_settingsDialog": "Utilisation des Cookies",
+    "message_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "privacyPolicyButtonText_settingsDialog": "Politique de Confidentialité",
+    "privacyPolicyText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "cookieAccepted_settingsDialog": "Accepté",
+    "cookieRejected_settingsDialog": "Rejeté",
+    "subtitle_settingsDialog": "Plus d'Information",
+    "submessage_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "contactUsButtonText_settingsDialog": "Nous contacter",
+    "contactUsText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. "
+}
