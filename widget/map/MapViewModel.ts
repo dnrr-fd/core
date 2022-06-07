@@ -396,7 +396,7 @@ async function addLayerList(widget: LayerListWidget, view: MapView){
                 if (t9nResults === null) {
                     t9nResults = layerList_defaultT9n;
                 }
-                _label = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetLocale, "label", widget.id? widget.id: lang==="en"? "Layer List": "Liste des Couches") as string;
+                _label = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetLocale, "label", lang==="en"? "Layer List": "Liste des Couches") as string;
             }).then(function (){
                 _layerList.label = _label;
                 _layerList.view = view;

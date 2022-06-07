@@ -347,7 +347,7 @@ async function addLayerList(widget, view) {
                 if (t9nResults === null) {
                     t9nResults = layerList_defaultT9n;
                 }
-                _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", widget.id ? widget.id : lang === "en" ? "Layer List" : "Liste des Couches");
+                _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Layer List" : "Liste des Couches");
             }).then(function () {
                 _layerList.label = _label;
                 _layerList.view = view;
