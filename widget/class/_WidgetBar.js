@@ -15,6 +15,9 @@ __decorate([
 ], WidgetBarWidget.prototype, "config", void 0);
 __decorate([
     property()
+], WidgetBarWidget.prototype, "t9nPath", void 0);
+__decorate([
+    property()
 ], WidgetBarWidget.prototype, "expanded", void 0);
 __decorate([
     property()

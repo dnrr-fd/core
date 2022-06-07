@@ -19,6 +19,9 @@ export class WidgetBarWidget extends Accessor {
     config!: string|null;
 
     @property()
+    t9nPath!: string|null;
+
+    @property()
     expanded!: boolean|null;
 
     @property()

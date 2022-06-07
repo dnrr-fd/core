@@ -14,6 +14,40 @@ import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";
 
+// Import local assets
+// import * as searchT9n_en from '../search/assets/t9n/en.json'
+// import * as searchT9n_fr from '../search/assets/t9n/fr.json'
+// var search_defaultT9n = searchT9n_en;
+
+// import * as scaleBarT9n_en from '../scalebar/assets/t9n/en.json'
+// import * as scaleBarT9n_fr from '../scalebar/assets/t9n/fr.json'
+// var scaleBar_defaultT9n = scaleBarT9n_en;
+
+// import * as coordinateConversionT9n_en from '../coordinateconversion/assets/t9n/en.json'
+// import * as coordinateConversionT9n_fr from '../coordinateconversion/assets/t9n/fr.json'
+// var coordinateConversion_defaultT9n = coordinateConversionT9n_en;
+
+// import * as homeT9n_en from '../home/assets/t9n/en.json'
+// import * as homeT9n_fr from '../home/assets/t9n/fr.json'
+// var home_defaultT9n = homeT9n_en;
+
+// import * as zoomT9n_en from '../zoom/assets/t9n/en.json'
+// import * as zoomT9n_fr from '../zoom/assets/t9n/fr.json'
+// var zoom_defaultT9n = zoomT9n_en;
+
+// import * as locateT9n_en from '../locate/assets/t9n/en.json'
+// import * as locateT9n_fr from '../locate/assets/t9n/fr.json'
+// var locate_defaultT9n = locateT9n_en;
+
+// import * as fullscreenT9n_en from '../fullscreen/assets/t9n/en.json'
+// import * as fullscreenT9n_fr from '../fullscreen/assets/t9n/fr.json'
+// var fullscreen_defaultT9n = fullscreenT9n_en;
+
+import * as layerListT9n_en from '../layerlist/assets/t9n/en.json'
+import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json'
+var layerList_defaultT9n = layerListT9n_en;
+
+
 export var searchWidget = null as Search|null;
 export var scaleBarWidget = null as ScaleBar|null;
 export var coordinateConversionWidget = null as CoordinateConversion|null;
@@ -94,7 +128,7 @@ async function addSearch(widget: MapWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         var _search = new Search();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _search.label = widget.id;
@@ -126,7 +160,7 @@ async function addScaleBar(widget: ScaleBarWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         var _scaleBar = new ScaleBar();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as ScaleBarWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _unit = getWidgetConfigKeyValue(config as ScaleBarWidget, "unit", widget.unit? widget.unit: "dual") as "non-metric"|"metric"|"dual";
             var _style = getWidgetConfigKeyValue(config as ScaleBarWidget, "style", widget.unit? widget.unit: "line") as "ruler"|"line";
@@ -162,7 +196,7 @@ async function addCoordinateConversion(widget: MapWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         var _coordinateConversion = new CoordinateConversion();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _coordinateConversion.label = widget.id;
@@ -199,7 +233,7 @@ async function addHome(widget: MapWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         var _home = new Home();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _home.label = widget.id;
@@ -231,7 +265,7 @@ async function addZoom(widget: MapWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
         var _zoom = new Zoom();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _zoom.label = widget.id;
@@ -263,7 +297,7 @@ async function addLocate(widget: MapWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 2);
         var _locate = new Locate();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _locate.label = widget.id;
@@ -295,7 +329,7 @@ async function addFullscreen(widget: MapWidget, view: MapView){
         var _index = getWidgetConfigKeyValue(widget, "index_position", 3);
         var _fullscreen = new Fullscreen();
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _fullscreen.label = widget.id;
@@ -316,13 +350,15 @@ async function addFullscreen(widget: MapWidget, view: MapView){
 
 async function addLayerList(widget: LayerListWidget, view: MapView){
     return new Promise(resolve => {
+        // Get the default asset from language.
+        layerList_defaultT9n = (lang === 'fr' ? layerListT9n_fr : layerListT9n_en);
+
         var configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
-        // var t9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
         var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left") as string;
         var _index = getWidgetConfigKeyValue(widget, "index_position", 4);
 
@@ -339,8 +375,13 @@ async function addLayerList(widget: LayerListWidget, view: MapView){
         //     }
         // }
 
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
-            var layerListT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+            var layerListT9nPath: string|null;
+            if (widget.t9nPath != null) {
+                layerListT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            } else {
+                layerListT9nPath = null;
+            }
             var _visible = getWidgetConfigKeyValue(config as LayerListWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as LayerListWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
             var _group = getWidgetConfigKeyValue(config as LayerListWidget, "group", widget.group? widget.group: `${_position}-group`) as string;
@@ -351,7 +392,10 @@ async function addLayerList(widget: LayerListWidget, view: MapView){
                 collapse_icon = "esri-icon-right"
             }
 
-            returnWidgetConfig(layerListT9nPath, layerListT9nPath).then(t9nResults => {
+            returnWidgetConfig(layerListT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = layerList_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetLocale, "label", widget.id? widget.id: lang==="en"? "Layer List": "Liste des Couches") as string;
             }).then(function (){
                 _layerList.label = _label;

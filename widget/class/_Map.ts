@@ -22,6 +22,9 @@ export class MapWidget extends Accessor {
     @property()
     config!: string|null;
 
+    @property()
+    t9nPath!: string|null;
+
 }
 
 @subclass('MapClasses.ScaleBarWidget')

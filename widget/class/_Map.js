@@ -19,6 +19,9 @@ __decorate([
 __decorate([
     property()
 ], MapWidget.prototype, "config", void 0);
+__decorate([
+    property()
+], MapWidget.prototype, "t9nPath", void 0);
 MapWidget = __decorate([
     subclass('MapClasses.MapWidget')
 ], MapWidget);

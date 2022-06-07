@@ -17,6 +17,25 @@ import Point from "@arcgis/core/geometry/Point";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Support from "../support/Support";
 import Button from "../Button/Button";
+// Import local assets
+import * as legendT9n_en from '../legend/assets/t9n/en.json';
+import * as legendT9n_fr from '../legend/assets/t9n/fr.json';
+var legend_defaultT9n = legendT9n_en;
+import * as bookmarksT9n_en from '../bookmarks/assets/t9n/en.json';
+import * as bookmarksT9n_fr from '../bookmarks/assets/t9n/fr.json';
+var bookmarks_defaultT9n = bookmarksT9n_en;
+import * as basemapGalleryT9n_en from '../basemapgallery/assets/t9n/en.json';
+import * as basemapGalleryT9n_fr from '../basemapgallery/assets/t9n/fr.json';
+var basemapGallery_defaultT9n = basemapGalleryT9n_en;
+import * as sketchT9n_en from '../sketch/assets/t9n/en.json';
+import * as sketchT9n_fr from '../sketch/assets/t9n/fr.json';
+var sketch_defaultT9n = sketchT9n_en;
+import * as printT9n_en from '../print/assets/t9n/en.json';
+import * as printT9n_fr from '../print/assets/t9n/fr.json';
+var print_defaultT9n = printT9n_en;
+import * as supportT9n_en from '../support/assets/t9n/en.json';
+import * as supportT9n_fr from '../support/assets/t9n/fr.json';
+var support_defaultT9n = supportT9n_en;
 export var legendWidget = null;
 export var bookmarksWidget = null;
 export var basemapgalleryWidget = null;
@@ -102,6 +121,8 @@ export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, 
 async function addLegend(widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        legend_defaultT9n = (lang === 'fr' ? legendT9n_fr : legendT9n_en);
         var configFile;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
@@ -109,20 +130,26 @@ async function addLegend(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
-            var legendT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+            var legendT9nPath;
+            if (widget.t9nPath != null) {
+                legendT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            }
+            else {
+                legendT9nPath = null;
+            }
             var _legend = new Legend();
             var _legend_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _label;
-            returnWidgetConfig(legendT9nPath, legendT9nPath).then(t9nResults => {
+            returnWidgetConfig(legendT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = legend_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Legend" : "Légende");
             }).then(function () {
-                // var newClassList = JSON.parse(JSON.stringify(_widgetClassList));
-                // newClassList.push(widget.id);
-                // createReactDiv(widgetBarContainer, widget.id, newClassList);
                 var _style = new LegendStyle();
                 _style.type = "card";
                 _style.layout = "auto";
@@ -157,21 +184,32 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
     return new Promise(resolve => {
         var configFile;
         var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        bookmarks_defaultT9n = (lang === 'fr' ? bookmarksT9n_fr : bookmarksT9n_en);
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         }
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(async (config) => {
-            var basemapGalleryT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(async (config) => {
+            var bookmarksT9nPath;
+            if (widget.t9nPath != null) {
+                bookmarksT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            }
+            else {
+                bookmarksT9nPath = null;
+            }
             var _bookmarks_expand = new Expand();
             var _bookmarks = await createBookmarks(config, _mapView, _cookies, _localeList, `${widgetsAssetsPath}${widget.id}/img/default-thumb.png`);
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _label;
-            returnWidgetConfig(basemapGalleryT9nPath, basemapGalleryT9nPath).then(t9nResults => {
+            returnWidgetConfig(bookmarksT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = bookmarks_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Bookmarks" : "Signets");
             }).then(function () {
                 // var newClassList = JSON.parse(JSON.stringify(_widgetClassList));
@@ -200,6 +238,8 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
 async function addBasemapGallery(widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        basemapGallery_defaultT9n = (lang === 'fr' ? basemapGalleryT9n_fr : basemapGalleryT9n_en);
         var configFile;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
@@ -207,15 +247,24 @@ async function addBasemapGallery(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
-            var basemapGalleryT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+            var basemapGalleryT9nPath;
+            if (widget.t9nPath != null) {
+                basemapGalleryT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            }
+            else {
+                basemapGalleryT9nPath = null;
+            }
             var _basemapGallery_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _portal = getWidgetConfigKeyValue(config, "basemapsourceportal", esriConfig.portalUrl);
             var _label;
-            returnWidgetConfig(basemapGalleryT9nPath, basemapGalleryT9nPath).then(t9nResults => {
+            returnWidgetConfig(basemapGalleryT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = basemapGallery_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Basemap Gallery" : "Bibliothèque de fonds de carte");
             }).then(function () {
                 var _basemapGallery = new BasemapGallery({
@@ -250,6 +299,8 @@ async function addBasemapGallery(widget, _mapView) {
 async function addSketch(widget, _mapView, _graphicsLayer) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        sketch_defaultT9n = (lang === 'fr' ? sketchT9n_fr : sketchT9n_en);
         var configFile;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
@@ -257,8 +308,14 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
-            var sketchT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+            var sketchT9nPath;
+            if (widget.t9nPath != null) {
+                sketchT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            }
+            else {
+                sketchT9nPath = null;
+            }
             var _sketch = new Sketch();
             var _sketch_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -266,7 +323,10 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _mode = getWidgetConfigKeyValue(config, "mode", "update");
             var _label;
-            returnWidgetConfig(sketchT9nPath, sketchT9nPath).then(t9nResults => {
+            returnWidgetConfig(sketchT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = sketch_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Sketch" : "Dessin");
             }).then(function () {
                 _sketch.label = _label;
@@ -296,6 +356,8 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
 async function addPrint(widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        print_defaultT9n = (lang === 'fr' ? printT9n_fr : printT9n_en);
         var configFile;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
@@ -303,8 +365,14 @@ async function addPrint(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
-            var printT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+            var printT9nPath;
+            if (widget.t9nPath != null) {
+                printT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            }
+            else {
+                printT9nPath = null;
+            }
             var _print = new Print();
             var _print_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -312,7 +380,10 @@ async function addPrint(widget, _mapView) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _psURL = getWidgetConfigKeyValue(config, "printServiceURL", "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task");
             var _label;
-            returnWidgetConfig(printT9nPath, printT9nPath).then(t9nResults => {
+            returnWidgetConfig(printT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = print_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Print" : "Imprimer");
             }).then(function () {
                 _print.label = _label;
@@ -342,6 +413,8 @@ async function addSupport(widget, _mapView) {
     return new Promise(resolve => {
         var _supportID = "supportID";
         var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        support_defaultT9n = (lang === 'fr' ? supportT9n_fr : supportT9n_en);
         var configFile;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
@@ -349,8 +422,14 @@ async function addSupport(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/${widget.id}_config.json`).then(config => {
-            var supportT9nPath = `${widgetsAssetsPath}${widget.id}/t9n/${widget.id}_${lang}.json`;
+        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+            var supportT9nPath;
+            if (widget.t9nPath != null) {
+                supportT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            }
+            else {
+                supportT9nPath = null;
+            }
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _container = getWidgetConfigKeyValue(config, "container", _supportID);
             var _sURL = getWidgetConfigKeyValue(config, "serviceURL", "https://nsgi-uat.cio.gov.ns.ca/feedback-api/api/SendFeedback");
@@ -365,7 +444,10 @@ async function addSupport(widget, _mapView) {
                 visible: false,
                 container: _container
             });
-            returnWidgetConfig(supportT9nPath, supportT9nPath).then(t9nResults => {
+            returnWidgetConfig(supportT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+                if (t9nResults === null) {
+                    t9nResults = support_defaultT9n;
+                }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Support Form" : "Formulaire d'assistance");
             }).then(function () {
                 _support.label = _label;
