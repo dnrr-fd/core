@@ -10,6 +10,7 @@ import { WidgetBarWidget } from '../class/_WidgetBar';
 import { getElementPosition, getWidgetTheme } from '@dnrr_fd/util/web'
 import { CookiesVM } from "../class/_Cookie";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
+import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 
 // Import Assets
@@ -25,7 +26,11 @@ import * as t9n_fr from './assets/t9n/fr.json'
 import Expand from "@arcgis/core/widgets/Expand";
 import Button from "../button/Button";
 
-var t9n = t9n_en;
+if (getNormalizedLocale() === "en") {
+  var t9n = t9n_en;
+} else {
+  var t9n = t9n_fr;
+}
 
 var css_theme = css_dark;
 

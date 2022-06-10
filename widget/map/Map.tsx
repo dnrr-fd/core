@@ -28,7 +28,12 @@ import * as css_light from './assets/css/light/map.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var t9n = t9n_en;
+if (getNormalizedLocale() === "en") {
+  var t9n = t9n_en;
+} else {
+  var t9n = t9n_fr;
+}
+
 var css_theme = css_dark;
 var _mapView = new MapView();
 

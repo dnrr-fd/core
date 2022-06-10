@@ -4,13 +4,19 @@ import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
+import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 import { getWidgetTheme, ariaDisable, getFocusableElements } from '@dnrr_fd/util/web';
 import { CookiesVM } from '../class/_Cookie';
 // Import Assets
 import * as css from './assets/css/cookies.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-var t9n = t9n_en;
+if (getNormalizedLocale() === "en") {
+    var t9n = t9n_en;
+}
+else {
+    var t9n = t9n_fr;
+}
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_widget_anchor: 'esri-widget__anchor',

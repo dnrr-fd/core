@@ -8,6 +8,7 @@ import * as intl from "@arcgis/core/intl";
 import { Locale, Logo, Menu, Theme } from "../class/_Header"
 import { Link } from "../class/_Common"
 import { getFocusableElements, getWidgetTheme, setStyleSheet } from '@dnrr_fd/util/web'
+import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
@@ -17,7 +18,12 @@ import * as css_light from './assets/css/light/header.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var t9n = t9n_en;
+if (getNormalizedLocale() === "en") {
+  var t9n = t9n_en;
+} else {
+  var t9n = t9n_fr;
+}
+
 var css_theme = css_dark;
 var _locale: 'en'|'fr';
 var _expanded = false;

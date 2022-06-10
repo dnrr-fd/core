@@ -5,6 +5,7 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
 import { getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web';
+import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
 import * as css_dark from './assets/css/dark/footer.module.css';
@@ -12,7 +13,12 @@ import * as css_light from './assets/css/light/footer.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
 var css_theme = css_dark;
-var t9n = t9n_en;
+if (getNormalizedLocale() === "en") {
+    var t9n = t9n_en;
+}
+else {
+    var t9n = t9n_fr;
+}
 var _expanded = false;
 const css_esri = {
     esri_widget: 'esri-widget',
