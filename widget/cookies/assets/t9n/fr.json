@@ -2,7 +2,7 @@
     "title": "Cookies",
     "title_mainDialog": "Ce Site Utilise des Cookies",
     "closeButtonLabel_mainDialog": "Fermer la Boîte de Dialogue des Cookies",
-    "message_mainDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "message_mainDialog": "Ce site Web utilise des cookies pour améliorer votre expérience de navigation. Vous pouvez rejeter tous les cookies sans conséquences néfastes ou sélectionner les cookies que vous souhaitez utiliser en cliquant sur ",
     "manageButtonText_mainDialog": "Gérer les Préférences",
 
     "agreeButtonText_allDialogs": "Accepter Tout",
@@ -12,13 +12,13 @@
     "header_settingsDialog": "Paramètres des Cookies",
     "closeButtonLabel_settingsDialog": "Fermer les Paramètres des Cookies",
     "title_settingsDialog": "Utilisation des Cookies",
-    "message_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "message_settingsDialog": "Ce site recueille certaines informations et les stocke dans votre navigateur Web (cookies) pour améliorer votre expérience de navigation. Le Ministère des Ressources Naturelles et des Énergies Renouvelables de la Nouvelle-Écosse ne recueille ni ne vend aucune information personnelle à lui-même, au gouvernement ou à tout autre tiers. Vous pouvez rejeter tous les cookies sans aucune conséquence négative sur votre expérience sur le site Web. Pour plus d'informations sur les cookies et la confidentialité, consultez notre ",
     "privacyPolicyButtonText_settingsDialog": "Politique de Confidentialité",
     "privacyPolicyText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
     "cookieAccepted_settingsDialog": "Accepté",
     "cookieRejected_settingsDialog": "Rejeté",
     "subtitle_settingsDialog": "Plus d'Information",
-    "submessage_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "submessage_settingsDialog": "Pour plus d'informations sur notre site Web, les cookies, les politiques ou pour toute question générale, n'hésitez pas à nous contacter pour ",
     "contactUsButtonText_settingsDialog": "Nous contacter",
     "contactUsText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. "
 }

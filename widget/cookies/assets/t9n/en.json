@@ -2,7 +2,7 @@
     "title": "Cookies",
     "title_mainDialog": "This Site Uses Cookies",
     "closeButtonLabel_mainDialog": "Close Cookie Dialog",
-    "message_mainDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "message_mainDialog": "This website uses cookies to enhance your browser experience. You may reject all cookies without any adverse consequences, or select which cookies you would like to use by clicking ",
     "manageButtonText_mainDialog": "Manage Preferences",
 
     "agreeButtonText_allDialogs": "Accept All",
@@ -12,13 +12,13 @@
     "header_settingsDialog": "Cookie Settings",
     "closeButtonLabel_settingsDialog": "Close Cookie Settings",
     "title_settingsDialog": "Cookie Usage",
-    "message_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "message_settingsDialog": "This site collects some information and stores it within your web browser (cookies) to enhance your browser experience. The Nova Scotia Department of Natural Resources and Renewables in no way collects or sells any personal information to itself, government, or any other 3rd party. You may reject all cookies without any adverse consequences to your website experience. For information on cookies and privacy, see our   ",
     "privacyPolicyButtonText_settingsDialog": "Privacy Policy",
     "privacyPolicyText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
     "cookieAccepted_settingsDialog": "Accepted",
     "cookieRejected_settingsDialog": "Rejected",
     "subtitle_settingsDialog": "More Information",
-    "submessage_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. ",
+    "submessage_settingsDialog": "For more information on our website, cookies, policies, or with any general questions, feel free to ",
     "contactUsButtonText_settingsDialog": "Contact Us",
     "contactUsText_settingsDialog": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis exercitation. "
 }
