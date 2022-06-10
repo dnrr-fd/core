@@ -12,12 +12,7 @@ import * as css_dark from './assets/css/dark/header.module.css';
 import * as css_light from './assets/css/light/header.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-if (getNormalizedLocale() === "en") {
-    var t9n = t9n_en;
-}
-else {
-    var t9n = t9n_fr;
-}
+var t9n = t9n_en;
 var css_theme = css_dark;
 var _locale;
 var _expanded = false;
@@ -68,8 +63,15 @@ let Header = class Header extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
+        var _locale = getNormalizedLocale();
+        console.log(`_LOCALE: ${_locale}`);
+        if (_locale === "en") {
+            t9n = t9n_en;
+        }
+        else {
+            t9n = t9n_fr;
+        }
         var self = this;
-        _locale = this._getLocale();
         this.label = this.title;
         intl.onLocaleChange(function (locale) {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);

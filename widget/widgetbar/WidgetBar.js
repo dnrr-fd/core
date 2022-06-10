@@ -15,12 +15,7 @@ export var widgetBarRootURL;
 export var widgetBarWidgetCloseFocusElement;
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-if (getNormalizedLocale() === "en") {
-    var t9n = t9n_en;
-}
-else {
-    var t9n = t9n_fr;
-}
+var t9n = t9n_en;
 var css_theme = css_dark;
 var _widgetBarWidgets;
 const elementIDs = {
@@ -36,6 +31,14 @@ let WidgetBar = class WidgetBar extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     async postInitialize() {
+        var _locale = getNormalizedLocale();
+        console.log(`_LOCALE: ${_locale}`);
+        if (_locale === "en") {
+            t9n = t9n_en;
+        }
+        else {
+            t9n = t9n_fr;
+        }
         widgetBarRootURL = this.widgetBarRootURL;
         var self = this;
         this.rendered = false;

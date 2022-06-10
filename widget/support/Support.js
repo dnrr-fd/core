@@ -11,12 +11,7 @@ import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 import * as css from './assets/css/support.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-if (getNormalizedLocale() === "en") {
-    var t9n = t9n_en;
-}
-else {
-    var t9n = t9n_fr;
-}
+var t9n = t9n_en;
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_widget_anchor: 'esri-widget__anchor',
@@ -54,6 +49,14 @@ let Support = class Support extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
+        var _locale = getNormalizedLocale();
+        console.log(`_LOCALE: ${_locale}`);
+        if (_locale === "en") {
+            t9n = t9n_en;
+        }
+        else {
+            t9n = t9n_fr;
+        }
         var supportWidget = this;
         this.label = t9n.headerText;
         this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme);

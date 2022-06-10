@@ -4,16 +4,12 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
 import { getWidgetTheme } from '@dnrr_fd/util/web'
-import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
+import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
-if (getNormalizedLocale() === "en") {
-  var t9n = t9n_en;
-} else {
-  var t9n = t9n_fr;
-}
+var t9n = t9n_en;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -68,6 +64,14 @@ class Button extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
   postInitialize(): void {
+    var _locale = getNormalizedLocale();
+    console.log(`_LOCALE: ${_locale}`);
+    if (_locale === "en") {
+      t9n = t9n_en;
+    } else {
+      t9n = t9n_fr;
+    }
+
     this.label = t9n.label;
     this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme) as 'light'|'dark';
 

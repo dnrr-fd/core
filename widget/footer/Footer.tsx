@@ -16,13 +16,7 @@ import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
 var css_theme = css_dark;
-
-if (getNormalizedLocale() === "en") {
-  var t9n = t9n_en;
-} else {
-  var t9n = t9n_fr;
-}
-
+var t9n = t9n_en;
 var _expanded = false;
 
 const css_esri = {
@@ -115,6 +109,14 @@ class Footer extends Widget {
   //--------------------------------------------------------------------------
 
   postInitialize(): void {
+    var _locale = getNormalizedLocale();
+    console.log(`_LOCALE: ${_locale}`);
+    if (_locale === "en") {
+      t9n = t9n_en;
+    } else {
+      t9n = t9n_fr;
+    }
+
     var self = this;
 
     this.label = t9n.button.label;

@@ -24,12 +24,7 @@ import * as css_dark from './assets/css/dark/map.module.css';
 import * as css_light from './assets/css/light/map.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-if (getNormalizedLocale() === "en") {
-    var t9n = t9n_en;
-}
-else {
-    var t9n = t9n_fr;
-}
+var t9n = t9n_en;
 var css_theme = css_dark;
 var _mapView = new MapView();
 const elementIDs = {
@@ -46,9 +41,16 @@ let Map = class Map extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
+        var _locale = getNormalizedLocale();
+        console.log(`_LOCALE: ${_locale}`);
+        if (_locale === "en") {
+            t9n = t9n_en;
+        }
+        else {
+            t9n = t9n_fr;
+        }
         mapRootURL = this.mapRootURL;
         var self = this;
-        var _locale = getNormalizedLocale();
         this.mapView = _mapView;
         var containerElement;
         if (typeof self.container === 'string') {
