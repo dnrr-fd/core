@@ -335,8 +335,9 @@ async function addLayerList(widget, view) {
             if (_position.toUpperCase().includes("RIGHT")) {
                 collapse_icon = "esri-icon-right";
             }
-            returnConfig(layerListT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(layerListT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = layerList_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Layer List" : "Liste des Couches");

@@ -145,8 +145,9 @@ async function addLegend(widget, _mapView) {
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _label;
-            returnConfig(legendT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(legendT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = legend_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Legend" : "Légende");
@@ -207,8 +208,9 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _label;
-            returnConfig(bookmarksT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(bookmarksT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = bookmarks_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Bookmarks" : "Signets");
@@ -258,8 +260,9 @@ async function addBasemapGallery(widget, _mapView) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _portal = getWidgetConfigKeyValue(config, "basemapsourceportal", esriConfig.portalUrl);
             var _label;
-            returnConfig(basemapGalleryT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(basemapGalleryT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = basemapGallery_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Basemap Gallery" : "Bibliothèque de fonds de carte");
@@ -320,8 +323,9 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _mode = getWidgetConfigKeyValue(config, "mode", "update");
             var _label;
-            returnConfig(sketchT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(sketchT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = sketch_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Sketch" : "Dessin");
@@ -377,8 +381,9 @@ async function addPrint(widget, _mapView) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _psURL = getWidgetConfigKeyValue(config, "printServiceURL", "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task");
             var _label;
-            returnConfig(printT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(printT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = print_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Print" : "Imprimer");
@@ -441,8 +446,9 @@ async function addSupport(widget, _mapView) {
                 visible: false,
                 container: _container
             });
-            returnConfig(supportT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(supportT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = support_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Support Form" : "Formulaire d'assistance");
