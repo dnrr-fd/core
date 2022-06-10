@@ -119,7 +119,9 @@ class WidgetBar extends Widget {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
       self.locale = locale;
       removeWidgetsFromWidgetBar(self.mapView);
-      await createWidgetsForWidgetBar(self.mapView, self.widgets, self.cookies, self.localeList, self.graphicsLayer);
+      await createWidgetsForWidgetBar(self.mapView, self.widgets, self.cookies, self.localeList, self.graphicsLayer).then(_mapBarWidgets => {
+        self.widgetStylize(_mapBarWidgets);
+      });
     });
 
     this.watch("theme", function(theme_new: string, theme_old: string){
@@ -132,38 +134,10 @@ class WidgetBar extends Widget {
 
     // Create widget bar widgets
     await createWidgetsForWidgetBar(this.mapView, this.widgets, this.cookies, this.localeList, this.graphicsLayer).then(_mapBarWidgets => {
-      if (_mapBarWidgets) {
-        _mapBarWidgets.forEach(wbw => {
-          // Make valid widget bar widget styling changes.
-          var wbw_node = document.getElementById(wbw.id) as HTMLDivElement;
-          if (wbw_node) {
-            var wbwccID = `${wbw.id}_controls_content`;
-            var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
-            if (wbwcc_node) {
-              var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
-              wbwcc_node.classList.add(css_theme.default[wbwccClass]);
-            }
-            wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
-          }
-        });
-        _mapBarWidgets.forEach(wbw => {
-          // Adjust the expand menus after final render from above class changes.
-          var button_node = document.getElementById(wbw.id) as HTMLDivElement;
-          if (button_node) {
-            var wbwccID = `${wbw.id}_controls_content`;
-            var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
-            if (wbwcc_node) {
-              var windowWidth = window.innerWidth;
-              var pos = getElementPosition(button_node);
-              var right_offset = windowWidth - pos.xMax;
-              wbwcc_node.setAttribute("style", "right: -" + right_offset + "px!important;");
-              console.log(`${wbw.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
-            }
-          }
-        });
-      }
+      this.widgetStylize(_mapBarWidgets);
     });
   }
+
 
   render() {
     return (
@@ -187,6 +161,39 @@ class WidgetBar extends Widget {
 
   private _setRendered() {
       this.rendered = true;
+  }
+
+  private widgetStylize(_mapBarWidgets: (__esri.Expand | import("c:/src/GitHub/dnrr-fd/core/widget/button/Button").default)[] | null) {
+    if (_mapBarWidgets) {
+      _mapBarWidgets.forEach(wbw => {
+        // Make valid widget bar widget styling changes.
+        var wbw_node = document.getElementById(wbw.id) as HTMLDivElement;
+        if (wbw_node) {
+          var wbwccID = `${wbw.id}_controls_content`;
+          var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
+          if (wbwcc_node) {
+            var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
+            wbwcc_node.classList.add(css_theme.default[wbwccClass]);
+          }
+          wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
+        }
+      });
+      _mapBarWidgets.forEach(wbw => {
+        // Adjust the expand menus after final render from above class changes.
+        var button_node = document.getElementById(wbw.id) as HTMLDivElement;
+        if (button_node) {
+          var wbwccID = `${wbw.id}_controls_content`;
+          var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
+          if (wbwcc_node) {
+            var windowWidth = window.innerWidth;
+            var pos = getElementPosition(button_node);
+            var right_offset = windowWidth - pos.xMax;
+            wbwcc_node.setAttribute("style", "right: -" + right_offset + "px!important;");
+            console.log(`${wbw.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
+          }
+        }
+      });
+    }
   }
 
   //--------------------------------------------------------------------------
