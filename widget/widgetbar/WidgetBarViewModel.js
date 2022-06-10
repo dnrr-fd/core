@@ -35,6 +35,7 @@ import * as printT9n_fr from '../print/assets/t9n/fr.json';
 var print_defaultT9n = printT9n_en;
 import * as supportT9n_en from '../support/assets/t9n/en.json';
 import * as supportT9n_fr from '../support/assets/t9n/fr.json';
+import { returnConfig } from "@dnrr_fd/util";
 var support_defaultT9n = supportT9n_en;
 export var legendWidget = null;
 export var bookmarksWidget = null;
@@ -130,7 +131,7 @@ async function addLegend(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+        returnConfig(configFile, null).then(config => {
             var legendT9nPath;
             if (widget.t9nPath != null) {
                 legendT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -144,7 +145,7 @@ async function addLegend(widget, _mapView) {
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _label;
-            returnWidgetConfig(legendT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(legendT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = legend_defaultT9n;
                 }
@@ -192,7 +193,7 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(async (config) => {
+        returnConfig(configFile, null).then(async (config) => {
             var bookmarksT9nPath;
             if (widget.t9nPath != null) {
                 bookmarksT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -206,15 +207,12 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _label;
-            returnWidgetConfig(bookmarksT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(bookmarksT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = bookmarks_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Bookmarks" : "Signets");
             }).then(function () {
-                // var newClassList = JSON.parse(JSON.stringify(_widgetClassList));
-                // newClassList.push(widget.id);
-                // createReactDiv(widgetBarContainer, widget.id, newClassList);
                 _bookmarks_expand.id = widget.id;
                 _bookmarks_expand.view = _mapView;
                 _bookmarks_expand.visible = _visible;
@@ -224,7 +222,6 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
                 _bookmarks_expand.container = widget.id;
                 _bookmarks_expand.collapseIconClass = "esri-icon-up";
                 _mapView.when(() => {
-                    //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _bookmarks_expand.expandTooltip = `${_label}`;
                 });
                 _bookmarks_expand.when(() => {
@@ -247,7 +244,7 @@ async function addBasemapGallery(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+        returnConfig(configFile, null).then(config => {
             var basemapGalleryT9nPath;
             if (widget.t9nPath != null) {
                 basemapGalleryT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -261,7 +258,7 @@ async function addBasemapGallery(widget, _mapView) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _portal = getWidgetConfigKeyValue(config, "basemapsourceportal", esriConfig.portalUrl);
             var _label;
-            returnWidgetConfig(basemapGalleryT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(basemapGalleryT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = basemapGallery_defaultT9n;
                 }
@@ -308,7 +305,7 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+        returnConfig(configFile, null).then(config => {
             var sketchT9nPath;
             if (widget.t9nPath != null) {
                 sketchT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -323,7 +320,7 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _mode = getWidgetConfigKeyValue(config, "mode", "update");
             var _label;
-            returnWidgetConfig(sketchT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(sketchT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = sketch_defaultT9n;
                 }
@@ -365,7 +362,7 @@ async function addPrint(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+        returnConfig(configFile, null).then(config => {
             var printT9nPath;
             if (widget.t9nPath != null) {
                 printT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -380,7 +377,7 @@ async function addPrint(widget, _mapView) {
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _psURL = getWidgetConfigKeyValue(config, "printServiceURL", "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task");
             var _label;
-            returnWidgetConfig(printT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(printT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = print_defaultT9n;
                 }
@@ -422,7 +419,7 @@ async function addSupport(widget, _mapView) {
         else {
             configFile = null;
         }
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+        returnConfig(configFile, null).then(config => {
             var supportT9nPath;
             if (widget.t9nPath != null) {
                 supportT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -444,7 +441,7 @@ async function addSupport(widget, _mapView) {
                 visible: false,
                 container: _container
             });
-            returnWidgetConfig(supportT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(supportT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = support_defaultT9n;
                 }
@@ -478,25 +475,6 @@ export function removeWidgetsFromWidgetBar(_mapView) {
         }
     });
     widgetBarWidgets = [];
-}
-async function returnWidgetConfig(filePath, defaultFilePath) {
-    return new Promise(resolve => {
-        // If the config file is not null, try and load it.
-        var finalFilePath = filePath ? filePath : defaultFilePath;
-        console.log(`Config file path: ${finalFilePath}`);
-        fetch(finalFilePath)
-            .then(response => {
-            if (response.status >= 200 && response.status <= 299) {
-                resolve(response.json());
-            }
-            else {
-                resolve(null);
-            }
-        })
-            .catch(error => {
-            resolve(null);
-        });
-    });
 }
 function getWidgetConfigKeyValue(widget, configKey, defaultValue = null) {
     if (widget) {
