@@ -50,6 +50,7 @@ var print_defaultT9n = printT9n_en;
 
 import * as supportT9n_en from '../support/assets/t9n/en.json'
 import * as supportT9n_fr from '../support/assets/t9n/fr.json'
+import { returnConfig } from "@dnrr_fd/util";
 var support_defaultT9n = supportT9n_en;
 
 export var legendWidget = null as Expand|null;
@@ -151,7 +152,7 @@ async function addLegend(widget: WidgetBarWidget, _mapView: MapView): Promise<Ex
             configFile = null;
         }
         
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(config => {
+        returnConfig(configFile, null).then(config => {
             var legendT9nPath: string|null;
             if (widget.t9nPath != null) {
                 legendT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -166,7 +167,7 @@ async function addLegend(widget: WidgetBarWidget, _mapView: MapView): Promise<Ex
             var _group = getWidgetConfigKeyValue(config as WidgetBarWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
             var _label: string;
 
-            returnWidgetConfig(legendT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(legendT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = legend_defaultT9n;
                 }
@@ -221,7 +222,7 @@ async function addBookmarks(widget: WidgetBarWidget, _mapView: MapView, _cookies
             configFile = null;
         }
         
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then(async config => {
+        returnConfig(configFile, null).then(async config => {
             var bookmarksT9nPath: string|null;
             if (widget.t9nPath != null) {
                 bookmarksT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -236,16 +237,12 @@ async function addBookmarks(widget: WidgetBarWidget, _mapView: MapView, _cookies
             var _group = getWidgetConfigKeyValue(config as BookmarksWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
             var _label: string;
 
-            returnWidgetConfig(bookmarksT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(bookmarksT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = bookmarks_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Bookmarks": "Signets") as string;
             }).then(function (){
-                // var newClassList = JSON.parse(JSON.stringify(_widgetClassList));
-                // newClassList.push(widget.id);
-                // createReactDiv(widgetBarContainer, widget.id, newClassList);
-
                 _bookmarks_expand.id = widget.id;
                 _bookmarks_expand.view = _mapView;
                 _bookmarks_expand.visible = _visible;
@@ -256,7 +253,6 @@ async function addBookmarks(widget: WidgetBarWidget, _mapView: MapView, _cookies
                 _bookmarks_expand.collapseIconClass = "esri-icon-up";
 
                 _mapView.when(() => {
-                    //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _bookmarks_expand.expandTooltip = `${_label}`;
                 });
 
@@ -283,7 +279,7 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
             configFile = null;
         }
         
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then( config => {
+        returnConfig(configFile, null).then( config => {
             var basemapGalleryT9nPath: string|null;
             if (widget.t9nPath != null) {
                 basemapGalleryT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -298,7 +294,7 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
             var _portal = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "basemapsourceportal", esriConfig.portalUrl) as string;
             var _label: string;
 
-            returnWidgetConfig(basemapGalleryT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(basemapGalleryT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = basemapGallery_defaultT9n;
                 }
@@ -351,7 +347,7 @@ async function addSketch(widget: WidgetBarWidget, _mapView: MapView, _graphicsLa
             configFile = null;
         }
         
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then( config => {
+        returnConfig(configFile, null).then( config => {
             var sketchT9nPath: string|null;
             if (widget.t9nPath != null) {
                 sketchT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -367,7 +363,7 @@ async function addSketch(widget: WidgetBarWidget, _mapView: MapView, _graphicsLa
             var _mode = getWidgetConfigKeyValue(config as SketchWidget, "mode", "update") as "update"|"single"|"continuous";
             var _label: string;
 
-            returnWidgetConfig(sketchT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(sketchT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = sketch_defaultT9n;
                 }
@@ -416,7 +412,7 @@ async function addPrint(widget: WidgetBarWidget, _mapView: MapView): Promise<Exp
             configFile = null;
         }
         
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then( config => {
+        returnConfig(configFile, null).then( config => {
             var printT9nPath: string|null;
             if (widget.t9nPath != null) {
                 printT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -432,7 +428,7 @@ async function addPrint(widget: WidgetBarWidget, _mapView: MapView): Promise<Exp
             var _psURL = getWidgetConfigKeyValue(config as PrintWidget, "printServiceURL", "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task") as string;
             var _label: string;
 
-            returnWidgetConfig(printT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(printT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = print_defaultT9n;
                 }
@@ -481,7 +477,7 @@ async function addSupport(widget: WidgetBarWidget, _mapView: MapView): Promise<B
             configFile = null;
         }
         
-        returnWidgetConfig(configFile, `${widgetsAssetsPath}${widget.id}/config/config.json`).then( config => {
+        returnConfig(configFile, null).then( config => {
             var supportT9nPath: string|null;
             if (widget.t9nPath != null) {
                 supportT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
@@ -505,7 +501,7 @@ async function addSupport(widget: WidgetBarWidget, _mapView: MapView): Promise<B
                 container: _container
             });
 
-            returnWidgetConfig(supportT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
+            returnConfig(supportT9nPath, `${widgetsAssetsPath}${widget.id}/t9n/${lang}.json`).then(t9nResults => {
                 if (t9nResults === null) {
                     t9nResults = support_defaultT9n;
                 }
@@ -543,26 +539,6 @@ export function removeWidgetsFromWidgetBar(_mapView: MapView) {
         }
     });
     widgetBarWidgets = [];
-}
-
-async function returnWidgetConfig (filePath: string|null, defaultFilePath: string){
-    return new Promise(resolve => {
-        // If the config file is not null, try and load it.
-        var finalFilePath = filePath? filePath: defaultFilePath
-        console.log(`Config file path: ${finalFilePath}`);
-
-        fetch(finalFilePath)
-        .then(response => {
-            if (response.status >= 200 && response.status <= 299) {
-                resolve(response.json());
-            } else {
-                resolve(null);
-            }
-        })
-        .catch(error => {
-            resolve(null);
-        });
-    });
 }
 
 function getWidgetConfigKeyValue(widget: WidgetBarWidget, configKey: string, defaultValue=null as string|number|boolean|null) {
