@@ -22,6 +22,8 @@ export var widgetBarWidgetCloseFocusElement: string|HTMLElement;
 
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
+import Expand from "@arcgis/core/widgets/Expand";
+import Button from "../button/Button";
 
 var t9n = t9n_en;
 
@@ -163,7 +165,7 @@ class WidgetBar extends Widget {
       this.rendered = true;
   }
 
-  private widgetStylize(_mapBarWidgets: (__esri.Expand | import("c:/src/GitHub/dnrr-fd/core/widget/button/Button").default)[] | null) {
+  private widgetStylize(_mapBarWidgets: Array<Expand|Button>|null) {
     if (_mapBarWidgets) {
       _mapBarWidgets.forEach(wbw => {
         // Make valid widget bar widget styling changes.
