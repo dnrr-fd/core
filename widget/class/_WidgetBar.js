@@ -2,6 +2,18 @@ import { __decorate } from "tslib";
 // @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from '@arcgis/core/core/Accessor';
+export class wbwObject {
+    constructor(wbWidget, fireEvent = true) {
+        this.wbWidget = wbWidget;
+        this.fireEvent = fireEvent;
+    }
+}
+__decorate([
+    property()
+], wbwObject.prototype, "wbWidget", void 0);
+__decorate([
+    property()
+], wbwObject.prototype, "fireEvent", void 0);
 let WidgetBarWidget = class WidgetBarWidget extends Accessor {
 };
 __decorate([

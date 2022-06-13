@@ -6,8 +6,8 @@ import * as intl from "@arcgis/core/intl";
 import MapView from "@arcgis/core/views/MapView";
 
 import { createWidgetsForWidgetBar, removeWidgetsFromWidgetBar } from './WidgetBarViewModel';
-import { WidgetBarWidget } from '../class/_WidgetBar';
-import { getElementPosition, getWidgetTheme } from '@dnrr_fd/util/web'
+import { wbwObject, WidgetBarWidget } from '../class/_WidgetBar';
+import { getElementPosition, getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web'
 import { CookiesVM } from "../class/_Cookie";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
@@ -30,6 +30,8 @@ var t9n = t9n_en;
 var css_theme = css_dark;
 
 var _widgetBarWidgets: tsx.JSX.Element;
+
+var afterWidgetCloseFocusElement: string|HTMLElement;
 
 const elementIDs = {
   esriThemeID: "esriThemeID",
@@ -113,6 +115,7 @@ class WidgetBar extends Widget {
     var self = this;
     var widgetBar = this as unknown as WidgetBar;
     this.rendered = false;
+    afterWidgetCloseFocusElement = this.afterWidgetCloseFocusElement;
 
     this.label = t9n.title;
 
@@ -178,13 +181,13 @@ class WidgetBar extends Widget {
       this.rendered = true;
   }
 
-  private widgetStylize(_mapBarWidgets: Array<Expand|Button>|null) {
+  private widgetStylize(_mapBarWidgets: Array<wbwObject>|null) {
     if (_mapBarWidgets) {
-      _mapBarWidgets.forEach(wbw => {
+      _mapBarWidgets.forEach(wbObj => {
         // Make valid widget bar widget styling changes.
-        var wbw_node = document.getElementById(wbw.id) as HTMLDivElement;
+        var wbw_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
         if (wbw_node) {
-          var wbwccID = `${wbw.id}_controls_content`;
+          var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
           var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
           if (wbwcc_node) {
             var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
@@ -193,28 +196,72 @@ class WidgetBar extends Widget {
           wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
         }
       });
-      _mapBarWidgets.forEach(wbw => {
+      _mapBarWidgets.forEach(wbObj => {
         // Adjust the expand menus after final render from above class changes.
-        var button_node = document.getElementById(wbw.id) as HTMLDivElement;
+        var button_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
         if (button_node) {
-          var wbwccID = `${wbw.id}_controls_content`;
+          var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
           var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
           if (wbwcc_node) {
             var windowWidth = window.innerWidth;
             var pos = getElementPosition(button_node);
             var right_offset = windowWidth - pos.xMax;
             wbwcc_node.setAttribute("style", "right: -" + right_offset + "px!important;");
-            console.log(`${wbw.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
+            // console.log(`${wbObj.wbWidget.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
+          }
+
+          if (wbObj.fireEvent === true) {
+            if (wbObj.wbWidget instanceof Expand) {
+              wbObj.wbWidget.watch("expanded", function(expanded_new: boolean, expanded_old: boolean){
+                wbObj.wbWidget.renderNow();
+                if (expanded_new === true) {
+                  console.log(`${wbObj.wbWidget.id.toUpperCase()} widget expanded`);
+                } else {
+                  console.log(`${wbObj.wbWidget.id.toUpperCase()} widget collapsed`);
+                }
+
+                if (afterWidgetCloseFocusElement) {
+                  if (typeof afterWidgetCloseFocusElement === "string") {
+                    getFocusableElements(document.getElementById(afterWidgetCloseFocusElement)!);
+                  } else {
+                    getFocusableElements(afterWidgetCloseFocusElement);
+                  }
+                }
+              });
+            }
+            // // Get focusable elements including widget.
+            // button_node.addEventListener('click', evt => {
+            //   this._setFocus(wbObj);
+            // });
+
+            // button_node.addEventListener('keypress', evt => {
+            //   let isEnterPressed = evt.key === 'Enter' || evt.keyCode === 13;
+            //   let isSpacePressed = evt.key === 'Space' || evt.keyCode === 32;
+          
+            //   if (isEnterPressed || isSpacePressed) {
+            //     this._setFocus(wbObj);
+            //   }
+            // });
           }
         }
       });
     }
   }
 
+  // private _setFocus(_wbObj: wbwObject) {
+  //   console.log(`${_wbObj.wbWidget.id.toUpperCase()} widget clicked`);
+  //   if (afterWidgetCloseFocusElement) {
+  //     if (typeof afterWidgetCloseFocusElement === "string") {
+  //       getFocusableElements(document.getElementById(afterWidgetCloseFocusElement)!);
+  //     } else {
+  //       getFocusableElements(afterWidgetCloseFocusElement);
+  //     }
+  //   }
+  // }
+
   //--------------------------------------------------------------------------
   //  Private Event Methods
   //--------------------------------------------------------------------------
-
 
   //--------------------------------------------------------------------------
   //  Public Methods

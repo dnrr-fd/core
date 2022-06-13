@@ -5,7 +5,7 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
 import { createWidgetsForWidgetBar, removeWidgetsFromWidgetBar } from './WidgetBarViewModel';
-import { getElementPosition, getWidgetTheme } from '@dnrr_fd/util/web';
+import { getElementPosition, getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web';
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
@@ -15,9 +15,11 @@ export var widgetBarRootURL;
 export var widgetBarWidgetCloseFocusElement;
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
+import Expand from "@arcgis/core/widgets/Expand";
 var t9n = t9n_en;
 var css_theme = css_dark;
 var _widgetBarWidgets;
+var afterWidgetCloseFocusElement;
 const elementIDs = {
     esriThemeID: "esriThemeID",
     widgetBarID: "_widgetBarID",
@@ -43,6 +45,7 @@ let WidgetBar = class WidgetBar extends Widget {
         var self = this;
         var widgetBar = this;
         this.rendered = false;
+        afterWidgetCloseFocusElement = this.afterWidgetCloseFocusElement;
         this.label = t9n.title;
         if (this.afterWidgetCloseFocusElement) {
             widgetBarWidgetCloseFocusElement = this.afterWidgetCloseFocusElement;
@@ -89,11 +92,11 @@ let WidgetBar = class WidgetBar extends Widget {
     }
     widgetStylize(_mapBarWidgets) {
         if (_mapBarWidgets) {
-            _mapBarWidgets.forEach(wbw => {
+            _mapBarWidgets.forEach(wbObj => {
                 // Make valid widget bar widget styling changes.
-                var wbw_node = document.getElementById(wbw.id);
+                var wbw_node = document.getElementById(wbObj.wbWidget.id);
                 if (wbw_node) {
-                    var wbwccID = `${wbw.id}_controls_content`;
+                    var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
                     var wbwcc_node = document.getElementById(wbwccID);
                     if (wbwcc_node) {
                         var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
@@ -102,18 +105,50 @@ let WidgetBar = class WidgetBar extends Widget {
                     wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
                 }
             });
-            _mapBarWidgets.forEach(wbw => {
+            _mapBarWidgets.forEach(wbObj => {
                 // Adjust the expand menus after final render from above class changes.
-                var button_node = document.getElementById(wbw.id);
+                var button_node = document.getElementById(wbObj.wbWidget.id);
                 if (button_node) {
-                    var wbwccID = `${wbw.id}_controls_content`;
+                    var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
                     var wbwcc_node = document.getElementById(wbwccID);
                     if (wbwcc_node) {
                         var windowWidth = window.innerWidth;
                         var pos = getElementPosition(button_node);
                         var right_offset = windowWidth - pos.xMax;
                         wbwcc_node.setAttribute("style", "right: -" + right_offset + "px!important;");
-                        console.log(`${wbw.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
+                        // console.log(`${wbObj.wbWidget.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
+                    }
+                    if (wbObj.fireEvent === true) {
+                        if (wbObj.wbWidget instanceof Expand) {
+                            wbObj.wbWidget.watch("expanded", function (expanded_new, expanded_old) {
+                                wbObj.wbWidget.renderNow();
+                                if (expanded_new === true) {
+                                    console.log(`${wbObj.wbWidget.id.toUpperCase()} widget expanded`);
+                                }
+                                else {
+                                    console.log(`${wbObj.wbWidget.id.toUpperCase()} widget collapsed`);
+                                }
+                                if (afterWidgetCloseFocusElement) {
+                                    if (typeof afterWidgetCloseFocusElement === "string") {
+                                        getFocusableElements(document.getElementById(afterWidgetCloseFocusElement));
+                                    }
+                                    else {
+                                        getFocusableElements(afterWidgetCloseFocusElement);
+                                    }
+                                }
+                            });
+                        }
+                        // // Get focusable elements including widget.
+                        // button_node.addEventListener('click', evt => {
+                        //   this._setFocus(wbObj);
+                        // });
+                        // button_node.addEventListener('keypress', evt => {
+                        //   let isEnterPressed = evt.key === 'Enter' || evt.keyCode === 13;
+                        //   let isSpacePressed = evt.key === 'Space' || evt.keyCode === 32;
+                        //   if (isEnterPressed || isSpacePressed) {
+                        //     this._setFocus(wbObj);
+                        //   }
+                        // });
                     }
                 }
             });

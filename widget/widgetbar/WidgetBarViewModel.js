@@ -1,7 +1,8 @@
 import esriConfig from "@arcgis/core/config.js";
 import Portal from "@arcgis/core/portal/Portal";
 import { widgetBarRootURL, widgetBarWidgetCloseFocusElement } from "./WidgetBar";
-import { DefaultCreateOptions, ScreenshotSettings, Centroid } from "../class/_WidgetBar";
+import { DefaultCreateOptions, ScreenshotSettings } from "../class/_WidgetBar";
+import { Centroid, wbwObject } from "../class/_WidgetBar";
 import { LegendStyle } from "../class/_Legend";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 import Expand from "@arcgis/core/widgets/Expand";
@@ -35,7 +36,7 @@ import * as printT9n_fr from '../print/assets/t9n/fr.json';
 var print_defaultT9n = printT9n_en;
 import * as supportT9n_en from '../support/assets/t9n/en.json';
 import * as supportT9n_fr from '../support/assets/t9n/fr.json';
-import { getFocusableElements, returnConfig } from "@dnrr_fd/util";
+import { returnConfig } from "@dnrr_fd/util";
 var support_defaultT9n = supportT9n_en;
 export var legendWidget = null;
 export var bookmarksWidget = null;
@@ -58,56 +59,56 @@ export async function createWidgetsForWidgetBar(widgetBar) {
             if (widget.id && typeof widget.id === "string") {
                 switch (widget.id.toUpperCase()) {
                     case "LEGEND":
-                        await addLegend(widgetBar, widget, _mapView).then(legendWidget => {
+                        await addLegend(widget, _mapView).then(legendWidget => {
                             if (legendWidget) {
                                 legendWidget.when(() => {
-                                    widgetBarWidgets.push(legendWidget);
+                                    widgetBarWidgets.push(new wbwObject(legendWidget));
                                     console.log("Legend widget added to array.");
                                 });
                             }
                         });
                         break;
                     case "BOOKMARKS":
-                        await addBookmarks(widgetBar, widget, _mapView, _cookies, _localeList).then(bookmarksWidget => {
+                        await addBookmarks(widget, _mapView, _cookies, _localeList).then(bookmarksWidget => {
                             if (bookmarksWidget) {
                                 bookmarksWidget.when(() => {
-                                    widgetBarWidgets.push(bookmarksWidget);
+                                    widgetBarWidgets.push(new wbwObject(bookmarksWidget));
                                     console.log("Bookmarks widget added to array.");
                                 });
                             }
                         });
                         break;
                     case "BASEMAPGALLERY":
-                        await addBasemapGallery(widgetBar, widget, _mapView).then(basemapgalleryWidget => {
+                        await addBasemapGallery(widget, _mapView).then(basemapgalleryWidget => {
                             if (basemapgalleryWidget) {
                                 basemapgalleryWidget.when(() => {
-                                    widgetBarWidgets.push(basemapgalleryWidget);
+                                    widgetBarWidgets.push(new wbwObject(basemapgalleryWidget));
                                     console.log("BasemapGallery widget added to array.");
                                 });
                             }
                         });
                         break;
                     case "SKETCH":
-                        await addSketch(widgetBar, widget, _mapView, graphicsLayer).then(sketchWidget => {
+                        await addSketch(widget, _mapView, graphicsLayer).then(sketchWidget => {
                             if (sketchWidget) {
                                 sketchWidget.when(() => {
-                                    widgetBarWidgets.push(sketchWidget);
+                                    widgetBarWidgets.push(new wbwObject(sketchWidget));
                                     console.log("Sketch widget added to array.");
                                 });
                             }
                         });
                         break;
                     case "PRINT":
-                        await addPrint(widgetBar, widget, _mapView).then(printWidget => {
+                        await addPrint(widget, _mapView).then(printWidget => {
                             if (printWidget) {
-                                widgetBarWidgets.push(printWidget);
+                                widgetBarWidgets.push(new wbwObject(printWidget));
                             }
                         });
                         break;
                     case "SUPPORT":
                         await addSupport(widget, _mapView).then(supportWidget => {
                             if (supportWidget) {
-                                widgetBarWidgets.push(supportWidget);
+                                widgetBarWidgets.push(new wbwObject(supportWidget, false));
                             }
                         });
                         break;
@@ -124,7 +125,7 @@ export async function createWidgetsForWidgetBar(widgetBar) {
         });
     });
 }
-async function addLegend(_widgetBar, widget, _mapView) {
+async function addLegend(widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -175,18 +176,6 @@ async function addLegend(_widgetBar, widget, _mapView) {
                 _legend_expand.group = _group;
                 _legend_expand.container = widget.id;
                 _legend_expand.collapseIconClass = "esri-icon-up";
-                // Get focusable elements including widget.
-                _legend_expand.on("click", function () {
-                    console.log("Legend widget clicked.");
-                    if (_widgetBar.afterWidgetCloseFocusElement) {
-                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
-                        }
-                        else {
-                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                        }
-                    }
-                });
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _legend_expand.expandTooltip = `${_legend.label}`;
@@ -199,7 +188,7 @@ async function addLegend(_widgetBar, widget, _mapView) {
         });
     });
 }
-async function addBookmarks(_widgetBar, widget, _mapView, _cookies, _localeList) {
+async function addBookmarks(widget, _mapView, _cookies, _localeList) {
     return new Promise(resolve => {
         var configFile;
         var lang = getNormalizedLocale();
@@ -240,18 +229,6 @@ async function addBookmarks(_widgetBar, widget, _mapView, _cookies, _localeList)
                 _bookmarks_expand.group = _group;
                 _bookmarks_expand.container = widget.id;
                 _bookmarks_expand.collapseIconClass = "esri-icon-up";
-                // Get focusable elements including widget.
-                _bookmarks_expand.on("click", function () {
-                    console.log("Bookmarks widget clicked.");
-                    if (_widgetBar.afterWidgetCloseFocusElement) {
-                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
-                        }
-                        else {
-                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                        }
-                    }
-                });
                 _mapView.when(() => {
                     _bookmarks_expand.expandTooltip = `${_label}`;
                 });
@@ -263,7 +240,7 @@ async function addBookmarks(_widgetBar, widget, _mapView, _cookies, _localeList)
         });
     });
 }
-async function addBasemapGallery(_widgetBar, widget, _mapView) {
+async function addBasemapGallery(widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -313,18 +290,6 @@ async function addBasemapGallery(_widgetBar, widget, _mapView) {
                 _basemapGallery_expand.group = _group;
                 _basemapGallery_expand.container = widget.id;
                 _basemapGallery_expand.collapseIconClass = "esri-icon-up";
-                // Get focusable elements including widget.
-                _basemapGallery_expand.on("click", function () {
-                    console.log("Basemap Gallery widget clicked.");
-                    if (_widgetBar.afterWidgetCloseFocusElement) {
-                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
-                        }
-                        else {
-                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                        }
-                    }
-                });
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
@@ -337,7 +302,7 @@ async function addBasemapGallery(_widgetBar, widget, _mapView) {
         });
     });
 }
-async function addSketch(_widgetBar, widget, _mapView, _graphicsLayer) {
+async function addSketch(widget, _mapView, _graphicsLayer) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -383,18 +348,6 @@ async function addSketch(_widgetBar, widget, _mapView, _graphicsLayer) {
                 _sketch_expand.group = _group;
                 _sketch_expand.container = widget.id;
                 _sketch_expand.collapseIconClass = "esri-icon-up";
-                // Get focusable elements including widget.
-                _sketch_expand.on("click", function () {
-                    console.log("Sketch widget clicked.");
-                    if (_widgetBar.afterWidgetCloseFocusElement) {
-                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
-                        }
-                        else {
-                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                        }
-                    }
-                });
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _sketch_expand.expandTooltip = `${_sketch.label}`;
@@ -407,7 +360,7 @@ async function addSketch(_widgetBar, widget, _mapView, _graphicsLayer) {
         });
     });
 }
-async function addPrint(_widgetBar, widget, _mapView) {
+async function addPrint(widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -452,18 +405,6 @@ async function addPrint(_widgetBar, widget, _mapView) {
                 _print_expand.group = _group;
                 _print_expand.container = widget.id;
                 _print_expand.collapseIconClass = "esri-icon-up";
-                // Get focusable elements including widget.
-                _print_expand.on("click", function () {
-                    console.log("Print widget clicked.");
-                    if (_widgetBar.afterWidgetCloseFocusElement) {
-                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
-                        }
-                        else {
-                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                        }
-                    }
-                });
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _print_expand.expandTooltip = `${_print.label}`;
@@ -539,9 +480,9 @@ async function addSupport(widget, _mapView) {
     });
 }
 export function removeWidgetsFromWidgetBar(_mapView) {
-    widgetBarWidgets.forEach(widget => {
-        if (widget) {
-            var widget_node = document.getElementById(widget.id);
+    widgetBarWidgets.forEach(wbwObj => {
+        if (wbwObj) {
+            var widget_node = document.getElementById(wbwObj.wbWidget.id);
             widget_node.innerHTML = "";
         }
     });

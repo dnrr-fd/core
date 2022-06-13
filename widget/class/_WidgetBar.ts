@@ -3,6 +3,21 @@ import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators
 import Accessor from '@arcgis/core/core/Accessor';
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Widget from "@arcgis/core/widgets/Widget";
+import Expand from "@arcgis/core/widgets/Expand";
+import Button from "../button/Button";
+
+export class wbwObject {
+    constructor(wbWidget: Expand|Button, fireEvent = true as boolean) {
+        this.wbWidget = wbWidget;
+        this.fireEvent = fireEvent;
+    }
+
+    @property()
+    wbWidget!: Expand|Button;
+
+    @property()
+    fireEvent!: boolean;
+}
 
 @subclass('WidgetBarClasses.WidgetBarWidget')
 export class WidgetBarWidget extends Accessor {
