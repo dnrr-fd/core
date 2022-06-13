@@ -41,6 +41,7 @@ let WidgetBar = class WidgetBar extends Widget {
         }
         widgetBarRootURL = this.widgetBarRootURL;
         var self = this;
+        var widgetBar = this;
         this.rendered = false;
         this.label = t9n.title;
         if (this.afterWidgetCloseFocusElement) {
@@ -56,7 +57,7 @@ let WidgetBar = class WidgetBar extends Widget {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);
             self.locale = locale;
             removeWidgetsFromWidgetBar(self.mapView);
-            await createWidgetsForWidgetBar(self.mapView, self.widgets, self.cookies, self.localeList, self.graphicsLayer).then(_mapBarWidgets => {
+            await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
                 self.widgetStylize(_mapBarWidgets);
             });
         });
@@ -68,7 +69,7 @@ let WidgetBar = class WidgetBar extends Widget {
             }
         });
         // Create widget bar widgets
-        await createWidgetsForWidgetBar(this.mapView, this.widgets, this.cookies, this.localeList, this.graphicsLayer).then(_mapBarWidgets => {
+        await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
             this.widgetStylize(_mapBarWidgets);
         });
     }
@@ -152,6 +153,9 @@ __decorate([
 __decorate([
     property()
 ], WidgetBar.prototype, "localeList", void 0);
+__decorate([
+    property()
+], WidgetBar.prototype, "activeWidget", void 0);
 WidgetBar = __decorate([
     subclass("dnrr.forestry.widgets.widgetbar")
 ], WidgetBar);

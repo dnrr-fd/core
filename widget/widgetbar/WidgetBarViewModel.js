@@ -35,7 +35,7 @@ import * as printT9n_fr from '../print/assets/t9n/fr.json';
 var print_defaultT9n = printT9n_en;
 import * as supportT9n_en from '../support/assets/t9n/en.json';
 import * as supportT9n_fr from '../support/assets/t9n/fr.json';
-import { returnConfig } from "@dnrr_fd/util";
+import { getFocusableElements, returnConfig } from "@dnrr_fd/util";
 var support_defaultT9n = supportT9n_en;
 export var legendWidget = null;
 export var bookmarksWidget = null;
@@ -46,14 +46,19 @@ export var supportWidget = null;
 var widgetBarWidgets = new Array();
 var widgetsAssetsPath;
 var widgetBarGroup = "widget-bar-group";
-export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, _cookies, _localeList, graphicsLayer) {
+export async function createWidgetsForWidgetBar(widgetBar) {
+    var _mapView = widgetBar.mapView;
+    var widgetBarWidgetArray = widgetBar.widgets;
+    var _cookies = widgetBar.cookies;
+    var _localeList = widgetBar.localeList;
+    var graphicsLayer = widgetBar.graphicsLayer;
     return new Promise(resolve => {
         widgetsAssetsPath = `${widgetBarRootURL}assets/widgets/`;
         wbwAsyncForEach(widgetBarWidgetArray, async (widget) => {
             if (widget.id && typeof widget.id === "string") {
                 switch (widget.id.toUpperCase()) {
                     case "LEGEND":
-                        await addLegend(widget, _mapView).then(legendWidget => {
+                        await addLegend(widgetBar, widget, _mapView).then(legendWidget => {
                             if (legendWidget) {
                                 legendWidget.when(() => {
                                     widgetBarWidgets.push(legendWidget);
@@ -63,7 +68,7 @@ export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, 
                         });
                         break;
                     case "BOOKMARKS":
-                        await addBookmarks(widget, _mapView, _cookies, _localeList).then(bookmarksWidget => {
+                        await addBookmarks(widgetBar, widget, _mapView, _cookies, _localeList).then(bookmarksWidget => {
                             if (bookmarksWidget) {
                                 bookmarksWidget.when(() => {
                                     widgetBarWidgets.push(bookmarksWidget);
@@ -73,7 +78,7 @@ export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, 
                         });
                         break;
                     case "BASEMAPGALLERY":
-                        await addBasemapGallery(widget, _mapView).then(basemapgalleryWidget => {
+                        await addBasemapGallery(widgetBar, widget, _mapView).then(basemapgalleryWidget => {
                             if (basemapgalleryWidget) {
                                 basemapgalleryWidget.when(() => {
                                     widgetBarWidgets.push(basemapgalleryWidget);
@@ -83,7 +88,7 @@ export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, 
                         });
                         break;
                     case "SKETCH":
-                        await addSketch(widget, _mapView, graphicsLayer).then(sketchWidget => {
+                        await addSketch(widgetBar, widget, _mapView, graphicsLayer).then(sketchWidget => {
                             if (sketchWidget) {
                                 sketchWidget.when(() => {
                                     widgetBarWidgets.push(sketchWidget);
@@ -93,7 +98,7 @@ export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, 
                         });
                         break;
                     case "PRINT":
-                        await addPrint(widget, _mapView).then(printWidget => {
+                        await addPrint(widgetBar, widget, _mapView).then(printWidget => {
                             if (printWidget) {
                                 widgetBarWidgets.push(printWidget);
                             }
@@ -119,7 +124,7 @@ export async function createWidgetsForWidgetBar(_mapView, widgetBarWidgetArray, 
         });
     });
 }
-async function addLegend(widget, _mapView) {
+async function addLegend(_widgetBar, widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -176,13 +181,24 @@ async function addLegend(widget, _mapView) {
                 });
                 _legend_expand.when(() => {
                     console.log("Legend widget rendered.");
+                    // Get focusable elements including widget.
+                    _legend_expand.on("click", function () {
+                        if (_widgetBar.afterWidgetCloseFocusElement) {
+                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
+                            }
+                            else {
+                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                            }
+                        }
+                    });
                     resolve(_legend_expand);
                 });
             });
         });
     });
 }
-async function addBookmarks(widget, _mapView, _cookies, _localeList) {
+async function addBookmarks(_widgetBar, widget, _mapView, _cookies, _localeList) {
     return new Promise(resolve => {
         var configFile;
         var lang = getNormalizedLocale();
@@ -228,13 +244,24 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
                 });
                 _bookmarks_expand.when(() => {
                     console.log("Bookmarks widget rendered.");
+                    // Get focusable elements including widget.
+                    _bookmarks_expand.on("click", function () {
+                        if (_widgetBar.afterWidgetCloseFocusElement) {
+                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
+                            }
+                            else {
+                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                            }
+                        }
+                    });
                     resolve(_bookmarks_expand);
                 });
             });
         });
     });
 }
-async function addBasemapGallery(widget, _mapView) {
+async function addBasemapGallery(_widgetBar, widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -290,13 +317,24 @@ async function addBasemapGallery(widget, _mapView) {
                 });
                 _basemapGallery_expand.when(() => {
                     console.log("BasemapGallery widget rendered.");
+                    // Get focusable elements including widget.
+                    _basemapGallery_expand.on("click", function () {
+                        if (_widgetBar.afterWidgetCloseFocusElement) {
+                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
+                            }
+                            else {
+                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                            }
+                        }
+                    });
                     resolve(_basemapGallery_expand);
                 });
             });
         });
     });
 }
-async function addSketch(widget, _mapView, _graphicsLayer) {
+async function addSketch(_widgetBar, widget, _mapView, _graphicsLayer) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -348,13 +386,24 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
                 });
                 _sketch_expand.when(() => {
                     console.log("Sketch widget rendered.");
+                    // Get focusable elements including widget.
+                    _sketch_expand.on("click", function () {
+                        if (_widgetBar.afterWidgetCloseFocusElement) {
+                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
+                            }
+                            else {
+                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                            }
+                        }
+                    });
                     resolve(_sketch_expand);
                 });
             });
         });
     });
 }
-async function addPrint(widget, _mapView) {
+async function addPrint(_widgetBar, widget, _mapView) {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
         // Get the default asset from language.
@@ -405,6 +454,17 @@ async function addPrint(widget, _mapView) {
                 });
                 _print_expand.when(() => {
                     console.log("Print widget rendered.");
+                    // Get focusable elements including widget.
+                    _print_expand.on("click", function () {
+                        if (_widgetBar.afterWidgetCloseFocusElement) {
+                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement));
+                            }
+                            else {
+                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                            }
+                        }
+                    });
                     resolve(_print_expand);
                 });
             });

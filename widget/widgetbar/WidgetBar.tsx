@@ -47,6 +47,7 @@ interface WidgetBarParams extends __esri.WidgetProperties {
   mapView: MapView;
   graphicsLayer: GraphicsLayer;
   widgetBarRootURL: string;
+  activeWidget?: string;
 }
 
 @subclass("dnrr.forestry.widgets.widgetbar")
@@ -92,6 +93,9 @@ class WidgetBar extends Widget {
   @property()
   localeList!: Array<string>;
 
+  @property()
+  activeWidget!: string;
+
   //--------------------------------------------------------------------------
   //  Public Methods
   //--------------------------------------------------------------------------
@@ -107,6 +111,7 @@ class WidgetBar extends Widget {
 
     widgetBarRootURL = this.widgetBarRootURL;
     var self = this;
+    var widgetBar = this as unknown as WidgetBar;
     this.rendered = false;
 
     this.label = t9n.title;
@@ -129,7 +134,7 @@ class WidgetBar extends Widget {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
       self.locale = locale;
       removeWidgetsFromWidgetBar(self.mapView);
-      await createWidgetsForWidgetBar(self.mapView, self.widgets, self.cookies, self.localeList, self.graphicsLayer).then(_mapBarWidgets => {
+      await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
         self.widgetStylize(_mapBarWidgets);
       });
     });
@@ -143,7 +148,7 @@ class WidgetBar extends Widget {
     });
 
     // Create widget bar widgets
-    await createWidgetsForWidgetBar(this.mapView, this.widgets, this.cookies, this.localeList, this.graphicsLayer).then(_mapBarWidgets => {
+    await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
       this.widgetStylize(_mapBarWidgets);
     });
   }
