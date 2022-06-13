@@ -201,6 +201,18 @@ async function addLegend(_widgetBar: WidgetBar, widget: WidgetBarWidget, _mapVie
                 _legend_expand.container = widget.id
                 _legend_expand.collapseIconClass = "esri-icon-up";
     
+                // Get focusable elements including widget.
+                _legend_expand.on("click", function(){
+                    console.log("Legend widget clicked.");
+                    if (_widgetBar.afterWidgetCloseFocusElement) {
+                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
+                        } else {
+                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                        }
+                    }
+                });
+
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _legend_expand.expandTooltip = `${_legend.label}`;
@@ -208,18 +220,6 @@ async function addLegend(_widgetBar: WidgetBar, widget: WidgetBarWidget, _mapVie
 
                 _legend_expand.when(() => {
                     console.log("Legend widget rendered.");
-
-                    // Get focusable elements including widget.
-                    _legend_expand.on("click", function(){
-                        if (_widgetBar.afterWidgetCloseFocusElement) {
-                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
-                            } else {
-                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                            }
-                        }
-                    });
-
                     resolve(_legend_expand);
                 });
             });
@@ -272,24 +272,24 @@ async function addBookmarks(_widgetBar: WidgetBar, widget: WidgetBarWidget, _map
                 _bookmarks_expand.container = widget.id;
                 _bookmarks_expand.collapseIconClass = "esri-icon-up";
 
+                // Get focusable elements including widget.
+                _bookmarks_expand.on("click", function(){
+                    console.log("Bookmarks widget clicked.");
+                    if (_widgetBar.afterWidgetCloseFocusElement) {
+                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
+                        } else {
+                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                        }
+                    }
+                });
+
                 _mapView.when(() => {
                     _bookmarks_expand.expandTooltip = `${_label}`;
                 });
 
                 _bookmarks_expand.when(() => {
                     console.log("Bookmarks widget rendered.");
-
-                    // Get focusable elements including widget.
-                    _bookmarks_expand.on("click", function(){
-                        if (_widgetBar.afterWidgetCloseFocusElement) {
-                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
-                            } else {
-                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                            }
-                        }
-                    });
-
                     resolve(_bookmarks_expand);
                 });
             });
@@ -352,6 +352,18 @@ async function addBasemapGallery(_widgetBar: WidgetBar, widget: WidgetBarWidget,
                 _basemapGallery_expand.container = widget.id
                 _basemapGallery_expand.collapseIconClass = "esri-icon-up";
     
+                // Get focusable elements including widget.
+                _basemapGallery_expand.on("click", function(){
+                    console.log("Basemap Gallery widget clicked.");
+                    if (_widgetBar.afterWidgetCloseFocusElement) {
+                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
+                        } else {
+                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                        }
+                    }
+                });
+
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
@@ -359,18 +371,6 @@ async function addBasemapGallery(_widgetBar: WidgetBar, widget: WidgetBarWidget,
 
                 _basemapGallery_expand.when(() => {
                     console.log("BasemapGallery widget rendered.");
-
-                    // Get focusable elements including widget.
-                    _basemapGallery_expand.on("click", function(){
-                        if (_widgetBar.afterWidgetCloseFocusElement) {
-                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
-                            } else {
-                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                            }
-                        }
-                    });
-
                     resolve(_basemapGallery_expand);
                 });
             });
@@ -430,6 +430,18 @@ async function addSketch(_widgetBar: WidgetBar, widget: WidgetBarWidget, _mapVie
                 _sketch_expand.container = widget.id
                 _sketch_expand.collapseIconClass = "esri-icon-up";
     
+                // Get focusable elements including widget.
+                _sketch_expand.on("click", function(){
+                    console.log("Sketch widget clicked.");
+                    if (_widgetBar.afterWidgetCloseFocusElement) {
+                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
+                        } else {
+                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                        }
+                    }
+                });
+
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _sketch_expand.expandTooltip = `${_sketch.label}`;
@@ -437,18 +449,6 @@ async function addSketch(_widgetBar: WidgetBar, widget: WidgetBarWidget, _mapVie
 
                 _sketch_expand.when(() => {
                     console.log("Sketch widget rendered.");
-
-                    // Get focusable elements including widget.
-                    _sketch_expand.on("click", function(){
-                        if (_widgetBar.afterWidgetCloseFocusElement) {
-                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
-                            } else {
-                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                            }
-                        }
-                    });
-
                     resolve(_sketch_expand);
                 });
             });
@@ -507,6 +507,18 @@ async function addPrint(_widgetBar: WidgetBar, widget: WidgetBarWidget, _mapView
                 _print_expand.container = widget.id
                 _print_expand.collapseIconClass = "esri-icon-up";
 
+                // Get focusable elements including widget.
+                _print_expand.on("click", function(){
+                    console.log("Print widget clicked.");
+                    if (_widgetBar.afterWidgetCloseFocusElement) {
+                        if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
+                            getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
+                        } else {
+                            getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
+                        }
+                    }
+                });
+
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _print_expand.expandTooltip = `${_print.label}`;
@@ -514,18 +526,6 @@ async function addPrint(_widgetBar: WidgetBar, widget: WidgetBarWidget, _mapView
 
                 _print_expand.when(() => {
                     console.log("Print widget rendered.");
-
-                    // Get focusable elements including widget.
-                    _print_expand.on("click", function(){
-                        if (_widgetBar.afterWidgetCloseFocusElement) {
-                            if (typeof _widgetBar.afterWidgetCloseFocusElement === "string") {
-                                getFocusableElements(document.getElementById(_widgetBar.afterWidgetCloseFocusElement)!);
-                            } else {
-                                getFocusableElements(_widgetBar.afterWidgetCloseFocusElement);
-                            }
-                        }
-                    });
-
                     resolve(_print_expand);
                 });
             });
