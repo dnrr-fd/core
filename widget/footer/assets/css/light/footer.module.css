@@ -26,39 +26,39 @@
 }
 
 .widget_footer_transition {
-  transition: all 0.4s;
   -webkit-transition: all 0.4s;
   -moz-transition: all 0.4s;
   -ms-transition: all 0.4s;
   -o-transition: all 0.4s;
+  transition: all 0.4s;
 }
 .widget_footer_transition__none{
-  transition: none;
   -webkit-transition: none;
   -moz-transition: none;
   -ms-transition: none;
   -o-transition: none;
+  transition: none;
 }
 .widget_footer_transform_90_down {
-  transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -o-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .widget_footer_transform_90_up {
-  transform: rotate(-90deg);
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
   -ms-transform: rotate(-90deg);
   -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 .widget_footer_transform_180 {
-  transform: rotate(180deg);
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .widget_footer_bg {
@@ -170,10 +170,10 @@
 }
 
 .widget_footer_bg_bg1 {
-  bottom: calc(40%);
   bottom: -o-calc(40%);
   bottom: -webkit-calc(40%);
   bottom: -moz-calc(40%);
+  bottom: calc(40%);
   position: absolute;
   z-index: 7;
   width: 100%;

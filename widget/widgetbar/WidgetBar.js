@@ -34,7 +34,7 @@ let WidgetBar = class WidgetBar extends Widget {
     //--------------------------------------------------------------------------
     async postInitialize() {
         var _locale = getNormalizedLocale();
-        console.log(`_LOCALE: ${_locale}`);
+        // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
         }
@@ -68,7 +68,7 @@ let WidgetBar = class WidgetBar extends Widget {
             if (theme_old) {
                 css_theme = (theme_new === 'dark' ? css_dark : css_light);
                 // self.render();
-                console.log(`Watch: Theme (WidgetBar) is now ${theme_new}`);
+                // console.log(`Watch: Theme (WidgetBar) is now ${theme_new}`);
             }
         });
         // Create widget bar widgets
@@ -122,12 +122,11 @@ let WidgetBar = class WidgetBar extends Widget {
                         if (wbObj.wbWidget instanceof Expand) {
                             wbObj.wbWidget.watch("expanded", function (expanded_new, expanded_old) {
                                 wbObj.wbWidget.renderNow();
-                                if (expanded_new === true) {
-                                    console.log(`${wbObj.wbWidget.id.toUpperCase()} widget expanded`);
-                                }
-                                else {
-                                    console.log(`${wbObj.wbWidget.id.toUpperCase()} widget collapsed`);
-                                }
+                                // if (expanded_new === true) {
+                                //   console.log(`${wbObj.wbWidget.id.toUpperCase()} widget expanded`);
+                                // } else {
+                                //   console.log(`${wbObj.wbWidget.id.toUpperCase()} widget collapsed`);
+                                // }
                                 if (afterWidgetCloseFocusElement) {
                                     if (typeof afterWidgetCloseFocusElement === "string") {
                                         getFocusableElements(document.getElementById(afterWidgetCloseFocusElement));

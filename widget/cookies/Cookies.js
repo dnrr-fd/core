@@ -55,7 +55,7 @@ let Cookies = class Cookies extends Widget {
     //--------------------------------------------------------------------------
     async postInitialize() {
         var _locale = getNormalizedLocale();
-        console.log(`_LOCALE: ${_locale}`);
+        // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
         }
@@ -161,7 +161,7 @@ let Cookies = class Cookies extends Widget {
     //--------------------------------------------------------------------------
     async setElementFocus() {
         const cookiesMain_containerNode = document.getElementById(elementIDs.cookiesMain_contentID);
-        console.log("Cookies AfterCreate");
+        // console.log("Cookies AfterCreate");
         // Add all the elements inside modal which you want to make focusable
         // Since there is no modal behind cookies, the main tab event must come from the main screen.
         getFocusableElements(cookiesMain_containerNode);

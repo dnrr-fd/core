@@ -16,18 +16,18 @@
   background-color: rgba(0,0,0,0.4);
 }
 .widget_header_transition {
-  transition: all 0.4s;
   -webkit-transition: all 0.4s;
   -moz-transition: all 0.4s;
   -ms-transition: all 0.4s;
   -o-transition: all 0.4s;
+  transition: all 0.4s;
 }
 .widget_header_transition__none{
-  transition: none;
   -webkit-transition: none;
   -moz-transition: none;
   -ms-transition: none;
   -o-transition: none;
+  transition: none;
 }
 .widget_header_bg {
   z-index: 1;
@@ -169,10 +169,10 @@
 .widget_header_sitemenu {
   display: block;
   z-index: 96!important;
-  height: calc(100% - 75px);
   height: -o-calc(100% - 75px); /* opera */
   height: -webkit-calc(100% - 75px); /* google, safari */
   height: -moz-calc(100% - 75px); /* firefox */
+  height: calc(100% - 75px);
   padding: 20px;
 }
 .widget_header_sitemenu_box_shadow {

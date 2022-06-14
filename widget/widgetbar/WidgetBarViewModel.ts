@@ -82,7 +82,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                             if (legendWidget) {
                                 legendWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(legendWidget));
-                                    console.log("Legend widget added to array.");
+                                    // console.log("Legend widget added to array.");
                                 });
                             }
                         });
@@ -92,7 +92,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                             if (bookmarksWidget) {
                                 bookmarksWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(bookmarksWidget));
-                                    console.log("Bookmarks widget added to array.");
+                                    // console.log("Bookmarks widget added to array.");
                                 });
                             }
                         });
@@ -102,7 +102,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                             if (basemapgalleryWidget) {
                                 basemapgalleryWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(basemapgalleryWidget));
-                                    console.log("BasemapGallery widget added to array.");
+                                    // console.log("BasemapGallery widget added to array.");
                                 });
                             }
                         });
@@ -112,7 +112,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                             if (sketchWidget) {
                                 sketchWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(sketchWidget));
-                                    console.log("Sketch widget added to array.");
+                                    // console.log("Sketch widget added to array.");
                                 });
                             }
                         });
@@ -138,7 +138,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                 console.log("Improper configuration of a map widget! Please check the configuration file.");
             }
         }).then(() => {
-            console.log("Resolved: createWidgetsForWidgetBar()");
+            // console.log("Resolved: createWidgetsForWidgetBar()");
             resolve(widgetBarWidgets);
         });
     })
@@ -788,14 +788,14 @@ function convertEsriBookmarksToJSONBookmarks(bookmarkCollection: Collection<Book
 
 async function wbwAsyncForEach(array: Array<WidgetBarWidget>, callback: { (widget: WidgetBarWidget): Promise<void>; (arg0: WidgetBarWidget, arg1: number, arg2: WidgetBarWidget[]): any; }) {
     for (let index = 0; index < array.length; index++) {
-        console.log("Promise: callback()");
+        // console.log("Promise: callback()");
         await callback(array[index], index, array);
     }
 }
 
 async function cookieVMAsyncForEach(array: Array<CookiesVM>, callback: { (cookie: CookiesVM): Promise<void>; (arg0: CookiesVM, arg1: number, arg2: CookiesVM[]): any; }) {
     for (let index = 0; index < array.length; index++) {
-        console.log("Promise: callback()");
+        // console.log("Promise: callback()");
         await callback(array[index], index, array);
     }
 }
@@ -805,7 +805,7 @@ export async function setBookmarksCookie(cookies: Array<CookiesVM>, _esriBookmar
         if (_cookie.id.toLowerCase() === "bookmarks") {
             if (_cookie.accepted === true) {
                 let jsonBookmarks = convertEsriBookmarksToJSONBookmarks(_esriBookmarks.bookmarks, _localeList, _defaultThumbnail)
-                console.log(`jsonBookmarks: ${jsonBookmarks}`);
+                // console.log(`jsonBookmarks: ${jsonBookmarks}`);
                 _cookie.setCookie(jsonBookmarks);
             } else {
                 _cookie.deleteCookie();

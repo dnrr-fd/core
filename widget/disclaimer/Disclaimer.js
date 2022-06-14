@@ -33,7 +33,7 @@ let Disclaimer = class Disclaimer extends Widget {
     //--------------------------------------------------------------------------
     postInitialize() {
         var _locale = getNormalizedLocale();
-        console.log(`_LOCALE: ${_locale}`);
+        // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
         }

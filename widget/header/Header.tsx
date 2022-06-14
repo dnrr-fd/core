@@ -125,7 +125,7 @@ class Header extends Widget {
 
   postInitialize(): void {
     var _locale = getNormalizedLocale();
-    console.log(`_LOCALE: ${_locale}`);
+    // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
     } else {
@@ -150,7 +150,7 @@ class Header extends Widget {
     _links = this._createReactLinks(this.links, css_theme.default.widget_header_link);
 
     // Insert menu links
-    _menuLinks = this._createReactLinks(this.menu.menulinks, css_theme.default.widget_header_submenu_link);
+    _menuLinks = this._createReactLinks(this.menu.menulinks, css_theme.default.widget_header_submenu_link, true);
 
     // Insert available themes
     _menuThemes = this._createReactThemeRBs(this.menu.themes, this.theme);
@@ -168,7 +168,7 @@ class Header extends Widget {
     this.watch("theme", function(theme_new: string, theme_old: string, propertyName: string, target: Accessor){
       css_theme = (theme_new === 'dark' ? css_dark : css_light);
       // self.render();
-      console.log(`Watch: Theme is now ${theme_new}`);
+      // console.log(`Watch: Theme is now ${theme_new}`);
       // if (_expanded === false) {
       //   // Keep the sitemenu open
       //   self.toggleSiteMenu(true);
@@ -184,7 +184,7 @@ class Header extends Widget {
     });
 
     this.watch("menu", function(menu_new: Menu){
-      self._modifyDOMLinks(menu_new.menulinks, elementIDs.sitemenu_linksID, css_theme.default.widget_header_submenu_link);
+      self._modifyDOMLinks(menu_new.menulinks, elementIDs.sitemenu_linksID, css_theme.default.widget_header_submenu_link, true);
 
       self._modifyDOMThemeRBs(menu_new.themes, elementIDs.sitemenu_themesID, self.theme);
       
@@ -313,7 +313,7 @@ class Header extends Widget {
 
   private _setLocale(localeID: string) {
     intl.setLocale(localeID);
-    console.log(`New Locale: ${localeID}`);
+    // console.log(`New Locale: ${localeID}`);
     _locale = this._getLocale();
   }
   
@@ -338,25 +338,36 @@ class Header extends Widget {
     }
   }
 
-  private _createReactLinks(linksArray: Array<Link>, linkDivClass=null as string|null) {
+  private _createReactLinks(linksArray: Array<Link>, linkDivClass=null as string|null, menuLinkTag=false) {
+    let postFix = "";
+    if (menuLinkTag === true) {
+      postFix = "_menu"
+    }
+
     var _links = linksArray.map(link => 
       <div class={linkDivClass}>
-        <a id={link.id} class={css_esri.esri_widget_anchor} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
+        <a id={`${link.id}${postFix}`} class={css_esri.esri_widget_anchor} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
       </div>
     );
 
     return _links;
   }
 
-  private _modifyDOMLinks(linksArray: Array<Link>, targetID: string, linkDivClass=null as string|null) {
+  private _modifyDOMLinks(linksArray: Array<Link>, targetID: string, linkDivClass=null as string|null, menuLinkTag=false) {
     let div_node = document.getElementById(targetID);
     let _anchors = div_node?.getElementsByTagName('a') as HTMLCollectionOf<HTMLAnchorElement>;
 
+    let postFix = "";
+    if (menuLinkTag === true) {
+      postFix = "_menu"
+    }
+
     // Re-build the existing link list using the DOM
     linksArray.map(link => {
-      var _a = null as HTMLAnchorElement|null;
+      let linkID = `${link.id}${postFix}`
+      let _a = null as HTMLAnchorElement|null;
       for (let i=0; i<_anchors.length; i++) {
-        if (_anchors[i].id.toLowerCase() === link.id.toLowerCase()) {
+        if (_anchors[i].id.toLowerCase() === linkID.toLowerCase()) {
           _a = _anchors[i];
         }
       }
@@ -494,7 +505,7 @@ class Header extends Widget {
   private _siteMenuButton_click(e: MouseEvent) {
     e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
     _expanded = this.toggleSiteMenu(_expanded);
-    console.log(`Site Menu is ${_expanded}`);
+    // console.log(`Site Menu is ${_expanded}`);
   }
 
   private _siteMenuButton_keypress(e: KeyboardEvent) {
@@ -504,7 +515,7 @@ class Header extends Widget {
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
       _expanded = this.toggleSiteMenu(_expanded);
-      console.log(`Site Menu is ${_expanded}`);
+      // console.log(`Site Menu is ${_expanded}`);
     }
   }
 

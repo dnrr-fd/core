@@ -63,7 +63,7 @@ export async function createWidgetsForWidgetBar(widgetBar) {
                             if (legendWidget) {
                                 legendWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(legendWidget));
-                                    console.log("Legend widget added to array.");
+                                    // console.log("Legend widget added to array.");
                                 });
                             }
                         });
@@ -73,7 +73,7 @@ export async function createWidgetsForWidgetBar(widgetBar) {
                             if (bookmarksWidget) {
                                 bookmarksWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(bookmarksWidget));
-                                    console.log("Bookmarks widget added to array.");
+                                    // console.log("Bookmarks widget added to array.");
                                 });
                             }
                         });
@@ -83,7 +83,7 @@ export async function createWidgetsForWidgetBar(widgetBar) {
                             if (basemapgalleryWidget) {
                                 basemapgalleryWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(basemapgalleryWidget));
-                                    console.log("BasemapGallery widget added to array.");
+                                    // console.log("BasemapGallery widget added to array.");
                                 });
                             }
                         });
@@ -93,7 +93,7 @@ export async function createWidgetsForWidgetBar(widgetBar) {
                             if (sketchWidget) {
                                 sketchWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(sketchWidget));
-                                    console.log("Sketch widget added to array.");
+                                    // console.log("Sketch widget added to array.");
                                 });
                             }
                         });
@@ -120,7 +120,7 @@ export async function createWidgetsForWidgetBar(widgetBar) {
                 console.log("Improper configuration of a map widget! Please check the configuration file.");
             }
         }).then(() => {
-            console.log("Resolved: createWidgetsForWidgetBar()");
+            // console.log("Resolved: createWidgetsForWidgetBar()");
             resolve(widgetBarWidgets);
         });
     });
@@ -704,13 +704,13 @@ function convertEsriBookmarksToJSONBookmarks(bookmarkCollection, _localeList, de
 }
 async function wbwAsyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
-        console.log("Promise: callback()");
+        // console.log("Promise: callback()");
         await callback(array[index], index, array);
     }
 }
 async function cookieVMAsyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
-        console.log("Promise: callback()");
+        // console.log("Promise: callback()");
         await callback(array[index], index, array);
     }
 }
@@ -719,7 +719,7 @@ export async function setBookmarksCookie(cookies, _esriBookmarks, _localeList, _
         if (_cookie.id.toLowerCase() === "bookmarks") {
             if (_cookie.accepted === true) {
                 let jsonBookmarks = convertEsriBookmarksToJSONBookmarks(_esriBookmarks.bookmarks, _localeList, _defaultThumbnail);
-                console.log(`jsonBookmarks: ${jsonBookmarks}`);
+                // console.log(`jsonBookmarks: ${jsonBookmarks}`);
                 _cookie.setCookie(jsonBookmarks);
             }
             else {

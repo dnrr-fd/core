@@ -12,11 +12,11 @@
   display: none!important;
 }
 .widget_widgetbar_transition {
-  transition: all 0.4s;
   -webkit-transition: all 0.4s;
   -moz-transition: all 0.4s;
   -ms-transition: all 0.4s;
   -o-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 .widget_widgetbar_fg,
@@ -25,7 +25,7 @@
   width: 100%;
 }
 .widget_widgetbar_fg {
-  width: fit-content;
+  width: fit-content(100%);
   z-index: 4;
 }
 .widget_widgetbar_bg {
@@ -52,11 +52,11 @@
   margin-bottom: 16px!important;
   margin-left: 6px!important;
   margin-right: 6px!important;
-  text-align: left!important;
   text-align: -webkit-left!important;
   text-align: -moz-left!important;
   text-align: -ms-left!important;
   text-align: -o-left!important;
+  text-align: left!important;
   right: 0px!important;
 }
 

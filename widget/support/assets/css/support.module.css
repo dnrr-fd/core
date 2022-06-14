@@ -34,7 +34,7 @@
   width: 600px;
   margin-left: auto;
   margin-right: auto;
-  height: fit-content;
+  height: fit-content(100%);
   border: solid 1px #d2d2d2;
 }
 .widget_support_form_textarea {
@@ -52,7 +52,7 @@
     padding: 10px;
     margin-top: 0px;
     width: 100%;
-    height: fit-content;
+    height: fit-content(100%);
   }
   .widget_support_form_textarea {
     min-width: 300px;

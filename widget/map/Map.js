@@ -42,7 +42,7 @@ let Map = class Map extends Widget {
     //--------------------------------------------------------------------------
     postInitialize() {
         var _locale = getNormalizedLocale();
-        console.log(`_LOCALE: ${_locale}`);
+        // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
         }
@@ -71,7 +71,7 @@ let Map = class Map extends Widget {
         css_theme = (this.theme === 'dark' ? css_dark : css_light);
         this.rendered = false;
         esriConfig.portalUrl = this.portalUrl;
-        console.log(`Assets Path: ${esriConfig.assetsPath}`);
+        // console.log(`Assets Path: ${esriConfig.assetsPath}`);
         var info = new OAuthInfo({
             appId: this.appid,
             portalUrl: this.map.portalUrl,
@@ -82,13 +82,13 @@ let Map = class Map extends Widget {
         identityManager.checkSignInStatus(info.portalUrl + "/sharing")
             .then(async () => {
             await this._handleSignIn().then(results => {
-                console.log("Resolved: loadArcGISContent() " + results);
+                // console.log("Resolved: loadArcGISContent() " + results);
                 this.rendered = true;
             });
         })
             .catch(async () => {
             await this._handleSignIn().then(results => {
-                console.log("Resolved: loadArcGISContent() " + results);
+                // console.log("Resolved: loadArcGISContent() " + results);
                 this.rendered = true;
             });
         });
@@ -103,7 +103,7 @@ let Map = class Map extends Widget {
             if (theme_old) {
                 css_theme = (theme_new === 'dark' ? css_dark : css_light);
                 // self.render();
-                console.log(`Watch: Theme (Map) is now ${theme_new}`);
+                // console.log(`Watch: Theme (Map) is now ${theme_new}`);
             }
         });
     }
@@ -121,7 +121,7 @@ let Map = class Map extends Widget {
             portal.authMode = "immediate";
             portal.load().then(() => {
                 const results = { name: portal.user.fullName, username: portal.user.username };
-                console.log(results);
+                // console.log(results);
                 // Set up the sign-out link if the user wishes.
                 var _signoutElement;
                 if (this.signoutElement != null && typeof this.signoutElement != "undefined") {

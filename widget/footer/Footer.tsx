@@ -110,7 +110,7 @@ class Footer extends Widget {
 
   postInitialize(): void {
     var _locale = getNormalizedLocale();
-    console.log(`_LOCALE: ${_locale}`);
+    // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
     } else {
@@ -136,7 +136,7 @@ class Footer extends Widget {
     this.watch("theme", function(theme_new: string, theme_old: string){
       css_theme = (theme_new === 'dark' ? css_dark : css_light);
       // self.render();
-      console.log(`Watch: Theme (Footer) is now ${theme_new}`);
+      // console.log(`Watch: Theme (Footer) is now ${theme_new}`);
     });
 
     this.watch("links", function(links_new: Array<Array<Link>>, links_old: Array<Array<Link>>){
@@ -265,7 +265,7 @@ class Footer extends Widget {
   private _footerButton_click(e: MouseEvent) {
     e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
     _expanded = this.toggleFooter(_expanded);
-    console.log(`Footer is ${_expanded}`);
+    // console.log(`Footer is ${_expanded}`);
   }
 
   private _footerButton_keypress(e: KeyboardEvent) {
@@ -275,7 +275,7 @@ class Footer extends Widget {
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
       _expanded = this.toggleFooter(_expanded);
-      console.log(`Footer is ${_expanded}`);
+      // console.log(`Footer is ${_expanded}`);
     }
   }
 

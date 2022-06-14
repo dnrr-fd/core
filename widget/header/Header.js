@@ -64,7 +64,7 @@ let Header = class Header extends Widget {
     //--------------------------------------------------------------------------
     postInitialize() {
         var _locale = getNormalizedLocale();
-        console.log(`_LOCALE: ${_locale}`);
+        // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
         }
@@ -84,7 +84,7 @@ let Header = class Header extends Widget {
         // Insert header links
         _links = this._createReactLinks(this.links, css_theme.default.widget_header_link);
         // Insert menu links
-        _menuLinks = this._createReactLinks(this.menu.menulinks, css_theme.default.widget_header_submenu_link);
+        _menuLinks = this._createReactLinks(this.menu.menulinks, css_theme.default.widget_header_submenu_link, true);
         // Insert available themes
         _menuThemes = this._createReactThemeRBs(this.menu.themes, this.theme);
         // Insert available languages
@@ -99,7 +99,7 @@ let Header = class Header extends Widget {
         this.watch("theme", function (theme_new, theme_old, propertyName, target) {
             css_theme = (theme_new === 'dark' ? css_dark : css_light);
             // self.render();
-            console.log(`Watch: Theme is now ${theme_new}`);
+            // console.log(`Watch: Theme is now ${theme_new}`);
             // if (_expanded === false) {
             //   // Keep the sitemenu open
             //   self.toggleSiteMenu(true);
@@ -112,7 +112,7 @@ let Header = class Header extends Widget {
             self._modifyDOMLinks(links_new, elementIDs.header_linksID, css_theme.default.widget_header_link);
         });
         this.watch("menu", function (menu_new) {
-            self._modifyDOMLinks(menu_new.menulinks, elementIDs.sitemenu_linksID, css_theme.default.widget_header_submenu_link);
+            self._modifyDOMLinks(menu_new.menulinks, elementIDs.sitemenu_linksID, css_theme.default.widget_header_submenu_link, true);
             self._modifyDOMThemeRBs(menu_new.themes, elementIDs.sitemenu_themesID, self.theme);
             if (menu_new.showlocales === true) {
                 self._modifyDOMLanguageRBs(menu_new.languages, elementIDs.sitemenu_languagesID, _locale);
@@ -209,7 +209,7 @@ let Header = class Header extends Widget {
     }
     _setLocale(localeID) {
         intl.setLocale(localeID);
-        console.log(`New Locale: ${localeID}`);
+        // console.log(`New Locale: ${localeID}`);
         _locale = this._getLocale();
     }
     _createReactLogo(logo, logoDivClass = null) {
@@ -227,19 +227,28 @@ let Header = class Header extends Widget {
             _img.alt = logo.alt;
         }
     }
-    _createReactLinks(linksArray, linkDivClass = null) {
+    _createReactLinks(linksArray, linkDivClass = null, menuLinkTag = false) {
+        let postFix = "";
+        if (menuLinkTag === true) {
+            postFix = "_menu";
+        }
         var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
-            tsx("a", { id: link.id, class: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
+            tsx("a", { id: `${link.id}${postFix}`, class: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
         return _links;
     }
-    _modifyDOMLinks(linksArray, targetID, linkDivClass = null) {
+    _modifyDOMLinks(linksArray, targetID, linkDivClass = null, menuLinkTag = false) {
         let div_node = document.getElementById(targetID);
         let _anchors = div_node?.getElementsByTagName('a');
+        let postFix = "";
+        if (menuLinkTag === true) {
+            postFix = "_menu";
+        }
         // Re-build the existing link list using the DOM
         linksArray.map(link => {
-            var _a = null;
+            let linkID = `${link.id}${postFix}`;
+            let _a = null;
             for (let i = 0; i < _anchors.length; i++) {
-                if (_anchors[i].id.toLowerCase() === link.id.toLowerCase()) {
+                if (_anchors[i].id.toLowerCase() === linkID.toLowerCase()) {
                     _a = _anchors[i];
                 }
             }
@@ -346,7 +355,7 @@ let Header = class Header extends Widget {
     _siteMenuButton_click(e) {
         e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
         _expanded = this.toggleSiteMenu(_expanded);
-        console.log(`Site Menu is ${_expanded}`);
+        // console.log(`Site Menu is ${_expanded}`);
     }
     _siteMenuButton_keypress(e) {
         let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
@@ -354,7 +363,7 @@ let Header = class Header extends Widget {
         if (isEnterPressed || isSpacePressed) {
             e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
             _expanded = this.toggleSiteMenu(_expanded);
-            console.log(`Site Menu is ${_expanded}`);
+            // console.log(`Site Menu is ${_expanded}`);
         }
     }
     //--------------------------------------------------------------------------

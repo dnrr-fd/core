@@ -10,11 +10,11 @@
   display: none!important;
 }
 .widget_map_transition {
-  transition: all 0.4s;
   -webkit-transition: all 0.4s;
   -moz-transition: all 0.4s;
   -ms-transition: all 0.4s;
   -o-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 .widget_map_content {

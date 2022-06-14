@@ -93,7 +93,7 @@ class Support extends Widget {
   //--------------------------------------------------------------------------
   postInitialize(): void {
     var _locale = getNormalizedLocale();
-    console.log(`_LOCALE: ${_locale}`);
+    // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
     } else {
@@ -110,7 +110,7 @@ class Support extends Widget {
     });
 
     this.watch("visible", async function(visible_new: boolean, visible_old: boolean){
-      console.log(`Support Form Visible: ${visible_new}`);
+      // console.log(`Support Form Visible: ${visible_new}`);
       // Render now to add or remove the widget then set the element focus.
       supportWidget.renderNow();
       if (visible_new === false) {
