@@ -71,7 +71,7 @@ let CookiesVM = class CookiesVM extends Cookie {
             d.setTime(d.getTime() + (this.expiry * 24 * 60 * 60 * 1000));
             let expires = "expires=" + d.toUTCString();
             document.cookie = this.id + "=" + enc_string + ";" + expires + ";SameSite=None;Secure;path=/";
-            console.log(`setCookie() Value: ${document.cookie}`);
+            // console.log(`setCookie() Value: ${document.cookie}`);
         }
         return true;
     }
@@ -94,7 +94,7 @@ let CookiesVM = class CookiesVM extends Cookie {
                 else {
                     this.value = dec_string;
                 }
-                console.log(`getCookie() Value: ${this.value}`);
+                // console.log(`getCookie() Value: ${this.value}`);
                 return true;
             }
         }

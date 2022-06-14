@@ -551,7 +551,7 @@ class Cookies extends Widget {
 
       if (conf_cookie.value) {
         _cookie.value = conf_cookie.value;
-        console.log(`Cookie value set for ID: ${_cookie.id} (${conf_cookie.value})`)
+        // console.log(`Cookie value set for ID: ${_cookie.id} (${conf_cookie.value})`)
       } else {
         // Populate the values from the client if it exists
         await _cookie.getCookie().then(result => {
