@@ -14,6 +14,10 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: -webkit-translate(-50%, -50%); /* centre the image */
+  transform: -moz-translate(-50%, -50%); /* centre the image */
+  transform: -ms-translate(-50%, -50%); /* centre the image */
+  transform: -o-translate(-50%, -50%); /* centre the image */
   transform: translate(-50%, -50%); /* centre the image */
 }
 .widget_loading_content {

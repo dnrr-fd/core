@@ -25,7 +25,11 @@
   width: 100%;
 }
 .widget_widgetbar_fg {
-  width: fit-content(100%);
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: -ms-fit-content;
+  width: -o-fit-content;
+  width: fit-content;
   z-index: 4;
 }
 .widget_widgetbar_bg {

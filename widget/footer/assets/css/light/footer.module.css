@@ -116,11 +116,11 @@
   width: 80px!important;
   height: 26px!important;
   z-index: 10;
-  transform: translate(0px, calc(calc(100%) * -1));
   -webkit-transform: -webkit-translate(0px, -webkit-calc(-webkit-calc(100%) * -1));
   -moz-transform: -moz-translate(0px, -moz-calc(-moz-calc(100%) * -1));
   -ms-transform: -ms-translate(0px, -ms-calc(-o-calc(100%) * -1));
   -o-transform: -o-translate(0px, -o-calc(-o-calc(100%) * -1));
+  transform: translate(0px, calc(calc(100%) * -1));
 }
 .widget_footer_title{
   text-align: center;
