@@ -1,6 +1,6 @@
 // @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
-import { tsx, messageBundle } from "@arcgis/core/widgets/support/widget";
+import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";

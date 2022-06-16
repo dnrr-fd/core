@@ -1,0 +1,17 @@
+.widget_measurement {
+  display: inline-flex;
+  padding: 5px;
+  box-shadow: 0px 2px 6px rgb(50 50 50 / 60%);
+}
+
+.widget_measurement_button__div {
+  padding: 2px;
+}
+
+.widget_measurement_button {
+  border: solid 1px #d2d2d2;
+}
+
+.widget_measurement_visible__none {
+  display: none;
+}

@@ -68,6 +68,18 @@ export class BasemapGalleryWidget extends WidgetBarWidget {
     basemapSourcePortal!: string;
 }
 
+@subclass('WidgetBarClasses.MeasurementWidget')
+export class MeasurementWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    measurement_map_location!: 'top-right'|'top-left'|'bottom-right'|'bottom-left';
+
+    @property()
+    measurement_index_position!: number;
+}
+
 @subclass('WidgetBarClasses.SketchWidget')
 export class SketchWidget extends WidgetBarWidget {
     //----------------------------------

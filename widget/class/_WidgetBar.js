@@ -62,6 +62,18 @@ BasemapGalleryWidget = __decorate([
     subclass('WidgetBarClasses.BasemapGalleryWidget')
 ], BasemapGalleryWidget);
 export { BasemapGalleryWidget };
+let MeasurementWidget = class MeasurementWidget extends WidgetBarWidget {
+};
+__decorate([
+    property()
+], MeasurementWidget.prototype, "measurement_map_location", void 0);
+__decorate([
+    property()
+], MeasurementWidget.prototype, "measurement_index_position", void 0);
+MeasurementWidget = __decorate([
+    subclass('WidgetBarClasses.MeasurementWidget')
+], MeasurementWidget);
+export { MeasurementWidget };
 let SketchWidget = class SketchWidget extends WidgetBarWidget {
 };
 __decorate([

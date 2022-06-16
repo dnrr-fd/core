@@ -6,10 +6,11 @@ import Portal from "@arcgis/core/portal/Portal";
 import PortalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/PortalBasemapsSource";
 import WidgetBar, { widgetBarRootURL, widgetBarWidgetCloseFocusElement } from "./WidgetBar"
 import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings } from "../class/_WidgetBar";
-import { BasemapGalleryWidget, SketchWidget, PrintWidget, SupportWidget, Centroid, wbwObject } from "../class/_WidgetBar";
+import { BasemapGalleryWidget, MeasurementWidget, SketchWidget, PrintWidget, SupportWidget, Centroid, wbwObject } from "../class/_WidgetBar";
 import { LegendStyle } from "../class/_Legend";
 import { CookiesVM } from "../class/_Cookie";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
+import { getFocusableElements, returnConfig } from "@dnrr_fd/util";
 
 import Expand from "@arcgis/core/widgets/Expand";
 import Legend from "@arcgis/core/widgets/Legend";
@@ -26,7 +27,8 @@ import Polygon from "@arcgis/core/geometry/Polygon";
 import Extent from "@arcgis/core/geometry/Extent";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Support from "../support/Support";
-import Button from "../Button/Button";
+import Button from "../button/Button";
+import MeasurementDNRR from "../measurement/Measurement";
 
 // Import local assets
 import * as legendT9n_en from '../legend/assets/t9n/en.json'
@@ -41,6 +43,10 @@ import * as basemapGalleryT9n_en from '../basemapgallery/assets/t9n/en.json'
 import * as basemapGalleryT9n_fr from '../basemapgallery/assets/t9n/fr.json'
 var basemapGallery_defaultT9n = basemapGalleryT9n_en;
 
+import * as measurementT9n_en from '../measurement/assets/t9n/en.json'
+import * as measurementT9n_fr from '../measurement/assets/t9n/fr.json'
+var measurement_defaultT9n = measurementT9n_en;
+
 import * as sketchT9n_en from '../sketch/assets/t9n/en.json'
 import * as sketchT9n_fr from '../sketch/assets/t9n/fr.json'
 var sketch_defaultT9n = sketchT9n_en;
@@ -51,15 +57,7 @@ var print_defaultT9n = printT9n_en;
 
 import * as supportT9n_en from '../support/assets/t9n/en.json'
 import * as supportT9n_fr from '../support/assets/t9n/fr.json'
-import { getFocusableElements, returnConfig } from "@dnrr_fd/util";
 var support_defaultT9n = supportT9n_en;
-
-export var legendWidget = null as Expand|null;
-export var bookmarksWidget = null as Expand|null;
-export var basemapgalleryWidget = null as Expand|null;
-export var sketchWidget = null as Expand|null;
-export var printWidget = null as Expand|null;
-export var supportWidget = null as Expand|null;
 
 var widgetBarWidgets = new Array<wbwObject>();
 var widgetsAssetsPath: string;
@@ -103,6 +101,16 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                                 basemapgalleryWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(basemapgalleryWidget));
                                     // console.log("BasemapGallery widget added to array.");
+                                });
+                            }
+                        });
+                        break;
+                    case "MEASUREMENT":
+                        await addMeasurement(widget as WidgetBarWidget, _mapView, graphicsLayer).then(measurementWidget => {
+                            if (measurementWidget) {
+                                measurementWidget.when(() => {
+                                    widgetBarWidgets.push(new wbwObject(measurementWidget));
+                                    // console.log("Measurement widget added to array.");
                                 });
                             }
                         });
@@ -337,6 +345,73 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
                 _basemapGallery_expand.when(() => {
                     console.log("BasemapGallery widget rendered.");
                     resolve(_basemapGallery_expand);
+                });
+            });
+        });
+    });
+}
+
+async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView, _graphicsLayer: GraphicsLayer): Promise<Expand|null> {
+    return new Promise(resolve => {
+        var lang = getNormalizedLocale();
+
+        // Get the default asset from language.
+        measurement_defaultT9n = (lang === 'fr' ? measurementT9n_fr : measurementT9n_en);
+
+        var configFile: string|null;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        } else {
+            configFile = null;
+        }
+        
+        returnConfig(configFile, null).then( config => {
+            var measurementT9nPath: string|null;
+            if (widget.t9nPath != null) {
+                measurementT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
+            } else {
+                measurementT9nPath = null;
+            }
+
+            var _measurement = new MeasurementDNRR();
+            var _measurement_expand = new Expand();
+            var _visible = getWidgetConfigKeyValue(config as MeasurementWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            var _expanded = getWidgetConfigKeyValue(config as MeasurementWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
+            var _group = getWidgetConfigKeyValue(config as MeasurementWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
+            var _map_location = getWidgetConfigKeyValue(config as MeasurementWidget, "measurement_map_location", "top-right") as "top-right"|"top-left"|"bottom-right"|"bottom-left";
+            var _index_pos = getWidgetConfigKeyValue(config as MeasurementWidget, "measurement_index_position", 0) as number;
+            var _label: string;
+
+            returnConfig(measurementT9nPath, null).then(t9nResults => {
+                if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                    t9nResults = sketch_defaultT9n;
+                }
+                _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Sketch": "Dessin") as string;
+            }).then(function (){
+
+                _measurement.label = _label;
+                _measurement.view = _mapView;
+                _measurement.measurement_map_location = _map_location;
+                _measurement.measurement_index_position = _index_pos;
+    
+                _measurement_expand.id = widget.id;
+                _measurement_expand.view = _mapView
+                _measurement_expand.visible = _visible
+                _measurement_expand.content = _measurement
+                _measurement_expand.expanded = _expanded
+                _measurement_expand.group = _group
+                _measurement_expand.container = widget.id
+                _measurement_expand.collapseIconClass = "esri-icon-up";
+    
+                _mapView.when(() => {
+                    //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
+                    _measurement_expand.expandTooltip = `${_measurement.label}`;
+                });
+
+                _measurement_expand.when(() => {
+                    console.log("Measurement widget rendered.");
+                    resolve(_measurement_expand);
                 });
             });
         });
