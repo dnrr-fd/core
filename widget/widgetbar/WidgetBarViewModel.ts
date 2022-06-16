@@ -59,6 +59,8 @@ import * as supportT9n_en from '../support/assets/t9n/en.json'
 import * as supportT9n_fr from '../support/assets/t9n/fr.json'
 var support_defaultT9n = supportT9n_en;
 
+export var bookmarksWidget: Expand|null;
+
 var widgetBarWidgets = new Array<wbwObject>();
 var widgetsAssetsPath: string;
 var widgetBarGroup = "widget-bar-group"
@@ -378,7 +380,7 @@ async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView, _graph
             var _visible = getWidgetConfigKeyValue(config as MeasurementWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as MeasurementWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
             var _group = getWidgetConfigKeyValue(config as MeasurementWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
-            var _map_location = getWidgetConfigKeyValue(config as MeasurementWidget, "measurement_map_location", "top-right") as "top-right"|"top-left"|"bottom-right"|"bottom-left";
+            var _map_location = getWidgetConfigKeyValue(config as MeasurementWidget, "measurement_map_location", "bottom-right") as "top-right"|"top-left"|"bottom-right"|"bottom-left";
             var _index_pos = getWidgetConfigKeyValue(config as MeasurementWidget, "measurement_index_position", 0) as number;
             var _label: string;
 
@@ -396,13 +398,14 @@ async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView, _graph
                 _measurement.measurement_index_position = _index_pos;
     
                 _measurement_expand.id = widget.id;
-                _measurement_expand.view = _mapView
-                _measurement_expand.visible = _visible
-                _measurement_expand.content = _measurement
-                _measurement_expand.expanded = _expanded
-                _measurement_expand.group = _group
-                _measurement_expand.container = widget.id
+                _measurement_expand.view = _mapView;
+                _measurement_expand.visible = _visible;
+                _measurement_expand.content = _measurement;
+                _measurement_expand.expanded = _expanded;
+                _measurement_expand.group = _group;
+                _measurement_expand.container = widget.id;
                 _measurement_expand.collapseIconClass = "esri-icon-up";
+                _measurement_expand.expandIconClass = "esri-icon-measure";
     
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;

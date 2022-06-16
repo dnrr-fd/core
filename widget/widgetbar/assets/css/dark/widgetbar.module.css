@@ -44,6 +44,7 @@
 .widget_widgetbar_widget__basemapgallery_controls_content,
 .widget_widgetbar_widget__layers_controls_content,
 .widget_widgetbar_widget__print_controls_content,
+.widget_widgetbar_widget__measurement_controls_content,
 .widget_widgetbar_widget__sketch_controls_content,
 .widget_widgetbar_widget__legend_controls_content,
 .widget_widgetbar_widget__bookmarks_controls_content {
@@ -104,6 +105,7 @@
   .widget_widgetbar_widget__basemapgallery_controls_content,
   .widget_widgetbar_widget__layers_controls_content,
   .widget_widgetbar_widget__print_controls_content,
+  .widget_widgetbar_widget__measurement_controls_content,
   .widget_widgetbar_widget__sketch_controls_content,
   .widget_widgetbar_widget__legend_controls_content,
   .widget_widgetbar_widget__bookmarks_controls_content {

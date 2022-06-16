@@ -42,6 +42,7 @@ var print_defaultT9n = printT9n_en;
 import * as supportT9n_en from '../support/assets/t9n/en.json';
 import * as supportT9n_fr from '../support/assets/t9n/fr.json';
 var support_defaultT9n = supportT9n_en;
+export var bookmarksWidget;
 var widgetBarWidgets = new Array();
 var widgetsAssetsPath;
 var widgetBarGroup = "widget-bar-group";
@@ -335,7 +336,7 @@ async function addMeasurement(widget, _mapView, _graphicsLayer) {
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
-            var _map_location = getWidgetConfigKeyValue(config, "measurement_map_location", "top-right");
+            var _map_location = getWidgetConfigKeyValue(config, "measurement_map_location", "bottom-right");
             var _index_pos = getWidgetConfigKeyValue(config, "measurement_index_position", 0);
             var _label;
             returnConfig(measurementT9nPath, null).then(t9nResults => {
@@ -357,6 +358,7 @@ async function addMeasurement(widget, _mapView, _graphicsLayer) {
                 _measurement_expand.group = _group;
                 _measurement_expand.container = widget.id;
                 _measurement_expand.collapseIconClass = "esri-icon-up";
+                _measurement_expand.expandIconClass = "esri-icon-measure";
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _measurement_expand.expandTooltip = `${_measurement.label}`;
