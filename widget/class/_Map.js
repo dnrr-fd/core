@@ -50,6 +50,15 @@ LayerListWidget = __decorate([
     subclass('MapClasses.LayerListWidget')
 ], LayerListWidget);
 export { LayerListWidget };
+let SearchWidget = class SearchWidget extends MapWidget {
+};
+__decorate([
+    property()
+], SearchWidget.prototype, "sources", void 0);
+SearchWidget = __decorate([
+    subclass('MapClasses.SearchWidget')
+], SearchWidget);
+export { SearchWidget };
 let MapWidgetLocale = class MapWidgetLocale {
 };
 __decorate([
@@ -62,6 +71,24 @@ MapWidgetLocale = __decorate([
     subclass('MapClasses.MapWidgetLocale')
 ], MapWidgetLocale);
 export { MapWidgetLocale };
+let MapWidgetSearch = class MapWidgetSearch {
+};
+__decorate([
+    property()
+], MapWidgetSearch.prototype, "id", void 0);
+__decorate([
+    property()
+], MapWidgetSearch.prototype, "label", void 0);
+__decorate([
+    property()
+], MapWidgetSearch.prototype, "allPlaceholder", void 0);
+__decorate([
+    property()
+], MapWidgetSearch.prototype, "sources", void 0);
+MapWidgetSearch = __decorate([
+    subclass('MapClasses.MapWidgetSearch')
+], MapWidgetSearch);
+export { MapWidgetSearch };
 let MapConfig = class MapConfig extends Accessor {
 };
 __decorate([

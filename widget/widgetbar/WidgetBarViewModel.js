@@ -147,13 +147,7 @@ async function addLegend(widget, _mapView) {
             configFile = null;
         }
         returnConfig(configFile, null).then(config => {
-            var legendT9nPath;
-            if (widget.t9nPath != null) {
-                legendT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                legendT9nPath = null;
-            }
+            var legendT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _legend = new Legend();
             var _legend_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -210,13 +204,7 @@ async function addBookmarks(widget, _mapView, _cookies, _localeList) {
             configFile = null;
         }
         returnConfig(configFile, null).then(async (config) => {
-            var bookmarksT9nPath;
-            if (widget.t9nPath != null) {
-                bookmarksT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                bookmarksT9nPath = null;
-            }
+            var bookmarksT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _bookmarks_expand = new Expand();
             var _bookmarks = await createBookmarks(config, _mapView, _cookies, _localeList, `${widgetsAssetsPath}${widget.id}/img/default-thumb.png`);
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -262,13 +250,7 @@ async function addBasemapGallery(widget, _mapView) {
             configFile = null;
         }
         returnConfig(configFile, null).then(config => {
-            var basemapGalleryT9nPath;
-            if (widget.t9nPath != null) {
-                basemapGalleryT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                basemapGalleryT9nPath = null;
-            }
+            var basemapGalleryT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _basemapGallery_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
@@ -324,13 +306,7 @@ async function addMeasurement(widget, _mapView, _graphicsLayer) {
             configFile = null;
         }
         returnConfig(configFile, null).then(config => {
-            var measurementT9nPath;
-            if (widget.t9nPath != null) {
-                measurementT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                measurementT9nPath = null;
-            }
+            var measurementT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _measurement = new MeasurementDNRR();
             var _measurement_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -384,13 +360,7 @@ async function addSketch(widget, _mapView, _graphicsLayer) {
             configFile = null;
         }
         returnConfig(configFile, null).then(config => {
-            var sketchT9nPath;
-            if (widget.t9nPath != null) {
-                sketchT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                sketchT9nPath = null;
-            }
+            var sketchT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _sketch = new Sketch();
             var _sketch_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -442,13 +412,7 @@ async function addPrint(widget, _mapView) {
             configFile = null;
         }
         returnConfig(configFile, null).then(config => {
-            var printT9nPath;
-            if (widget.t9nPath != null) {
-                printT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                printT9nPath = null;
-            }
+            var printT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _print = new Print();
             var _print_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
@@ -500,13 +464,7 @@ async function addSupport(widget, _mapView) {
             configFile = null;
         }
         returnConfig(configFile, null).then(config => {
-            var supportT9nPath;
-            if (widget.t9nPath != null) {
-                supportT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                supportT9nPath = null;
-            }
+            var supportT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _container = getWidgetConfigKeyValue(config, "container", _supportID);
             var _sURL = getWidgetConfigKeyValue(config, "serviceURL", "https://nsgi-uat.cio.gov.ns.ca/feedback-api/api/SendFeedback");

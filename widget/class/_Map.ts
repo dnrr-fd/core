@@ -53,6 +53,21 @@ export class LayerListWidget extends MapWidget {
 
 }
 
+@subclass('MapClasses.SearchWidget')
+export class SearchWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    sources!: Array<{
+      id: string,
+      url: string,
+      searchFields: Array<string>,
+      outFields: Array<string>,
+      exactMatch: boolean
+    }>|null;
+}
+
 @subclass('MapClasses.MapWidgetLocale')
 export class MapWidgetLocale {
     //----------------------------------
@@ -63,6 +78,31 @@ export class MapWidgetLocale {
 
     @property()
     label!: string;
+
+}
+
+@subclass('MapClasses.MapWidgetSearch')
+export class MapWidgetSearch {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    id!: string;
+
+    @property()
+    label!: string;
+
+    @property()
+    allPlaceholder!: string;
+
+    @property()
+    sources!: Array<{
+      id: string,
+      label: string,
+      placeholder: string,
+      popuptemplatetitle: string,
+      suggestionTemplate: string
+    }>;
 
 }
 

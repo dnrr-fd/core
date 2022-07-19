@@ -9,10 +9,10 @@ import Zoom from "@arcgis/core/widgets/Zoom";
 import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";
+import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 // Import local assets
-// import * as searchT9n_en from '../search/assets/t9n/en.json'
-// import * as searchT9n_fr from '../search/assets/t9n/fr.json'
-// var search_defaultT9n = searchT9n_en;
+import * as searchT9n_en from '../search/assets/t9n/en.json';
+var search_defaultT9n = searchT9n_en;
 // import * as scaleBarT9n_en from '../scalebar/assets/t9n/en.json'
 // import * as scaleBarT9n_fr from '../scalebar/assets/t9n/fr.json'
 // var scaleBar_defaultT9n = scaleBarT9n_en;
@@ -112,18 +112,61 @@ async function addSearch(widget, view) {
         var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         var _search = new Search();
         returnConfig(configFile, null).then(config => {
+            var searchT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
+            var sources = widget.sources ? widget.sources : null;
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
-            _search.label = widget.id;
-            _search.view = view;
-            _search.visible = _visible;
-            view.ui.add([
-                {
-                    component: _search,
-                    position: _position,
-                    index: _index
+            var _label;
+            var _allPlaceholder;
+            var _t9nResults;
+            returnConfig(searchT9nPath, null).then(t9nResults => {
+                if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                    t9nResults = search_defaultT9n;
                 }
-            ]);
-            resolve(_search);
+                _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Search" : "Rechercher");
+                _allPlaceholder = getWidgetLocaleConfigKeyValue(t9nResults, "allPlaceholder", lang === "en" ? "Search" : "Rechercher");
+                _t9nResults = t9nResults;
+            }).then(function () {
+                var sourcesT9n = _t9nResults.sources ? _t9nResults.sources : null;
+                _search.label = _label;
+                _search.allPlaceholder = _allPlaceholder;
+                _search.view = view;
+                _search.visible = _visible;
+                // Add any sources using sources and t9n
+                var _sources = new Array();
+                sources?.forEach(source => {
+                    let _source = new Object();
+                    if (source.url) {
+                        let lyr = new FeatureLayer({
+                            url: source.url
+                        });
+                        _source["searchFields"] = source.searchFields ? source.searchFields : [];
+                        _source["outFields"] = source.outFields ? source.outFields : ["*"];
+                        _source["exactMatch"] = source.exactMatch ? source.exactMatch : false;
+                        if (sourcesT9n) {
+                            sourcesT9n.forEach(sourceT9n => {
+                                if (sourceT9n.id.toLowerCase() === source.id.toLowerCase()) {
+                                    _source["name"] = sourceT9n.label ? sourceT9n.label : sourceT9n.id;
+                                    _source["placeholder"] = sourceT9n.placeholder ? sourceT9n.placeholder : sourceT9n.id;
+                                    _source["suggestionTemplate"] = sourceT9n.suggestionTemplate ? sourceT9n.suggestionTemplate : "";
+                                    lyr.popupTemplate = { title: sourceT9n.popuptemplatetitle };
+                                }
+                            });
+                        }
+                        _source["layer"] = lyr;
+                        _sources.push(_source);
+                    }
+                });
+                view.ui.add([
+                    {
+                        component: _search,
+                        position: _position,
+                        index: _index,
+                        sources: _sources
+                    }
+                ]);
+                resolve(_search);
+            });
         });
     });
 }
@@ -320,13 +363,7 @@ async function addLayerList(widget, view) {
         var _layerList = new LayerList();
         var _layerList_expand = new Expand();
         returnConfig(configFile, null).then(config => {
-            var layerListT9nPath;
-            if (widget.t9nPath != null) {
-                layerListT9nPath = `${widget.t9nPath}/${widget.id}_${lang}.json`;
-            }
-            else {
-                layerListT9nPath = null;
-            }
+            var layerListT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : `${_position}-group`);
