@@ -50,6 +50,62 @@ LayerListWidget = __decorate([
     subclass('MapClasses.LayerListWidget')
 ], LayerListWidget);
 export { LayerListWidget };
+export class SearchWidgetSource {
+    constructor(id, url, searchFields, outFields, exactMatch, maxResults, maxSuggestions) {
+        this.id = id;
+        this.url = url;
+        this.searchFields = searchFields;
+        this.outFields = outFields;
+        this.exactMatch = exactMatch;
+        this.maxResults = maxResults;
+        this.maxSuggestions = maxSuggestions;
+    }
+}
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "id", void 0);
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "url", void 0);
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "searchFields", void 0);
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "outFields", void 0);
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "exactMatch", void 0);
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "maxResults", void 0);
+__decorate([
+    property()
+], SearchWidgetSource.prototype, "maxSuggestions", void 0);
+export class SearchWidgetSourceT9n {
+    constructor(id, label, placeholder, popuptemplatetitle, suggestionTemplate) {
+        this.id = id;
+        this.label = label;
+        this.placeholder = placeholder;
+        this.popuptemplatetitle = popuptemplatetitle;
+        this.suggestionTemplate = suggestionTemplate;
+    }
+}
+__decorate([
+    property()
+], SearchWidgetSourceT9n.prototype, "id", void 0);
+__decorate([
+    property()
+], SearchWidgetSourceT9n.prototype, "label", void 0);
+__decorate([
+    property()
+], SearchWidgetSourceT9n.prototype, "placeholder", void 0);
+__decorate([
+    property()
+], SearchWidgetSourceT9n.prototype, "popuptemplatetitle", void 0);
+__decorate([
+    property()
+], SearchWidgetSourceT9n.prototype, "suggestionTemplate", void 0);
 let SearchWidget = class SearchWidget extends MapWidget {
 };
 __decorate([
@@ -89,6 +145,24 @@ MapWidgetSearch = __decorate([
     subclass('MapClasses.MapWidgetSearch')
 ], MapWidgetSearch);
 export { MapWidgetSearch };
+let SearchConfig = class SearchConfig extends Accessor {
+};
+__decorate([
+    property()
+], SearchConfig.prototype, "id", void 0);
+__decorate([
+    property()
+], SearchConfig.prototype, "version", void 0);
+__decorate([
+    property()
+], SearchConfig.prototype, "visible", void 0);
+__decorate([
+    property()
+], SearchConfig.prototype, "sources", void 0);
+SearchConfig = __decorate([
+    subclass('MapClasses.MapConfig')
+], SearchConfig);
+export { SearchConfig };
 let MapConfig = class MapConfig extends Accessor {
 };
 __decorate([

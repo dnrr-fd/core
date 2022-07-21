@@ -1,11 +1,14 @@
 // @ts-check
 import MapView from "@arcgis/core/views/MapView";
-import { mapRootURL, mapParentElement } from "./Map"
-import { MapWidget, ScaleBarWidget, LayerListWidget, MapWidgetLocale, MapWidgetSearch, SearchWidget } from "../class/_Map";
+import { mapRootURL } from "./Map"
+import { MapWidget, ScaleBarWidget, LayerListWidget, MapWidgetLocale, MapWidgetSearch, SearchWidget, SearchWidgetSource, SearchConfig } from "../class/_Map";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
+import { returnConfig } from "@dnrr_fd/util";
 
+import Collection from "@arcgis/core/core/Collection";
 import Expand from "@arcgis/core/widgets/Expand";
 import Search from "@arcgis/core/widgets/Search";
+import LayerSearchSource from "@arcgis/core/widgets/Search/LayerSearchSource";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 import Home from "@arcgis/core/widgets/Home";
@@ -47,7 +50,6 @@ var search_defaultT9n = searchT9n_en;
 
 import * as layerListT9n_en from '../layerlist/assets/t9n/en.json'
 import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json'
-import { returnConfig } from "@dnrr_fd/util";
 var layerList_defaultT9n = layerListT9n_en;
 
 
@@ -120,6 +122,9 @@ export function removeWidgetsFromMap(_mapView: MapView) {
 
 async function addSearch(widget: SearchWidget, view: MapView){
     return new Promise(resolve => {
+        // Get the default asset from language.
+        search_defaultT9n = (lang === 'fr' ? searchT9n_fr : searchT9n_en);
+
         var configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
@@ -132,62 +137,72 @@ async function addSearch(widget: SearchWidget, view: MapView){
         var _search = new Search();
 
         returnConfig(configFile, null).then(config => {
+            var searchConfigPath = widget.config? widget.config: null as string|null;
             var searchT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
-            var sources = widget.sources? widget.sources: null as Array<{id: string, url: string, searchFields: Array<string>, outFields: Array<string>, exactMatch: boolean}>|null;
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            var _visible: boolean;
             var _label: string;
             var _allPlaceholder: string;
-            var _t9nResults: MapWidgetSearch;
-            returnConfig(searchT9nPath, null).then(t9nResults => {
-                if (t9nResults === null) {
-                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
-                    t9nResults = search_defaultT9n;
-                }
-                _label = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetSearch, "label", lang==="en"? "Search": "Rechercher") as string;
-                _allPlaceholder = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetSearch, "allPlaceholder", lang==="en"? "Search": "Rechercher") as string;
-                _t9nResults = t9nResults as MapWidgetSearch;
-            }).then(function(){
-                var sourcesT9n = _t9nResults.sources? _t9nResults.sources: null;
-                _search.label = _label;
-                _search.allPlaceholder = _allPlaceholder
-                _search.view = view;
-                _search.visible = _visible;
-
-                // Add any sources using sources and t9n
-                var _sources = new Array<any>();
-                sources?.forEach(source => {
-                    let _source = new Object();
-                    if (source.url) {
-                        let lyr = new FeatureLayer({
-                            url: source.url
-                        });
-                        _source["searchFields"] = source.searchFields? source.searchFields: [];
-                        _source["outFields"] = source.outFields? source.outFields: ["*"];
-                        _source["exactMatch"] = source.exactMatch? source.exactMatch: false;
-                        if (sourcesT9n) {
-                            sourcesT9n.forEach(sourceT9n => {
-                                if (sourceT9n.id.toLowerCase() === source.id.toLowerCase()) {
-                                    _source["name"] = sourceT9n.label? sourceT9n.label: sourceT9n.id;
-                                    _source["placeholder"] = sourceT9n.placeholder? sourceT9n.placeholder: sourceT9n.id;
-                                    _source["suggestionTemplate"] = sourceT9n.suggestionTemplate? sourceT9n.suggestionTemplate: "";
-                                    lyr.popupTemplate = {title: sourceT9n.popuptemplatetitle} as PopupTemplate;
+            var searchConfig: SearchConfig|null;
+            returnConfig(searchConfigPath, null).then(config => {
+                searchConfig = config as SearchConfig|null;
+                returnConfig(searchT9nPath, null).then(t9nResults => {
+                    var _t9nResults: MapWidgetSearch;
+                    if (t9nResults === null) {
+                        console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                        _t9nResults = search_defaultT9n as MapWidgetSearch;
+                    } else {
+                        _t9nResults = t9nResults as MapWidgetSearch;
+                    }
+                    _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: searchConfig? searchConfig.visible? searchConfig.visible: true: true) as boolean;
+                    _label = getWidgetLocaleConfigKeyValue(_t9nResults, "label", lang==="en"? "Search": "Rechercher") as string;
+                    _allPlaceholder = getWidgetLocaleConfigKeyValue(_t9nResults, "allPlaceholder", lang==="en"? "Search": "Rechercher") as string;
+                    _search.label = _label;
+                    _search.allPlaceholder = _allPlaceholder
+                    _search.view = view;
+                    _search.visible = _visible;
+                    return _t9nResults.sources? _t9nResults.sources: null;
+                }).then(searchSourcesT9n => {
+                    // Add any sources using sources and t9n
+                    var _sources = new Collection<LayerSearchSource>();
+                    if (searchConfig) {
+                        var sources = searchConfig.sources? searchConfig.sources: null as Array<SearchWidgetSource>|null;
+                        sources?.forEach(source => {
+                            let _source = new LayerSearchSource();
+                            if (source.url) {
+                                let lyr = new FeatureLayer({
+                                    url: source.url
+                                });
+                                _source.searchFields = source.searchFields? source.searchFields: [];
+                                _source.outFields = source.outFields? source.outFields: ["*"];
+                                _source.exactMatch = source.exactMatch? source.exactMatch: false;
+                                _source.maxResults = source.maxResults? source.maxResults: 6;
+                                _source.maxSuggestions = source.maxSuggestions? source.maxSuggestions: 6;
+                                if (searchSourcesT9n) {
+                                    searchSourcesT9n.forEach(sourceT9n => {
+                                        if (sourceT9n.id.toLowerCase() === source.id.toLowerCase()) {
+                                            _source.name = sourceT9n.label? sourceT9n.label: sourceT9n.id;
+                                            _source.placeholder = sourceT9n.placeholder? sourceT9n.placeholder: sourceT9n.id;
+                                            _source.suggestionTemplate = sourceT9n.suggestionTemplate? sourceT9n.suggestionTemplate: "";
+                                            lyr.popupTemplate = {title: sourceT9n.popuptemplatetitle} as PopupTemplate;
+                                        }
+                                    })
                                 }
-                            })
+                                _source.layer = lyr;
+                                _sources.push(_source);
+                            }
+                        });
+                        _search.sources = _sources;
+                    }
+        
+                    view.ui.add([
+                        {
+                            component: _search,
+                            position: _position,
+                            index: _index
                         }
-                        _source["layer"] = lyr;
-                        _sources.push(_source);
-                    }
+                    ]);
+                    resolve(_search);
                 });
-    
-                view.ui.add([
-                    {
-                        component: _search,
-                        position: _position,
-                        index: _index,
-                        sources: _sources
-                    }
-                ]);
-                resolve(_search);
             });
         });
     });

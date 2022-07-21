@@ -53,19 +53,84 @@ export class LayerListWidget extends MapWidget {
 
 }
 
+export class SearchWidgetSource {
+  constructor(
+    id: string,
+    url: string,
+    searchFields: Array<string>,
+    outFields: Array<string>,
+    exactMatch: boolean,
+    maxResults: number,
+    maxSuggestions: number
+  ) {
+      this.id = id;
+      this.url = url;
+      this.searchFields = searchFields;
+      this.outFields = outFields;
+      this.exactMatch = exactMatch;
+      this.maxResults = maxResults;
+      this.maxSuggestions = maxSuggestions;
+  }
+
+  @property()
+  id!: string;
+
+  @property()
+  url!: string;
+
+  @property()
+  searchFields!: Array<string>;
+
+  @property()
+  outFields!: Array<string>;
+
+  @property()
+  exactMatch!: boolean;
+
+  @property()
+  maxResults: number;
+
+  @property()
+  maxSuggestions: number;
+}
+export class SearchWidgetSourceT9n {
+  constructor(
+    id: string,
+    label: string,
+    placeholder: string,
+    popuptemplatetitle: string,
+    suggestionTemplate: string
+  ) {
+      this.id = id;
+      this.label = label;
+      this.placeholder = placeholder;
+      this.popuptemplatetitle = popuptemplatetitle;
+      this.suggestionTemplate = suggestionTemplate;
+  }
+
+  @property()
+  id!: string;
+
+  @property()
+  label!: string;
+
+  @property()
+  placeholder!: string;
+
+  @property()
+  popuptemplatetitle!: string;
+
+  @property()
+  suggestionTemplate!: string;
+}
+
 @subclass('MapClasses.SearchWidget')
 export class SearchWidget extends MapWidget {
     //----------------------------------
     //  Properties
     //----------------------------------
     @property()
-    sources!: Array<{
-      id: string,
-      url: string,
-      searchFields: Array<string>,
-      outFields: Array<string>,
-      exactMatch: boolean
-    }>|null;
+    sources!: Array<SearchWidgetSource>|null;
 }
 
 @subclass('MapClasses.MapWidgetLocale')
@@ -96,14 +161,26 @@ export class MapWidgetSearch {
     allPlaceholder!: string;
 
     @property()
-    sources!: Array<{
-      id: string,
-      label: string,
-      placeholder: string,
-      popuptemplatetitle: string,
-      suggestionTemplate: string
-    }>;
+    sources!: Array<SearchWidgetSourceT9n>;
 
+}
+
+@subclass('MapClasses.MapConfig')
+export class SearchConfig extends Accessor {
+  //----------------------------------
+  //  Properties
+  //----------------------------------
+  @property()
+  id!: string;
+
+  @property()
+  version!: number;
+
+  @property()
+  visible!: boolean;
+
+  @property()
+  sources!: Array<SearchWidgetSource>|null;
 }
 
 @subclass('MapClasses.MapConfig')

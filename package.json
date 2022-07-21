@@ -1,13 +1,13 @@
 {
   "name": "@dnrr_fd/core",
-  "version": "1.1.5",
+  "version": "1.1.11",
   "description": "Core modules to use with JavaScript 4.x",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@arcgis/core": "^4.23.7",
+    "@arcgis/core": "^4.24.7",
     "@dnrr_fd/util": "^1.0.8",
     "tslib": "^2.4.0",
     "typescript": "^4.7.2"
