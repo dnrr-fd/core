@@ -41,6 +41,7 @@
   right: 0px!important;
 }
 
+.widget_widgetbar_widget__addlayer_controls_content,
 .widget_widgetbar_widget__basemapgallery_controls_content,
 .widget_widgetbar_widget__layers_controls_content,
 .widget_widgetbar_widget__print_controls_content,
@@ -102,6 +103,7 @@
 @media screen and (max-width: 992px) {
 }
 @media screen and (max-width: 600px) {
+  .widget_widgetbar_widget__addlayer_controls_content,
   .widget_widgetbar_widget__basemapgallery_controls_content,
   .widget_widgetbar_widget__layers_controls_content,
   .widget_widgetbar_widget__print_controls_content,

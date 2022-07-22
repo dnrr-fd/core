@@ -20,10 +20,14 @@ import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Support from "../support/Support";
 import Button from "../button/Button";
 import MeasurementDNRR from "../measurement/Measurement";
+import AddLayer from "../addlayer/AddLayer";
 // Import local assets
 import * as legendT9n_en from '../legend/assets/t9n/en.json';
 import * as legendT9n_fr from '../legend/assets/t9n/fr.json';
 var legend_defaultT9n = legendT9n_en;
+import * as addLayerT9n_en from '../addlayer/assets/t9n/en.json';
+import * as addLayerT9n_fr from '../addlayer/assets/t9n/fr.json';
+var addLayer_defaultT9n = addLayerT9n_en;
 import * as bookmarksT9n_en from '../bookmarks/assets/t9n/en.json';
 import * as bookmarksT9n_fr from '../bookmarks/assets/t9n/fr.json';
 var bookmarks_defaultT9n = bookmarksT9n_en;
@@ -63,6 +67,16 @@ export async function createWidgetsForWidgetBar(widgetBar) {
                                 legendWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(legendWidget));
                                     // console.log("Legend widget added to array.");
+                                });
+                            }
+                        });
+                        break;
+                    case "ADDLAYER":
+                        await addAddLayer(widget, _mapView).then(addLayerWidget => {
+                            if (addLayerWidget) {
+                                addLayerWidget.when(() => {
+                                    widgetBarWidgets.push(new wbwObject(addLayerWidget));
+                                    // console.log("Bookmarks widget added to array.");
                                 });
                             }
                         });
@@ -186,6 +200,57 @@ async function addLegend(widget, _mapView) {
                 _legend_expand.when(() => {
                     console.log("Legend widget rendered.");
                     resolve(_legend_expand);
+                });
+            });
+        });
+    });
+}
+async function addAddLayer(widget, _mapView) {
+    return new Promise(resolve => {
+        var lang = getNormalizedLocale();
+        // Get the default asset from language.
+        addLayer_defaultT9n = (lang === 'fr' ? addLayerT9n_fr : addLayerT9n_en);
+        var configFile;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        }
+        else {
+            configFile = null;
+        }
+        returnConfig(configFile, null).then(config => {
+            var addLayerT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
+            var _addLayer = new AddLayer();
+            var _addLayer_expand = new Expand();
+            var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
+            var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
+            var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
+            var _generateURL = getWidgetConfigKeyValue(config, "generateURL", "https://www.arcgis.com/sharing/rest/content/features/generate");
+            var _label;
+            returnConfig(addLayerT9nPath, null).then(t9nResults => {
+                if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                    t9nResults = addLayer_defaultT9n;
+                }
+                _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Add Layer" : "Ajouter une Couche");
+            }).then(function () {
+                _addLayer.label = _label;
+                _addLayer.view = _mapView;
+                _addLayer.generateURL = _generateURL;
+                _addLayer_expand.id = widget.id;
+                _addLayer_expand.view = _mapView;
+                _addLayer_expand.visible = _visible;
+                _addLayer_expand.content = _addLayer;
+                _addLayer_expand.expanded = _expanded;
+                _addLayer_expand.group = _group;
+                _addLayer_expand.container = widget.id;
+                _addLayer_expand.collapseIconClass = "esri-icon-up";
+                _addLayer_expand.expandIconClass = "esri-icon-plus-circled";
+                _mapView.when(() => {
+                    _addLayer_expand.expandTooltip = `${_addLayer.label}`;
+                });
+                _addLayer_expand.when(() => {
+                    console.log("Add Layer widget rendered.");
+                    resolve(_addLayer_expand);
                 });
             });
         });

@@ -1,0 +1,125 @@
+.widget_addlayer {
+  width: 260px;
+  height: 100%;
+}
+
+.widget_addlayer_tab__div {
+  height: 35px;
+}
+
+.widget_addlayer_tab__button {
+  float: left;
+  cursor: pointer;
+  padding: 14px 16px;
+  width: calc(50% - 4px);
+  margin: 2px;
+}
+
+.widget_addlayer_file_button__div {
+  width: 100%;
+  margin-top:20px;
+}
+
+.widget_addlayer_file_uploadstatus__div {
+  padding-top: 8px;
+  padding-bottom: 0px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  overflow: auto;
+}
+
+.widget_addlayer_file_uploadstatus__p {
+  margin: 0px;
+}
+.widget_addlayer_file_fileinfo__div {
+  overflow: auto;
+}
+.widget_addlayer_file_uploadstatus_clear_button__div {
+  padding: 4px 1px 4px 6px;
+}
+.widget_addlayer_file_uploadstatus_clear__button {
+  outline: 1px solid #d2d2d2;
+}
+.widget_addlayer_buttontitle__label {
+  font-weight: bold;
+}
+.widget_addlayer_file__button {
+  margin-top: 4px;
+}
+.widget_addlayer_p {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.widget_addlayer__error {
+  color: red;
+  font-weight: bold;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: -ms-fit-content;
+  width: -o-fit-content;
+  width: fit-content;
+}
+
+.widget_addlayer_tabcontent__div {
+  padding: 0px 12px 12px 12px;
+}
+
+.widget_addlayer_results__div {
+  margin: 0px 12px 6px 12px;
+  overflow: auto;
+  padding: 1px;
+  border-collapse: separate;
+  border-spacing: 0px 6px;
+  outline: 1px solid #d2d2d2;
+}
+
+.widget_addlayer_results_layer__div {
+  display: table-row;
+}
+.widget_addlayer_results_layer__label {
+  display: table-cell;
+  padding-left: 4px;
+  width: 100%;
+}
+.widget_addlayer_results_button_wrapper__div {
+  display: table-cell;
+}
+.widget_addlayer_results_button__div {
+  display: flex;
+  margin-left: 6px;
+}
+.widget_addlayer_results__button {
+  margin: 3px;
+  outline: 1px solid #d2d2d2;
+
+}
+
+.widget_addlayer_service__div {
+  display: flex;
+  align-items: flex-end;
+}
+.widget_addlayer_service_input__div {
+  display: table-cell;
+  margin-right: 2px;
+}
+.widget_addlayer_service__input {
+  width: 100%;
+}
+.widget_addlayer_service_button__div {
+  display: table-cell
+}
+.widget_addlayer_service_go__button {
+  min-height: 32px;
+  min-width: 32px;
+}
+
+.widget_addlayer_service_serviceInfo__div {
+  overflow: auto;
+}
+
+.widget_addlayer_visible__none {
+  display: none;
+}

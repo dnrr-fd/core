@@ -38,6 +38,15 @@ WidgetBarWidget = __decorate([
     subclass('WidgetBarClasses.WidgetBarWidget')
 ], WidgetBarWidget);
 export { WidgetBarWidget };
+let AddLayerWidget = class AddLayerWidget extends WidgetBarWidget {
+};
+__decorate([
+    property()
+], AddLayerWidget.prototype, "generateURL", void 0);
+AddLayerWidget = __decorate([
+    subclass('WidgetBarClasses.AddLayerWidget')
+], AddLayerWidget);
+export { AddLayerWidget };
 let BookmarksWidget = class BookmarksWidget extends WidgetBarWidget {
 };
 __decorate([

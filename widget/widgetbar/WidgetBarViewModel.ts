@@ -5,7 +5,7 @@ import esriConfig from "@arcgis/core/config.js";
 import Portal from "@arcgis/core/portal/Portal";
 import PortalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/PortalBasemapsSource";
 import WidgetBar, { widgetBarRootURL, widgetBarWidgetCloseFocusElement } from "./WidgetBar"
-import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings } from "../class/_WidgetBar";
+import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, AddLayerWidget } from "../class/_WidgetBar";
 import { BasemapGalleryWidget, MeasurementWidget, SketchWidget, PrintWidget, SupportWidget, Centroid, wbwObject } from "../class/_WidgetBar";
 import { LegendStyle } from "../class/_Legend";
 import { CookiesVM } from "../class/_Cookie";
@@ -29,11 +29,16 @@ import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Support from "../support/Support";
 import Button from "../button/Button";
 import MeasurementDNRR from "../measurement/Measurement";
+import AddLayer from "../addlayer/AddLayer"
 
 // Import local assets
 import * as legendT9n_en from '../legend/assets/t9n/en.json'
 import * as legendT9n_fr from '../legend/assets/t9n/fr.json'
 var legend_defaultT9n = legendT9n_en;
+
+import * as addLayerT9n_en from '../addlayer/assets/t9n/en.json'
+import * as addLayerT9n_fr from '../addlayer/assets/t9n/fr.json'
+var addLayer_defaultT9n = addLayerT9n_en;
 
 import * as bookmarksT9n_en from '../bookmarks/assets/t9n/en.json'
 import * as bookmarksT9n_fr from '../bookmarks/assets/t9n/fr.json'
@@ -83,6 +88,16 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                                 legendWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(legendWidget));
                                     // console.log("Legend widget added to array.");
+                                });
+                            }
+                        });
+                        break;
+                    case "ADDLAYER":
+                        await addAddLayer(widget as WidgetBarWidget, _mapView).then(addLayerWidget => {
+                            if (addLayerWidget) {
+                                addLayerWidget.when(() => {
+                                    widgetBarWidgets.push(new wbwObject(addLayerWidget));
+                                    // console.log("Bookmarks widget added to array.");
                                 });
                             }
                         });
@@ -214,6 +229,64 @@ async function addLegend(widget: WidgetBarWidget, _mapView: MapView): Promise<Ex
                 _legend_expand.when(() => {
                     console.log("Legend widget rendered.");
                     resolve(_legend_expand);
+                });
+            });
+        });
+    });
+}
+
+async function addAddLayer(widget: WidgetBarWidget, _mapView: MapView): Promise<Expand|null> {
+    return new Promise(resolve => {
+        var lang = getNormalizedLocale();
+
+        // Get the default asset from language.
+        addLayer_defaultT9n = (lang === 'fr' ? addLayerT9n_fr : addLayerT9n_en);
+
+        var configFile: string|null;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        } else {
+            configFile = null;
+        }
+        
+        returnConfig(configFile, null).then(config => {
+            var addLayerT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
+            var _addLayer = new AddLayer();
+            var _addLayer_expand = new Expand();
+            var _visible = getWidgetConfigKeyValue(config as AddLayerWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            var _expanded = getWidgetConfigKeyValue(config as AddLayerWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
+            var _group = getWidgetConfigKeyValue(config as AddLayerWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
+            var _generateURL = getWidgetConfigKeyValue(config as AddLayerWidget, "generateURL", "https://www.arcgis.com/sharing/rest/content/features/generate") as string;
+            var _label: string;
+
+            returnConfig(addLayerT9nPath, null).then(t9nResults => {
+                if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                    t9nResults = addLayer_defaultT9n;
+                }
+                _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Add Layer": "Ajouter une Couche") as string;
+            }).then(function (){
+                _addLayer.label = _label;
+                _addLayer.view = _mapView;
+                _addLayer.generateURL = _generateURL;
+    
+                _addLayer_expand.id = widget.id;
+                _addLayer_expand.view = _mapView
+                _addLayer_expand.visible = _visible
+                _addLayer_expand.content = _addLayer
+                _addLayer_expand.expanded = _expanded
+                _addLayer_expand.group = _group
+                _addLayer_expand.container = widget.id
+                _addLayer_expand.collapseIconClass = "esri-icon-up";
+                _addLayer_expand.expandIconClass = "esri-icon-plus-circled";
+    
+                _mapView.when(() => {
+                    _addLayer_expand.expandTooltip = `${_addLayer.label}`;
+                });
+
+                _addLayer_expand.when(() => {
+                    console.log("Add Layer widget rendered.");
+                    resolve(_addLayer_expand);
                 });
             });
         });

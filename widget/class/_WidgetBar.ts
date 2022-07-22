@@ -44,6 +44,15 @@ export class WidgetBarWidget extends Accessor {
 
 }
 
+@subclass('WidgetBarClasses.AddLayerWidget')
+export class AddLayerWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    generateURL!: string;
+}
+
 @subclass('WidgetBarClasses.BookmarksWidget')
 export class BookmarksWidget extends WidgetBarWidget {
     //----------------------------------

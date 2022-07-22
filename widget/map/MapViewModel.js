@@ -117,72 +117,69 @@ async function addSearch(widget, view) {
         var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         var _search = new Search();
         returnConfig(configFile, null).then(config => {
-            var searchConfigPath = widget.config ? widget.config : null;
             var searchT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
             var _visible;
             var _label;
             var _allPlaceholder;
             var searchConfig;
-            returnConfig(searchConfigPath, null).then(config => {
-                searchConfig = config;
-                returnConfig(searchT9nPath, null).then(t9nResults => {
-                    var _t9nResults;
-                    if (t9nResults === null) {
-                        console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
-                        _t9nResults = search_defaultT9n;
-                    }
-                    else {
-                        _t9nResults = t9nResults;
-                    }
-                    _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : searchConfig ? searchConfig.visible ? searchConfig.visible : true : true);
-                    _label = getWidgetLocaleConfigKeyValue(_t9nResults, "label", lang === "en" ? "Search" : "Rechercher");
-                    _allPlaceholder = getWidgetLocaleConfigKeyValue(_t9nResults, "allPlaceholder", lang === "en" ? "Search" : "Rechercher");
-                    _search.label = _label;
-                    _search.allPlaceholder = _allPlaceholder;
-                    _search.view = view;
-                    _search.visible = _visible;
-                    return _t9nResults.sources ? _t9nResults.sources : null;
-                }).then(searchSourcesT9n => {
-                    // Add any sources using sources and t9n
-                    var _sources = new Collection();
-                    if (searchConfig) {
-                        var sources = searchConfig.sources ? searchConfig.sources : null;
-                        sources?.forEach(source => {
-                            let _source = new LayerSearchSource();
-                            if (source.url) {
-                                let lyr = new FeatureLayer({
-                                    url: source.url
+            searchConfig = config;
+            returnConfig(searchT9nPath, null).then(t9nResults => {
+                var _t9nResults;
+                if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                    _t9nResults = search_defaultT9n;
+                }
+                else {
+                    _t9nResults = t9nResults;
+                }
+                _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : searchConfig ? searchConfig.visible ? searchConfig.visible : true : true);
+                _label = getWidgetLocaleConfigKeyValue(_t9nResults, "label", lang === "en" ? "Search" : "Rechercher");
+                _allPlaceholder = getWidgetLocaleConfigKeyValue(_t9nResults, "allPlaceholder", lang === "en" ? "Search" : "Rechercher");
+                _search.label = _label;
+                _search.allPlaceholder = _allPlaceholder;
+                _search.view = view;
+                _search.visible = _visible;
+                return _t9nResults.sources ? _t9nResults.sources : null;
+            }).then(searchSourcesT9n => {
+                // Add any sources using sources and t9n
+                var _sources = new Collection();
+                if (searchConfig) {
+                    var sources = searchConfig.sources ? searchConfig.sources : null;
+                    sources?.forEach(source => {
+                        let _source = new LayerSearchSource();
+                        if (source.url) {
+                            let lyr = new FeatureLayer({
+                                url: source.url
+                            });
+                            _source.searchFields = source.searchFields ? source.searchFields : [];
+                            _source.outFields = source.outFields ? source.outFields : ["*"];
+                            _source.exactMatch = source.exactMatch ? source.exactMatch : false;
+                            _source.maxResults = source.maxResults ? source.maxResults : 6;
+                            _source.maxSuggestions = source.maxSuggestions ? source.maxSuggestions : 6;
+                            if (searchSourcesT9n) {
+                                searchSourcesT9n.forEach(sourceT9n => {
+                                    if (sourceT9n.id.toLowerCase() === source.id.toLowerCase()) {
+                                        _source.name = sourceT9n.label ? sourceT9n.label : sourceT9n.id;
+                                        _source.placeholder = sourceT9n.placeholder ? sourceT9n.placeholder : sourceT9n.id;
+                                        _source.suggestionTemplate = sourceT9n.suggestionTemplate ? sourceT9n.suggestionTemplate : "";
+                                        lyr.popupTemplate = { title: sourceT9n.popuptemplatetitle };
+                                    }
                                 });
-                                _source.searchFields = source.searchFields ? source.searchFields : [];
-                                _source.outFields = source.outFields ? source.outFields : ["*"];
-                                _source.exactMatch = source.exactMatch ? source.exactMatch : false;
-                                _source.maxResults = source.maxResults ? source.maxResults : 6;
-                                _source.maxSuggestions = source.maxSuggestions ? source.maxSuggestions : 6;
-                                if (searchSourcesT9n) {
-                                    searchSourcesT9n.forEach(sourceT9n => {
-                                        if (sourceT9n.id.toLowerCase() === source.id.toLowerCase()) {
-                                            _source.name = sourceT9n.label ? sourceT9n.label : sourceT9n.id;
-                                            _source.placeholder = sourceT9n.placeholder ? sourceT9n.placeholder : sourceT9n.id;
-                                            _source.suggestionTemplate = sourceT9n.suggestionTemplate ? sourceT9n.suggestionTemplate : "";
-                                            lyr.popupTemplate = { title: sourceT9n.popuptemplatetitle };
-                                        }
-                                    });
-                                }
-                                _source.layer = lyr;
-                                _sources.push(_source);
                             }
-                        });
-                        _search.sources = _sources;
-                    }
-                    view.ui.add([
-                        {
-                            component: _search,
-                            position: _position,
-                            index: _index
+                            _source.layer = lyr;
+                            _sources.push(_source);
                         }
-                    ]);
-                    resolve(_search);
-                });
+                    });
+                    _search.sources = _sources;
+                }
+                view.ui.add([
+                    {
+                        component: _search,
+                        position: _position,
+                        index: _index
+                    }
+                ]);
+                resolve(_search);
             });
         });
     });
