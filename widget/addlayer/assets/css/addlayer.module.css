@@ -1,5 +1,6 @@
 .widget_addlayer {
   width: 260px;
+  padding-bottom: 8px;
   height: 100%;
 }
 
@@ -9,10 +10,10 @@
 
 .widget_addlayer_tab__button {
   float: left;
-  cursor: pointer;
-  padding: 14px 16px;
-  width: calc(50% - 4px);
-  margin: 2px;
+  padding: 14px 16px!important;
+  width: calc(50% - 4px)!important;
+  margin: 2px!important;
+  border: none;
 }
 
 .widget_addlayer_file_button__div {
@@ -92,7 +93,7 @@
   margin-left: 6px;
 }
 .widget_addlayer_results__button {
-  margin: 3px;
+  margin: 3px!important;
   outline: 1px solid #d2d2d2;
 
 }

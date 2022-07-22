@@ -225,6 +225,7 @@ async function addAddLayer(widget, _mapView) {
             var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : false);
             var _group = getWidgetConfigKeyValue(config, "group", widget.group ? widget.group : widgetBarGroup);
             var _generateURL = getWidgetConfigKeyValue(config, "generateURL", "https://www.arcgis.com/sharing/rest/content/features/generate");
+            var _rootFocusElement = getWidgetConfigKeyValue(config, "rootFocusElement", "mainID");
             var _label;
             returnConfig(addLayerT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
@@ -236,6 +237,7 @@ async function addAddLayer(widget, _mapView) {
                 _addLayer.label = _label;
                 _addLayer.view = _mapView;
                 _addLayer.generateURL = _generateURL;
+                _addLayer.rootFocusElement = _rootFocusElement;
                 _addLayer_expand.id = widget.id;
                 _addLayer_expand.view = _mapView;
                 _addLayer_expand.visible = _visible;

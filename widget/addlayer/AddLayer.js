@@ -9,7 +9,7 @@ import Field from "@arcgis/core/layers/support/Field";
 import esriRequest from "@arcgis/core/request";
 import esriConfig from "@arcgis/core/config";
 import * as intl from "@arcgis/core/intl";
-import { getWidgetTheme } from "@dnrr_fd/util/web";
+import { getWidgetTheme, getFocusableElements, ariaDisable } from "@dnrr_fd/util/web";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 // Import Assets
 import * as css from './assets/css/addlayer.module.css';
@@ -88,7 +88,7 @@ let AddLayer = class AddLayer extends Widget {
                 tsx("p", { class: css.default.widget_addlayer_p }, t9n.addFileSelectionText),
                 tsx("p", { class: css.default.widget_addlayer_p },
                     `${t9n.addFileTypeHelpText} `,
-                    tsx("a", { target: "_blank", href: "https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm", class: css_esri.esri_widget_anchor }, t9n.addFileTypeHelpLinkTitle)),
+                    tsx("a", { target: "_blank", rel: "noopener", href: "https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm", class: css_esri.esri_widget_anchor }, t9n.addFileTypeHelpLinkTitle)),
                 tsx("form", { id: elementIDs.addlayer_FileFormID, enctype: "multipart/form-data", method: "post" },
                     tsx("div", { class: css.default.widget_addlayer_file_button__div },
                         tsx("label", { for: elementIDs.addlayer_FileFileID, class: css.default.widget_addlayer_buttontitle__label }, t9n.addFileButtonSectionLabel),
@@ -111,7 +111,7 @@ let AddLayer = class AddLayer extends Widget {
                         tsx("label", { for: elementIDs.addlayer_ServiceInputID }, t9n.addServiceInputLabel),
                         tsx("input", { id: elementIDs.addlayer_ServiceInputID, class: this.classes(css_esri.esri_input, css.default.widget_addlayer_service__input), type: "text", title: t9n.addServiceInputLabel, ariaLabel: t9n.addServiceInputLabel, tabindex: "0" })),
                     tsx("div", { class: css.default.widget_addlayer_service_button__div },
-                        tsx("button", { id: elementIDs.addlayer_ServiceGoButtonID, class: this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled), title: t9n.addFileServiceGoLabel, ariaLabel: t9n.addFileServiceGoLabel, onclick: this._addFileServiceGoButton_click.bind(this), tabindex: "0" }, t9n.addFileServiceGoLabel))),
+                        tsx("button", { id: elementIDs.addlayer_ServiceGoButtonID, class: this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled), title: t9n.addFileServiceGoLabel, ariaLabel: t9n.addFileServiceGoLabel, "aria-disabled": 'true', onclick: this._addFileServiceGoButton_click.bind(this), tabindex: "0" }, t9n.addFileServiceGoLabel))),
                 tsx("div", { id: elementIDs.addlayer_ServiceInfoDivID, class: this.classes(css.default.widget_addlayer_service_serviceInfo__div, css.default.widget_addlayer_visible__none) },
                     tsx("p", { id: elementIDs.addlayer_ServiceInfoID, class: css.default.widget_addlayer_p }))),
             tsx("div", null,
@@ -125,12 +125,16 @@ let AddLayer = class AddLayer extends Widget {
         let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID);
         fileDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
         serviceDiv_node.classList.add(css.default.widget_addlayer_visible__none);
+        // Get focusable elements
+        getFocusableElements(document.getElementById(this.rootFocusElement));
     }
     _addServiceTab_click() {
         let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID);
         let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID);
         fileDiv_node.classList.add(css.default.widget_addlayer_visible__none);
         serviceDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
+        // Get focusable elements
+        getFocusableElements(document.getElementById(this.rootFocusElement));
     }
     _addFileButton_click(e) {
         let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
@@ -151,8 +155,14 @@ let AddLayer = class AddLayer extends Widget {
     }
     _addFileServiceGoButton_click(e) {
         let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
+        let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
         let urlValue = serviceInputText_node.value;
-        this.addURLServiceToMap(urlValue);
+        if (serviceGoButton_node.ariaDisabled === "true") {
+            e.preventDefault();
+        }
+        else {
+            this.addURLServiceToMap(urlValue);
+        }
     }
     //--------------------------------------------------------------------------
     //  Private Methods
@@ -211,10 +221,10 @@ let AddLayer = class AddLayer extends Widget {
             let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
             if (!isEnterPressed || !isSpacePressed || isTabPressed) {
                 if (serviceInput_node.value.length > 0) {
-                    serviceGoButton_node.classList.remove(css_esri.esri_button_disabled);
+                    ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], false);
                 }
                 else {
-                    serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+                    ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
                 }
             }
         });
@@ -244,7 +254,7 @@ let AddLayer = class AddLayer extends Widget {
         serviceInputText_node.value = "";
         serviceInfo_node.innerHTML = "";
         serviceInfoDiv_node.classList.add(css.default.widget_addlayer_visible__none);
-        serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+        ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
     }
     loadFile() {
         let fn = fileName_full.split(".");
@@ -387,7 +397,7 @@ let AddLayer = class AddLayer extends Widget {
                     serviceInfo_node.classList.add(css.default.widget_addlayer__error);
                     serviceInfo_node.innerHTML = response.message;
                     serviceInputText_node.value = "";
-                    serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+                    ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
                 }
             });
         }
@@ -396,7 +406,7 @@ let AddLayer = class AddLayer extends Widget {
             serviceInfo_node.classList.add(css.default.widget_addlayer__error);
             serviceInfo_node.innerHTML = `<b>${t9n.addServiceInvalidUrlLabel}</b> ${_urlValue}`;
             serviceInputText_node.value = "";
-            serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+            ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
         }
     }
     async urlToFeatureLayer(url) {
@@ -504,6 +514,9 @@ __decorate([
 __decorate([
     property()
 ], AddLayer.prototype, "generateURL", void 0);
+__decorate([
+    property()
+], AddLayer.prototype, "rootFocusElement", void 0);
 __decorate([
     property()
 ], AddLayer.prototype, "theme", void 0);

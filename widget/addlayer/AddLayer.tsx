@@ -10,7 +10,7 @@ import Layer from "@arcgis/core/layers/Layer";
 import esriRequest from "@arcgis/core/request"
 import esriConfig from "@arcgis/core/config"
 import * as intl from "@arcgis/core/intl";
-import { getWidgetTheme } from "@dnrr_fd/util/web";
+import { getWidgetTheme, getFocusableElements, ariaDisable } from "@dnrr_fd/util/web";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 
@@ -78,6 +78,7 @@ class URLServiceResult {
 interface AddLayerParams extends __esri.WidgetProperties {
   view: MapView;
   generateURL: string;
+  rootFocusElement: string;
 }
 
 @subclass("esri.widgets.addlayer")
@@ -95,6 +96,9 @@ class AddLayer extends Widget {
 
   @property()
   generateURL!: string;
+
+  @property()
+  rootFocusElement!: string;
 
   @property()
   theme!: 'light'|'dark';
@@ -139,7 +143,7 @@ class AddLayer extends Widget {
         <div id={elementIDs.addlayer_FileTabDivID} class={this.classes(css.default.widget_addlayer_tabcontent__div)}>
           <h3>{t9n.addFileHeaderLabel}</h3>
           <p class={css.default.widget_addlayer_p}>{t9n.addFileSelectionText}</p>
-          <p class={css.default.widget_addlayer_p}>{`${t9n.addFileTypeHelpText} `}<a target="_blank" href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" class={css_esri.esri_widget_anchor}>{t9n.addFileTypeHelpLinkTitle}</a></p>
+          <p class={css.default.widget_addlayer_p}>{`${t9n.addFileTypeHelpText} `}<a target="_blank" rel="noopener" href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" class={css_esri.esri_widget_anchor}>{t9n.addFileTypeHelpLinkTitle}</a></p>
           <form id={elementIDs.addlayer_FileFormID}
             enctype="multipart/form-data"
             method="post">
@@ -200,6 +204,7 @@ class AddLayer extends Widget {
                 class={this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled)}
                 title={t9n.addFileServiceGoLabel}
                 ariaLabel={t9n.addFileServiceGoLabel}
+                aria-disabled='true'
                 onclick={this._addFileServiceGoButton_click.bind(this)}
                 tabindex="0">{t9n.addFileServiceGoLabel}
               </button>
@@ -228,13 +233,21 @@ class AddLayer extends Widget {
     let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
     fileDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
     serviceDiv_node.classList.add(css.default.widget_addlayer_visible__none);
-  }
+  
+    // Get focusable elements
+    getFocusableElements(document.getElementById(this.rootFocusElement)!);
+
+}
 
   private _addServiceTab_click() {
     let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
     let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
     fileDiv_node.classList.add(css.default.widget_addlayer_visible__none);
     serviceDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
+
+    // Get focusable elements
+    getFocusableElements(document.getElementById(this.rootFocusElement)!);
+
   }
 
   private _addFileButton_click(e: MouseEvent) {
@@ -259,9 +272,14 @@ class AddLayer extends Widget {
 
   private _addFileServiceGoButton_click(e: MouseEvent) {
     let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
+    let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
     let urlValue = serviceInputText_node.value;
 
-    this.addURLServiceToMap(urlValue);
+    if (serviceGoButton_node.ariaDisabled === "true") {
+      e.preventDefault();
+    } else {
+      this.addURLServiceToMap(urlValue);
+    }
   }
 
   //--------------------------------------------------------------------------
@@ -327,9 +345,9 @@ class AddLayer extends Widget {
   
       if (!isEnterPressed || !isSpacePressed || isTabPressed) {
         if (serviceInput_node.value.length > 0) {
-          serviceGoButton_node.classList.remove(css_esri.esri_button_disabled);
+          ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], false);
         } else {
-          serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+          ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
         }
       }
     });
@@ -364,8 +382,8 @@ class AddLayer extends Widget {
     serviceInputText_node.value = "";
     serviceInfo_node.innerHTML = "";
     serviceInfoDiv_node.classList.add(css.default.widget_addlayer_visible__none);
-    serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
-}
+    ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
+  }
 
   private loadFile() {
     let fn = fileName_full.split(".");
@@ -525,7 +543,7 @@ class AddLayer extends Widget {
           serviceInfo_node.classList.add(css.default.widget_addlayer__error);
           serviceInfo_node.innerHTML = response.message;
           serviceInputText_node.value = "";
-          serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+          ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
         }
       });
     } else {
@@ -533,7 +551,7 @@ class AddLayer extends Widget {
       serviceInfo_node.classList.add(css.default.widget_addlayer__error);
       serviceInfo_node.innerHTML = `<b>${t9n.addServiceInvalidUrlLabel}</b> ${_urlValue}`;
       serviceInputText_node.value = "";
-      serviceGoButton_node.classList.add(css_esri.esri_button_disabled);
+      ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
     }
   }
 

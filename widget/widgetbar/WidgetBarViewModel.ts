@@ -10,7 +10,7 @@ import { BasemapGalleryWidget, MeasurementWidget, SketchWidget, PrintWidget, Sup
 import { LegendStyle } from "../class/_Legend";
 import { CookiesVM } from "../class/_Cookie";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
-import { getFocusableElements, returnConfig } from "@dnrr_fd/util";
+import { returnConfig } from "@dnrr_fd/util";
 
 import Expand from "@arcgis/core/widgets/Expand";
 import Legend from "@arcgis/core/widgets/Legend";
@@ -257,6 +257,7 @@ async function addAddLayer(widget: WidgetBarWidget, _mapView: MapView): Promise<
             var _expanded = getWidgetConfigKeyValue(config as AddLayerWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
             var _group = getWidgetConfigKeyValue(config as AddLayerWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
             var _generateURL = getWidgetConfigKeyValue(config as AddLayerWidget, "generateURL", "https://www.arcgis.com/sharing/rest/content/features/generate") as string;
+            var _rootFocusElement = getWidgetConfigKeyValue(config as AddLayerWidget, "rootFocusElement", "mainID") as string;
             var _label: string;
 
             returnConfig(addLayerT9nPath, null).then(t9nResults => {
@@ -269,6 +270,7 @@ async function addAddLayer(widget: WidgetBarWidget, _mapView: MapView): Promise<
                 _addLayer.label = _label;
                 _addLayer.view = _mapView;
                 _addLayer.generateURL = _generateURL;
+                _addLayer.rootFocusElement = _rootFocusElement;
     
                 _addLayer_expand.id = widget.id;
                 _addLayer_expand.view = _mapView
