@@ -159,9 +159,32 @@
   padding-right: 15px;
   width: 0px;
 }
+
+
 .widget_header_links_menu__button {
   z-index: 96!important;
   box-shadow: 0 1px 2px rgb(200 200 200 / 30%);
+}
+.widget_header_links_menu__button input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+.widget_header_links_menu__button input[type="checkbox"] + label {
+  font-family: 'CalciteWebCoreIcons'!important;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.widget_header_links_menu__button input[type="checkbox"] + label::before {
+  -webkit-transition: .1s ease-in-out;
+  -moz-transition: .1s ease-in-out;
+  -ms-transition: .1s ease-in-out;
+  -o-transition: .1s ease-in-out;
+  transition: .1s ease-in-out;
+  content: "\e601";
+}
+.widget_header_links_menu__button input[type="checkbox"]:checked + label::before {
+  content: "\e632";
 }
 
 
