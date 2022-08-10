@@ -165,28 +165,11 @@
   z-index: 96!important;
   box-shadow: 0 1px 2px rgb(200 200 200 / 30%);
 }
-.widget_header_links_menu__button input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-}
-.widget_header_links_menu__button input[type="checkbox"] + label {
-  font-family: 'CalciteWebCoreIcons'!important;
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-.widget_header_links_menu__button input[type="checkbox"] + label::before {
-  -webkit-transition: .1s ease-in-out;
-  -moz-transition: .1s ease-in-out;
-  -ms-transition: .1s ease-in-out;
-  -o-transition: .1s ease-in-out;
-  transition: .1s ease-in-out;
-  content: "\e601";
-}
-.widget_header_links_menu__button input[type="checkbox"]:checked + label::before {
-  content: "\e632";
-}
 
+
+.widget_header_sitemenu__ignore {
+  /* Identifier for QuerySelectorAll */
+}
 
 .widget_header_sitemenu {
   display: block;
@@ -197,12 +180,19 @@
   height: calc(100% - 75px);
   padding: 20px;
 }
+
+.widget_header_sitemenu__content {
+  position: absolute;
+}
+.widget_header_sitemenu_open__content {
+  right: 0px;
+}
+.widget_header_sitemenu_closed__content {
+  right: -100%;
+}
+
 .widget_header_sitemenu_box_shadow {
   box-shadow: 0px -2px 6px rgb(50 50 50 / 60%);
-}
-.widget_header_sitemenu__content {
-  right: 0px;
-  position: absolute;
 }
 .widget_header_sitemenu_fieldset {
   border: 0px;

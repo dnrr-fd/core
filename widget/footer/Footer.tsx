@@ -323,7 +323,7 @@ class Footer extends Widget {
           footerIcon_node.classList.add(css_esri.esri_collapse_icon);
           isExpanded = true;
           // elementIDs.sitemenuID is actually off page.
-          getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
+          getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources)`);
         }
         else {
           footerButton_node.title = t9n.button.label;

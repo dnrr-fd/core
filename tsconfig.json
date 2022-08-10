@@ -17,5 +17,5 @@
     "suppressImplicitAnyIndexErrors": true,
     "target": "ES2020"
   },
-  "include": ["./"]
+  "include": ["./widget"]
 }

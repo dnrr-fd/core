@@ -103,11 +103,11 @@
   -ms-transition: .1s ease-in-out;
   -o-transition: .1s ease-in-out;
   transition: .1s ease-in-out;
-  content: '';
+  content: '\e600';
 }
 .widget_cookies_all_switch__toggle input[type="checkbox"]:checked + label::before {
   left: 50%;
-  content: '';
+  content: '\e605';
 }
 .widget_cookies_all_switch__toggle input[type="checkbox"]:focus-visible + label {
   outline: -webkit-focus-ring-color auto 1px;

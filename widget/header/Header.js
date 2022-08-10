@@ -37,8 +37,6 @@ const elementIDs = {
     header_linksID: "header_linksID",
     header_sitemenuID: "header_sitemenuID",
     header_sitemenu_buttonID: "header_sitemenu_buttonID",
-    header_sitemenu_buttonInputID: "header_sitemenu_buttonInputID",
-    header_sitemenu_buttonInputLabelID: "header_sitemenu_buttonInputLabelID",
     header_sitemenu_iconID: "header_sitemenu_iconID",
     sitemenuID: "sitemenuID",
     sitemenuModalID: "sitemenuModalID",
@@ -100,8 +98,9 @@ let Header = class Header extends Widget {
         // Watch for changes
         this.watch("theme", function (theme_new, theme_old, propertyName, target) {
             css_theme = (theme_new === 'dark' ? css_dark : css_light);
-            // // Keep the sitemenu open
-            // self.toggleSiteMenu(false);
+            // Close the Site Menu
+            self.toggleSiteMenu(true);
+            _expanded = false;
             // console.log(`Watch: Theme is now ${theme_new}`);
         });
         this.watch("logo", function (logo_new) {
@@ -134,9 +133,10 @@ let Header = class Header extends Widget {
                     tsx("div", null,
                         tsx("div", { id: elementIDs.header_linksID, class: css_theme.default.widget_header_links }, _links),
                         tsx("div", { class: css_theme.default.widget_header_menu },
-                            tsx("div", { id: elementIDs.header_sitemenuID, class: this.classes(css_esri.esri_widget, css_esri.esri_widget_button, css_theme.default.widget_header_links_menu__button) },
-                                tsx("input", { id: elementIDs.header_sitemenu_buttonInputID, type: 'checkbox', class: css_esri.esri_widget_button, checked: "false", tabindex: "0", onchange: this._siteMenuButton_change.bind(this) }),
-                                tsx("label", { id: elementIDs.header_sitemenu_buttonInputLabelID, for: elementIDs.header_sitemenu_buttonInputID, "aria-label": t9n.sitemenu.label, title: t9n.sitemenu.label })))))),
+                            tsx("div", { id: elementIDs.header_sitemenuID, class: this.classes(css_esri.esri_widget, css_theme.default.widget_header_links_menu__button) },
+                                tsx("div", { id: elementIDs.header_sitemenu_buttonID, class: css_esri.esri_widget_button, role: "button", "aria-label": t9n.sitemenu.collapse, title: t9n.sitemenu.collapse, tabindex: "0", onclick: this._siteMenuButton_click.bind(this), onkeypress: this._siteMenuButton_keypress.bind(this) },
+                                    tsx("span", { id: elementIDs.header_sitemenu_iconID, class: this.classes(css_esri.esri_icon_drag_horizontal, css_esri.esri_expand_icon_expanded), "aria-hidden": "true" }),
+                                    tsx("span", { class: css_esri.esri_icon_font_fallback_text }, t9n.sitemenu.collapse))))))),
             tsx("div", { class: css_theme.default.widget_header_bg_bg1 }),
             tsx("div", { class: css_theme.default.widget_header_bg_bg2 }),
             tsx("div", { class: css_theme.default.widget_header_bg_bg3 }),
@@ -148,44 +148,45 @@ let Header = class Header extends Widget {
                     tsx("div", { id: elementIDs.sitemenu_languagesID, class: css_theme.default.widget_header_submenu_languages }, _menuLanguages),
                     tsx("div", { id: elementIDs.sitemenu_themesID, class: css_theme.default.widget_header_submenu_themes }, _menuThemes),
                     tsx("div", { id: elementIDs.sitemenu_signinID },
-                        tsx("a", { href: "#", id: elementIDs.sitemenu_signoutLinkID, class: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_link__enabled), title: t9n.sitemenu.menu.signout, tabindex: "0" }, t9n.sitemenu.menu.signout))))));
+                        tsx("a", { href: "#", id: elementIDs.sitemenu_signoutLinkID, class: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_link__enabled, css_theme.default.widget_header_sitemenu__ignore), title: t9n.sitemenu.menu.signout, tabindex: "0" }, t9n.sitemenu.menu.signout))))));
     }
     //--------------------------------------------------------------------------
     //  Private Methods
     //--------------------------------------------------------------------------
     setSiteMenu(expanded) {
-        var siteMenuButtonInput_node = document.getElementById(elementIDs.header_sitemenu_buttonInputID);
-        siteMenuButtonInput_node.checked = _expanded;
-        // var siteMenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
-        // var siteMenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
-        // var self = this;
-        // if (siteMenuButton_node && siteMenuModal_node) {
-        //   siteMenuButton_node.addEventListener('keydown', function (e) {
-        //     let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
-        //     if (!isEscapePressed) {
-        //         return;
-        //     } else {
-        //       if (_expanded === true) {
-        //         _expanded = self.toggleSiteMenu(true);
-        //           // console.log(`Element (${siteMenu_node.id}) is within viewport.`);
-        //       } else {
-        //         return;
-        //           // console.log(`Element (${siteMenu_node.id}) is NOT within viewport.`);
-        //       }
-        //     }
-        //   });
-        // }
-        // if (siteMenuModal_node){
-        //   siteMenuModal_node.addEventListener('keydown', function (e) {
-        //     let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
-        //     if (!isEscapePressed) {
-        //         return;
-        //     } else {
-        //       _expanded = self.toggleSiteMenu(true);
-        //     }
-        //   });
-        // }
-        // _expanded = this.toggleSiteMenu(expanded);
+        var siteMenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
+        var siteMenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
+        var self = this;
+        if (siteMenuButton_node && siteMenuModal_node) {
+            siteMenuButton_node.addEventListener('keydown', function (e) {
+                let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+                if (!isEscapePressed) {
+                    return;
+                }
+                else {
+                    if (_expanded === true) {
+                        _expanded = self.toggleSiteMenu(true);
+                        // console.log(`Element (${siteMenu_node.id}) is within viewport.`);
+                    }
+                    else {
+                        return;
+                        // console.log(`Element (${siteMenu_node.id}) is NOT within viewport.`);
+                    }
+                }
+            });
+        }
+        if (siteMenuModal_node) {
+            siteMenuModal_node.addEventListener('keydown', function (e) {
+                let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+                if (!isEscapePressed) {
+                    return;
+                }
+                else {
+                    _expanded = self.toggleSiteMenu(true);
+                }
+            });
+        }
+        _expanded = this.toggleSiteMenu(expanded);
     }
     _theme_change(themeID) {
         setStyleSheet(`https://js.arcgis.com/4.20/@arcgis/core/assets/esri/themes/${themeID}/main.css`, elementIDs.esriThemeID); // ESRI Themed CSS
@@ -228,9 +229,13 @@ let Header = class Header extends Widget {
         let postFix = "";
         if (menuLinkTag === true) {
             postFix = "_menu";
+            var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
+                tsx("a", { id: `${link.id}${postFix}`, class: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_sitemenu__ignore), href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
         }
-        var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
-            tsx("a", { id: `${link.id}${postFix}`, class: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
+        else {
+            var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
+                tsx("a", { id: `${link.id}${postFix}`, class: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
+        }
         return _links;
     }
     _modifyDOMLinks(linksArray, targetID, linkDivClass = null, menuLinkTag = false) {
@@ -258,7 +263,7 @@ let Header = class Header extends Widget {
     }
     _createReactThemeRBs(themesArray, defaultThemeID, themeDivClass = null) {
         var _themes = themesArray.map(theme => tsx("div", { class: themeDivClass },
-            tsx("input", { type: "radio", id: theme.id, checked: theme.id === defaultThemeID ? true : false, name: "set_theme", value: theme.id, title: theme.label, tabindex: "0", onchange: this._theme_change.bind(this, theme.id) }),
+            tsx("input", { type: "radio", id: theme.id, class: css_theme.default.widget_header_sitemenu__ignore, checked: theme.id === defaultThemeID ? true : false, name: "set_theme", value: theme.id, title: theme.label, tabindex: "0", onchange: this._theme_change.bind(this, theme.id) }),
             tsx("label", { id: `${theme.id}_label`, for: theme.id }, theme.label),
             tsx("br", null)));
         return (tsx("fieldset", { class: css_theme.default.widget_header_sitemenu_fieldset },
@@ -298,7 +303,7 @@ let Header = class Header extends Widget {
     }
     _createReactLanguageRBs(languagesArray, defaultLocaleID, localeDivClass = null) {
         var _languages = languagesArray.map(lang => tsx("div", { class: localeDivClass },
-            tsx("input", { type: "radio", id: lang.id, checked: lang.id === defaultLocaleID ? true : false, name: "set_language", value: lang.id, title: lang.label, tabindex: "0", onchange: this._setLocale.bind(this, lang.id) }),
+            tsx("input", { type: "radio", id: lang.id, class: css_theme.default.widget_header_sitemenu__ignore, checked: lang.id === defaultLocaleID ? true : false, name: "set_language", value: lang.id, title: lang.label, tabindex: "0", onchange: this._setLocale.bind(this, lang.id) }),
             tsx("label", { id: `${lang.id}_label`, for: lang.id }, lang.label),
             tsx("br", null)));
         return (tsx("fieldset", { class: css_theme.default.widget_header_sitemenu_fieldset },
@@ -349,15 +354,19 @@ let Header = class Header extends Widget {
     //--------------------------------------------------------------------------
     //  Private Event Methods
     //--------------------------------------------------------------------------
-    _siteMenuButton_change() {
-        var sitemenuButtonInput_node = document.getElementById(elementIDs.header_sitemenu_buttonInputID);
-        if (sitemenuButtonInput_node.checked) {
-            _expanded = this.toggleSiteMenu(false);
+    _siteMenuButton_click(e) {
+        e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
+        _expanded = this.toggleSiteMenu(_expanded);
+        // console.log(`Site Menu is ${_expanded}`);
+    }
+    _siteMenuButton_keypress(e) {
+        let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+        let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+        if (isEnterPressed || isSpacePressed) {
+            e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
+            _expanded = this.toggleSiteMenu(_expanded);
+            // console.log(`Site Menu is ${_expanded}`);
         }
-        else {
-            _expanded = this.toggleSiteMenu(true);
-        }
-        console.log(`Site Menu is ${_expanded}`);
     }
     //--------------------------------------------------------------------------
     //  Public Methods
@@ -366,60 +375,66 @@ let Header = class Header extends Widget {
         var isExpanded = false;
         var sitemenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
         var sitemenu_node = document.getElementById(elementIDs.sitemenuID);
-        var sitemenuButtonInputLabel_node = document.getElementById(elementIDs.header_sitemenu_buttonInputLabelID);
-        if (sitemenuButtonInputLabel_node) {
-            // var sitemenuIcon_node = document.getElementById(elementIDs.header_sitemenu_iconID)!;
+        var sitemenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
+        if (sitemenuButton_node) {
+            var sitemenuIcon_node = document.getElementById(elementIDs.header_sitemenu_iconID);
             var siteMenuWidth = sitemenu_node.clientWidth;
             if (typeof expanded === "object") {
-                sitemenuButtonInputLabel_node.title = t9n.sitemenu.label;
-                sitemenuButtonInputLabel_node.setAttribute('aria-label', t9n.sitemenu.label);
+                sitemenuButton_node.title = t9n.sitemenu.label;
+                sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.label);
                 sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_box_shadow);
-                sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth + 3}px, 0px);transform: -moz-translate(${siteMenuWidth + 3}px, 0px);transform: -ms-translate(${siteMenuWidth + 3}px, 0px);transform: -o-translate(${siteMenuWidth + 3}px, 0px);transform: translate(${siteMenuWidth + 3}px, 0px);`);
+                sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
+                sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
+                // sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth+3}px, 0px);transform: -moz-translate(${siteMenuWidth+3}px, 0px);transform: -ms-translate(${siteMenuWidth+3}px, 0px);transform: -o-translate(${siteMenuWidth+3}px, 0px);transform: translate(${siteMenuWidth+3}px, 0px);`);
                 sitemenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
-                // sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
-                // sitemenuIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
-                // sitemenuIcon_node.classList.remove(css_esri.esri_icon_collapse);
-                // sitemenuIcon_node.classList.remove(css_esri.esri_collapse_icon);
+                sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
+                sitemenuIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
+                sitemenuIcon_node.classList.remove(css_esri.esri_icon_collapse);
+                sitemenuIcon_node.classList.remove(css_esri.esri_collapse_icon);
                 if (this.afterMenuCloseFocusElement) {
                     if (typeof this.afterMenuCloseFocusElement === "string") {
-                        getFocusableElements(document.getElementById(this.afterMenuCloseFocusElement));
+                        getFocusableElements(document.getElementById(this.afterMenuCloseFocusElement), null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
                     }
                     else {
-                        getFocusableElements(this.afterMenuCloseFocusElement);
+                        getFocusableElements(this.afterMenuCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
                     }
                 }
             }
             else {
                 if (expanded === false) {
-                    sitemenuButtonInputLabel_node.title = t9n.sitemenu.collapse;
-                    sitemenuButtonInputLabel_node.setAttribute('aria-label', t9n.sitemenu.collapse);
+                    sitemenuButton_node.title = t9n.sitemenu.collapse;
+                    sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.collapse);
                     sitemenuModal_node.classList.remove(css_theme.default.widget_header_visible__hidden);
+                    // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
+                    // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
                     sitemenu_node.setAttribute('style', `transform: -webkit-translate(0px, 0px);transform: -moz-translate(0px, 0px);transform: -ms-translate(0px, 0px);transform: -o-translate(0px, 0px);transform: translate(0px, 0px);`);
                     sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_box_shadow);
-                    // sitemenuIcon_node.classList.remove(css_esri.esri_icon_drag_horizontal);
-                    // sitemenuIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
-                    // sitemenuIcon_node.classList.add(css_esri.esri_icon_collapse);
-                    // sitemenuIcon_node.classList.add(css_esri.esri_collapse_icon);
+                    sitemenuIcon_node.classList.remove(css_esri.esri_icon_drag_horizontal);
+                    sitemenuIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
+                    sitemenuIcon_node.classList.add(css_esri.esri_icon_collapse);
+                    sitemenuIcon_node.classList.add(css_esri.esri_collapse_icon);
                     isExpanded = true;
                     // elementIDs.sitemenuID is actually off page. Must include the DIV so it is easier for the user to hit <ESC> to close the menu.
-                    getFocusableElements(sitemenu_node, sitemenuButtonInputLabel_node, false, `#${elementIDs.sitemenuID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
+                    getFocusableElements(sitemenu_node, sitemenuButton_node, false, `#${elementIDs.sitemenuID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources)`);
                 }
                 else {
-                    sitemenuButtonInputLabel_node.title = t9n.sitemenu.label;
-                    sitemenuButtonInputLabel_node.setAttribute('aria-label', t9n.sitemenu.label);
+                    sitemenuButton_node.title = t9n.sitemenu.label;
+                    sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.label);
                     sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_box_shadow);
+                    // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_closed__content);
+                    // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_open__content);
                     sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth + 3}px, 0px);transform: -moz-translate(${siteMenuWidth + 3}px, 0px);transform: -ms-translate(${siteMenuWidth + 3}px, 0px);transform: -o-translate(${siteMenuWidth + 3}px, 0px);transform: translate(${siteMenuWidth + 3}px, 0px);`);
                     sitemenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
-                    // sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
-                    // sitemenuIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
-                    // sitemenuIcon_node.classList.remove(css_esri.esri_icon_collapse);
-                    // sitemenuIcon_node.classList.remove(css_esri.esri_collapse_icon);
+                    sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
+                    sitemenuIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
+                    sitemenuIcon_node.classList.remove(css_esri.esri_icon_collapse);
+                    sitemenuIcon_node.classList.remove(css_esri.esri_collapse_icon);
                     if (this.afterMenuCloseFocusElement) {
                         if (typeof this.afterMenuCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(this.afterMenuCloseFocusElement));
+                            getFocusableElements(document.getElementById(this.afterMenuCloseFocusElement), null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
                         }
                         else {
-                            getFocusableElements(this.afterMenuCloseFocusElement);
+                            getFocusableElements(this.afterMenuCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
                         }
                     }
                 }
