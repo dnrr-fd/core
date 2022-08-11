@@ -211,7 +211,7 @@ let Header = class Header extends Widget {
         _locale = this._getLocale();
     }
     _createReactLogo(logo, logoDivClass = null) {
-        return (tsx("a", { class: css_theme.default.widget_header_logo_a, href: logo.url, title: logo.title, target: logo.target },
+        return (tsx("a", { class: css_theme.default.widget_header_logo_a, href: logo.url, title: logo.title, tabindex: '0', target: logo.target },
             tsx("img", { class: css_theme.default.widget_header_logo_img, src: logo.src, alt: logo.alt })));
     }
     _modifyDOMLogo(logo, targetID, logoDivClass = null) {
@@ -383,9 +383,9 @@ let Header = class Header extends Widget {
                 sitemenuButton_node.title = t9n.sitemenu.label;
                 sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.label);
                 sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_box_shadow);
-                sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
-                sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
-                // sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth+3}px, 0px);transform: -moz-translate(${siteMenuWidth+3}px, 0px);transform: -ms-translate(${siteMenuWidth+3}px, 0px);transform: -o-translate(${siteMenuWidth+3}px, 0px);transform: translate(${siteMenuWidth+3}px, 0px);`);
+                // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
+                // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
+                sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth + 3}px, 0px);transform: -moz-translate(${siteMenuWidth + 3}px, 0px);transform: -ms-translate(${siteMenuWidth + 3}px, 0px);transform: -o-translate(${siteMenuWidth + 3}px, 0px);transform: translate(${siteMenuWidth + 3}px, 0px);`);
                 sitemenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
                 sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
                 sitemenuIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
@@ -415,7 +415,7 @@ let Header = class Header extends Widget {
                     sitemenuIcon_node.classList.add(css_esri.esri_collapse_icon);
                     isExpanded = true;
                     // elementIDs.sitemenuID is actually off page. Must include the DIV so it is easier for the user to hit <ESC> to close the menu.
-                    getFocusableElements(sitemenu_node, sitemenuButton_node, false, `#${elementIDs.sitemenuID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources)`);
+                    getFocusableElements(sitemenu_node, sitemenuButton_node, false, `#${elementIDs.sitemenuID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
                 }
                 else {
                     sitemenuButton_node.title = t9n.sitemenu.label;

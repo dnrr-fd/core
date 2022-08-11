@@ -161,13 +161,13 @@ class Footer extends Widget {
               <p>{this.title}</p>
             </div>
             <div id={elementIDs.footer_bodytextID} class={css_theme.default.widget_footer_bodytext}>
-              <p>{`${this.bodytext?.text? this.bodytext.text: t9n.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: t9n.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: t9n.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext} target='_top' tabindex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext}</a>}</p>
+              <p>{`${this.bodytext?.text? this.bodytext.text: t9n.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor, css_theme.default.widget_footer__ignore)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: t9n.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: t9n.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext} target='_top' tabindex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext}</a>}</p>
             </div>
             <div id={elementIDs.footer_linksID} class={this.classes(css_theme.default.widget_footer_links)}>
               {_links}
             </div>
             <div id={elementIDs.footer_copyrightID} class={this.classes(css_theme.default.widget_footer_copyright)}>
-              <a class={this.classes(css_theme.default.widget_footer_copyright__anchor)} href={this.copyright?.link.url? this.copyright.link.url: t9n.copyright.link.url} title={this.copyright?.link.title? this.copyright.link.title: t9n.copyright.link.title} target={this.copyright?.link.target? this.copyright.link.target: t9n.copyright.link.target}>{this.copyright?.link.title? this.copyright.link.title: t9n.copyright.link.title}</a>
+              <a class={this.classes(css_theme.default.widget_footer_copyright__anchor, css_theme.default.widget_footer__ignore)} href={this.copyright?.link.url? this.copyright.link.url: t9n.copyright.link.url} title={this.copyright?.link.title? this.copyright.link.title: t9n.copyright.link.title} target={this.copyright?.link.target? this.copyright.link.target: t9n.copyright.link.target}>{this.copyright?.link.title? this.copyright.link.title: t9n.copyright.link.title}</a>
             </div>
           </div>
           <div class={css_theme.default.widget_footer_bg_bg1}></div>
@@ -227,7 +227,7 @@ class Footer extends Widget {
       <div class={linkLineDivClass}>
         {links.map(link => 
           <div class={linkDivClass}>
-            <a id={link.id} class={anchorClass} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
+            <a id={link.id} class={this.classes(anchorClass, css_theme.default.widget_footer__ignore)} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
           </div>
         )}
       </div>
@@ -305,9 +305,9 @@ class Footer extends Widget {
         footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
         if (this.afterFooterCloseFocusElement) {
           if (typeof this.afterFooterCloseFocusElement === "string") {
-            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!);
+            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           } else {
-            getFocusableElements(this.afterFooterCloseFocusElement);
+            getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           }
         }
       } else {
@@ -322,8 +322,8 @@ class Footer extends Widget {
           footerIcon_node.classList.add(css_esri.esri_icon_collapse);
           footerIcon_node.classList.add(css_esri.esri_collapse_icon);
           isExpanded = true;
-          // elementIDs.sitemenuID is actually off page.
-          getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources)`);
+
+          getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
         }
         else {
           footerButton_node.title = t9n.button.label;
@@ -337,9 +337,9 @@ class Footer extends Widget {
           footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
           if (this.afterFooterCloseFocusElement) {
             if (typeof this.afterFooterCloseFocusElement === "string") {
-              getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!);
+              getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
             } else {
-              getFocusableElements(this.afterFooterCloseFocusElement);
+              getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
             }
           }
         }

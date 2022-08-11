@@ -171,13 +171,13 @@ class Cookies extends Widget {
           <div id={elementIDs.cookiesMain_contentID} class={this.classes(css_esri.esri_widget, cookiesMain_content_position, css.default.widget_cookies_main_content, css.default.widget_cookies_all_transition)}>
             <div class={css.default.widget_cookies_all_header}>
               <div class={css.default.widget_cookies_all_header__div}>
-                <div class={css.default.widget_cookies_all_header_heading__div}>
-                  <h1 role='heading' ariaLevel='1'>{t9n.title_mainDialog}</h1>
-                </div>
                 <div class={css.default.widget_cookies_all_header_close__div}>
                   <button id={elementIDs.cookiesMain_closeButtonID} class={this.classes(css_esri.esri_button_tertiary, css.default.widget_cookies_all_header_close__button)} ariaLabel={t9n.closeButtonLabel_mainDialog} title={t9n.closeButtonLabel_mainDialog} onclick={this._main_closeButton_click.bind(this)} tabindex="0">
                     <span id={elementIDs.cookiesMain_closeSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
+                </div>
+                <div class={css.default.widget_cookies_all_header_heading__div}>
+                  <h1 role='heading' ariaLevel='1'>{t9n.title_mainDialog}</h1>
                 </div>
               </div>
             </div>
@@ -207,15 +207,15 @@ class Cookies extends Widget {
           <div id={elementIDs.cookiesSettings_contentID} class={this.classes(css_esri.esri_widget, css.default.widget_cookies_settings_content, css.default.widget_cookies_settings_content)}>
             <div class={css.default.widget_cookies_all_header}>
               <div class={css.default.widget_cookies_all_header__div}>
-                <div class={css.default.widget_cookies_all_header_heading__div}>
-                  <h1 role='heading' ariaLevel='1'>
-                    {t9n.header_settingsDialog}
-                  </h1>
-                </div>
                 <div class={css.default.widget_cookies_all_header_close__div}>
                   <button id={elementIDs.cookiesSettings_closeButtonID} class={this.classes(css_esri.esri_button_tertiary, css.default.widget_cookies_all_header_close__button)} ariaLabel={t9n.closeButtonLabel_settingsDialog} title={t9n.closeButtonLabel_settingsDialog} onclick={this._settings_closeButton_click.bind(this)} tabindex="0">
                     <span id={elementIDs.cookiesSettings_closeSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
+                </div>
+                <div class={css.default.widget_cookies_all_header_heading__div}>
+                  <h1 role='heading' ariaLevel='1'>
+                    {t9n.header_settingsDialog}
+                  </h1>
                 </div>
               </div>
             </div>
