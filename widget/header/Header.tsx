@@ -21,7 +21,7 @@ import * as t9n_fr from './assets/t9n/fr.json'
 var t9n = t9n_en;
 var css_theme = css_dark;
 var _locale: 'en'|'fr';
-var _expanded = false;
+var _isSiteMenuExpanded = false;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -85,6 +85,7 @@ interface HeaderParams extends __esri.WidgetProperties {
       themes?: Array<Theme>,
       showlocales?: boolean,
       languages?: Array<Locale>,
+      startExpanded?: boolean
   };
 }
 
@@ -167,10 +168,6 @@ class Header extends Widget {
     // Watch for changes
     this.watch("theme", function(theme_new: string, theme_old: string, propertyName: string, target: Accessor){
       css_theme = (theme_new === 'dark' ? css_dark : css_light);
-      
-      // Close the Site Menu
-      self.toggleSiteMenu(true);
-      _expanded = false;
       // console.log(`Watch: Theme is now ${theme_new}`);
     });
 
@@ -230,8 +227,8 @@ class Header extends Widget {
         <div class={css_theme.default.widget_header_bg_bg1}></div>
         <div class={css_theme.default.widget_header_bg_bg2}></div>
         <div class={css_theme.default.widget_header_bg_bg3}></div>
-        <div id={elementIDs.sitemenuModalID} class={this.classes(css_theme.default.widget_header_modal, css_theme.default.widget_header_visible__hidden)}>
-          <div id={elementIDs.sitemenuID} class={this.classes(css_esri.esri_widget_panel, css_theme.default.widget_header_sitemenu__content, css_theme.default.widget_header_sitemenu, css_esri.esri_widget, css_theme.default.widget_header_transition)} tabindex="0">
+        <div id={elementIDs.sitemenuModalID} class={this.classes(css_theme.default.widget_header_modal)}>
+          <div id={elementIDs.sitemenuID} class={this.classes(css_esri.esri_widget_panel, css_theme.default.widget_header_sitemenu__content, css_theme.default.widget_header_sitemenu, css_esri.esri_widget, css_theme.default.widget_header_transition, css_theme.default.widget_header_sitemenu__ignore)} tabindex="0">
             <div class={elementIDs.sitemenu_titleID}>
               <h3 aria-label={t9n.sitemenu.menu.title}>{t9n.sitemenu.menu.title}</h3>
             </div>
@@ -257,40 +254,49 @@ class Header extends Widget {
   //  Private Methods
   //--------------------------------------------------------------------------
 
-  private setSiteMenu(expanded: boolean|Element) {
+  private setSiteMenu(expandSiteMenu: boolean|Element) {
     var siteMenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
     var siteMenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
+    var esm = (typeof expandSiteMenu === "boolean"? expandSiteMenu: this.menu.startExpanded? this.menu.startExpanded: false);
     var self = this;
 
     if (siteMenuButton_node && siteMenuModal_node) {
-      siteMenuButton_node.addEventListener('keydown', function (e) {
-        let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
-
-        if (!isEscapePressed) {
-            return;
-        } else {
-          if (_expanded === true) {
-            _expanded = self.toggleSiteMenu(true);
-              // console.log(`Element (${siteMenu_node.id}) is within viewport.`);
-          } else {
-            return;
-              // console.log(`Element (${siteMenu_node.id}) is NOT within viewport.`);
+        if (typeof expandSiteMenu === "object") {
+          // This is the initial rendering setup.
+          if (this.menu.startExpanded === false) {
+            siteMenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
           }
-        }
-      });
-    }
 
-    if (siteMenuModal_node){
-      siteMenuModal_node.addEventListener('keydown', function (e) {
-        let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
-        if (!isEscapePressed) {
-            return;
-        } else {
-          _expanded = self.toggleSiteMenu(true);
+          // Set event listeners
+          siteMenuModal_node.addEventListener('keydown', function (e) {
+            let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+            if (!isEscapePressed) {
+                return;
+            } else {
+              _isSiteMenuExpanded = self.toggleSiteMenu(false);
+            }
+          });
+
+          siteMenuButton_node.addEventListener('keydown', function (e) {
+            let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+    
+            if (!isEscapePressed) {
+                return;
+            } else {
+              if (_isSiteMenuExpanded === true) {
+                _isSiteMenuExpanded = self.toggleSiteMenu(false);
+                  // console.log(`Element (${siteMenu_node.id}) is within viewport.`);
+              } else {
+                return;
+                  // console.log(`Element (${siteMenu_node.id}) is NOT within viewport.`);
+              }
+            }
+          });
         }
-      });
+
+        _isSiteMenuExpanded = this.toggleSiteMenu(esm);
+
     }
-    _expanded = this.toggleSiteMenu(expanded);
   }
 
   private _theme_change(themeID: 'light'|'dark') {
@@ -485,7 +491,7 @@ class Header extends Widget {
 
       if (_langRB && _langLabel) {
         _langRB.title = lang.label;
-        _langRB.checked = lang.id === defaultLocaleID ? true : false;
+        // _langRB.checked = lang.id === defaultLocaleID ? true : false;
         _langLabel.innerHTML = lang.label;
       }
     });
@@ -508,8 +514,9 @@ class Header extends Widget {
 
   private _siteMenuButton_click(e: MouseEvent) {
     e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
-    _expanded = this.toggleSiteMenu(_expanded);
-    // console.log(`Site Menu is ${_expanded}`);
+    let esm = (_isSiteMenuExpanded === true? false: true)
+    _isSiteMenuExpanded = this.toggleSiteMenu(esm);
+    console.log(`Site Menu is ${_isSiteMenuExpanded}`);
   }
 
   private _siteMenuButton_keypress(e: KeyboardEvent) {
@@ -518,8 +525,9 @@ class Header extends Widget {
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
-      _expanded = this.toggleSiteMenu(_expanded);
-      // console.log(`Site Menu is ${_expanded}`);
+      let esm = (_isSiteMenuExpanded === true? false: true)
+      _isSiteMenuExpanded = this.toggleSiteMenu(esm);
+      console.log(`Site Menu is ${_isSiteMenuExpanded}`);
     }
   }
 
@@ -527,7 +535,7 @@ class Header extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
 
-  toggleSiteMenu(expanded: boolean|Element) {
+  toggleSiteMenu(_expandSiteMenu: boolean) {
     var isExpanded = false;
     var sitemenuModal_node = document.getElementById(elementIDs.sitemenuModalID)!;
     var sitemenu_node = document.getElementById(elementIDs.sitemenuID)!;
@@ -537,12 +545,28 @@ class Header extends Widget {
       var sitemenuIcon_node = document.getElementById(elementIDs.header_sitemenu_iconID)!;
       var siteMenuWidth = sitemenu_node.clientWidth as number;
 
-      if (typeof expanded === "object") {
+      if (_expandSiteMenu === true) {
+        sitemenuButton_node.title = t9n.sitemenu.collapse;
+        sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.collapse);
+        sitemenuModal_node.classList.remove(css_theme.default.widget_header_visible__hidden);
+        // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
+        // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
+        sitemenu_node.setAttribute('style', `transform: -webkit-translate(0px, 0px);transform: -moz-translate(0px, 0px);transform: -ms-translate(0px, 0px);transform: -o-translate(0px, 0px);transform: translate(0px, 0px);`);
+        sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_box_shadow);
+        sitemenuIcon_node.classList.remove(css_esri.esri_icon_drag_horizontal);
+        sitemenuIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
+        sitemenuIcon_node.classList.add(css_esri.esri_icon_collapse);
+        sitemenuIcon_node.classList.add(css_esri.esri_collapse_icon);
+        isExpanded = true;
+        // elementIDs.sitemenuID is actually off page. Must include the DIV so it is easier for the user to hit <ESC> to close the menu.
+        getFocusableElements(sitemenu_node, sitemenuButton_node, false, `#${elementIDs.sitemenuID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
+      }
+      else {
         sitemenuButton_node.title = t9n.sitemenu.label;
         sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.label);
         sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_box_shadow);
-        // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
-        // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
+        // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_closed__content);
+        // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_open__content);
         sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth+3}px, 0px);transform: -moz-translate(${siteMenuWidth+3}px, 0px);transform: -ms-translate(${siteMenuWidth+3}px, 0px);transform: -o-translate(${siteMenuWidth+3}px, 0px);transform: translate(${siteMenuWidth+3}px, 0px);`);
         sitemenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
         sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
@@ -554,43 +578,6 @@ class Header extends Widget {
             getFocusableElements(document.getElementById(this.afterMenuCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
           } else {
             getFocusableElements(this.afterMenuCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
-          }
-        }
-      } else {
-        if (expanded === false) {
-          sitemenuButton_node.title = t9n.sitemenu.collapse;
-          sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.collapse);
-          sitemenuModal_node.classList.remove(css_theme.default.widget_header_visible__hidden);
-          // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
-          // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
-          sitemenu_node.setAttribute('style', `transform: -webkit-translate(0px, 0px);transform: -moz-translate(0px, 0px);transform: -ms-translate(0px, 0px);transform: -o-translate(0px, 0px);transform: translate(0px, 0px);`);
-          sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_box_shadow);
-          sitemenuIcon_node.classList.remove(css_esri.esri_icon_drag_horizontal);
-          sitemenuIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
-          sitemenuIcon_node.classList.add(css_esri.esri_icon_collapse);
-          sitemenuIcon_node.classList.add(css_esri.esri_collapse_icon);
-          isExpanded = true;
-          // elementIDs.sitemenuID is actually off page. Must include the DIV so it is easier for the user to hit <ESC> to close the menu.
-          getFocusableElements(sitemenu_node, sitemenuButton_node, false, `#${elementIDs.sitemenuID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
-        }
-        else {
-          sitemenuButton_node.title = t9n.sitemenu.label;
-          sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.label);
-          sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_box_shadow);
-          // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_closed__content);
-          // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_open__content);
-          sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth+3}px, 0px);transform: -moz-translate(${siteMenuWidth+3}px, 0px);transform: -ms-translate(${siteMenuWidth+3}px, 0px);transform: -o-translate(${siteMenuWidth+3}px, 0px);transform: translate(${siteMenuWidth+3}px, 0px);`);
-          sitemenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
-          sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);
-          sitemenuIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
-          sitemenuIcon_node.classList.remove(css_esri.esri_icon_collapse);
-          sitemenuIcon_node.classList.remove(css_esri.esri_collapse_icon);
-          if (this.afterMenuCloseFocusElement) {
-            if (typeof this.afterMenuCloseFocusElement === "string") {
-              getFocusableElements(document.getElementById(this.afterMenuCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
-            } else {
-              getFocusableElements(this.afterMenuCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_header_sitemenu__ignore}), [href]:not(.${css_theme.default.widget_header_sitemenu__ignore}), input:not(.${css_theme.default.widget_header_sitemenu__ignore}), select:not(.${css_theme.default.widget_header_sitemenu__ignore}), textarea:not(.${css_theme.default.widget_header_sitemenu__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_header_sitemenu__ignore}):not(.esri-attribution__sources)`);
-            }
           }
         }
       }

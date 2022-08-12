@@ -71,6 +71,9 @@ export class Menu extends Accessor {
     languages!: Array<Locale>;
 
     @property()
+    startExpanded!: boolean;
+
+    @property()
     signoutlinkid?: string;
 }
 

@@ -4,7 +4,6 @@
   overflow: hidden;
   width: 100%;
   height: 75px;
-  padding: 4px 0px 4px 0px;
   z-index: 1;
 }
 .widget_header_modal {
@@ -36,6 +35,7 @@
 .widget_header_fg {
   position: relative;
   width: 100%;
+  height: 75px;
   display: table;
   z-index: 5;
 }
@@ -191,14 +191,13 @@
 
 .widget_header_sitemenu__content {
   position: absolute;
-}
-
-
-.widget_header_sitemenu_open__content {
   right: 0px;
 }
+.widget_header_sitemenu_open__content {
+  transform: translate(0px, 0px);
+}
 .widget_header_sitemenu_closed__content {
-  right: -100%;
+  transform: translate(calc(100% + 3px), 0px);
 }
 
 .widget_header_sitemenu_box_shadow {

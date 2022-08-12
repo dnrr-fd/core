@@ -1,6 +1,6 @@
 {
   "name": "@dnrr_fd/core",
-  "version": "1.3.7",
+  "version": "1.3.9",
   "description": "Core modules to use with JavaScript 4.x",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
