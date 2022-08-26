@@ -66,6 +66,9 @@ __decorate([
 ], Menu.prototype, "languages", void 0);
 __decorate([
     property()
+], Menu.prototype, "startExpanded", void 0);
+__decorate([
+    property()
 ], Menu.prototype, "signoutlinkid", void 0);
 Menu = __decorate([
     subclass('HeaderClasses.Menu')
