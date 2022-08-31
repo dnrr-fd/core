@@ -549,8 +549,6 @@ class Header extends Widget {
         sitemenuButton_node.title = t9n.sitemenu.collapse;
         sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.collapse);
         sitemenuModal_node.classList.remove(css_theme.default.widget_header_visible__hidden);
-        // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_closed__content);
-        // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_open__content);
         sitemenu_node.setAttribute('style', `transform: -webkit-translate(0px, 0px);transform: -moz-translate(0px, 0px);transform: -ms-translate(0px, 0px);transform: -o-translate(0px, 0px);transform: translate(0px, 0px);`);
         sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_box_shadow);
         sitemenuIcon_node.classList.remove(css_esri.esri_icon_drag_horizontal);
@@ -565,8 +563,6 @@ class Header extends Widget {
         sitemenuButton_node.title = t9n.sitemenu.label;
         sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.label);
         sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_box_shadow);
-        // sitemenu_node.classList.add(css_theme.default.widget_header_sitemenu_closed__content);
-        // sitemenu_node.classList.remove(css_theme.default.widget_header_sitemenu_open__content);
         sitemenu_node.setAttribute('style', `transform: -webkit-translate(${siteMenuWidth+3}px, 0px);transform: -moz-translate(${siteMenuWidth+3}px, 0px);transform: -ms-translate(${siteMenuWidth+3}px, 0px);transform: -o-translate(${siteMenuWidth+3}px, 0px);transform: translate(${siteMenuWidth+3}px, 0px);`);
         sitemenuModal_node.classList.add(css_theme.default.widget_header_visible__hidden);
         sitemenuIcon_node.classList.add(css_esri.esri_icon_drag_horizontal);

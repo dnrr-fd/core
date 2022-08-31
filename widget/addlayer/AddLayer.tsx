@@ -152,6 +152,8 @@ class AddLayer extends Widget {
 
     this.label = t9n.label;
     this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme) as 'light'|'dark';
+
+    var self = this;
   
     intl.onLocaleChange(function(locale) {
       t9n = (locale === 'en' ? t9n_en : t9n_fr);
@@ -258,7 +260,7 @@ class AddLayer extends Widget {
           
           <div>
             <div id={elementIDs.addlayer_ResultsDivID} class={this.classes(css.default.widget_addlayer_results__div, css.default.widget_addlayer_visible__none)}>
-              <div id={elementIDs.addlayer_ResultsEditDivID} class={this.classes(css_esri.esri_widget, css.default.widget_addlayer_results_edit__div, css.default.widget_addlayer_visible__none)}>
+              <div id={elementIDs.addlayer_ResultsEditDivID} class={this.classes(css_esri.esri_widget, css.default.widget_addlayer_results_edit__div, css.default.widget_addlayer__overmodal, css.default.widget_addlayer_visible__none)}>
                 <div class={css.default.widget_addlayer_results_edit_pickr__div}>
                   <p id={elementIDs.addlayer_ResultsEditErrorID} class={this.classes(css.default.widget_addlayer__error, css.default.widget_addlayer_visible__none)}></p>
                 </div>
@@ -492,16 +494,29 @@ class AddLayer extends Widget {
     let serviceInput_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
     let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
 
-    // Create the colour pickers for the edit layer button.
-    pickr_outline = this.createPickr(css_pickr.pickr_outline);
-    pickr_main = this.createPickr(css_pickr.pickr_main);
+    // Re-build the results layers if they exist.
+    let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
+    let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
+    let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
 
-    pickr_outline.on('save', function() {
-      pickr_outline.hide();
+    if (addedLayers && addedLayers.length > 0) {
+      addedLayers.map(lyr => {
+        this.createLayerResultsItem(this, lyr.layerID, lyr.layerName, resultsDiv_node, resultsEditDiv_node, modalDiv_node);
+      });
+    }
+
+    // Create the colour pickers for the edit layer button.
+    pickr_main = this.createPickr(css_pickr.pickr_main);
+    pickr_outline = this.createPickr(css_pickr.pickr_outline);
+
+    pickr_main.on('show', function() {
+      resultsEditDiv_node.classList.remove(css.default.widget_addlayer__overmodal);
+      resultsEditDiv_node.classList.add(css.default.widget_addlayer__undermodal);
     });
 
-    pickr_outline.on('cancel', function() {
-      pickr_outline.hide();
+    pickr_main.on('hide', function() {
+      resultsEditDiv_node.classList.add(css.default.widget_addlayer__overmodal);
+      resultsEditDiv_node.classList.remove(css.default.widget_addlayer__undermodal);
     });
 
     pickr_main.on('save', function() {
@@ -510,6 +525,24 @@ class AddLayer extends Widget {
 
     pickr_main.on('cancel', function() {
       pickr_main.hide();
+    });
+
+    pickr_outline.on('show', function() {
+      resultsEditDiv_node.classList.remove(css.default.widget_addlayer__overmodal);
+      resultsEditDiv_node.classList.add(css.default.widget_addlayer__undermodal);
+    });
+
+    pickr_outline.on('hide', function() {
+      resultsEditDiv_node.classList.add(css.default.widget_addlayer__overmodal);
+      resultsEditDiv_node.classList.remove(css.default.widget_addlayer__undermodal);
+    });
+
+    pickr_outline.on('save', function() {
+      pickr_outline.hide();
+    });
+
+    pickr_outline.on('cancel', function() {
+      pickr_outline.hide();
     });
 
     fileForm_node.addEventListener("change", (event) => {
@@ -574,6 +607,7 @@ class AddLayer extends Widget {
       el: `.${className}`,
       theme: 'nano',
       disabled: true,
+      appClass: css.default.widget_addlayer__colorpickr,
       i18n: {
         // Strings visible in the UI
         'ui:dialog': t9n.colorPickr_ui_dialog,
@@ -780,7 +814,7 @@ class AddLayer extends Widget {
     });
 
     // Turn on the results layer DIV and populate with the layer.
-    this.createLayerResultsItem(self, resultsDiv_node, resultsEditDiv_node, modalDiv_node);
+    this.createLayerResultsItem(self, layerID, layerName, resultsDiv_node, resultsEditDiv_node, modalDiv_node);
 
     // Reset the file input.
     this.removeFile();
@@ -815,7 +849,7 @@ class AddLayer extends Widget {
           serviceInfo_node.innerHTML = "";
 
           // Turn on the results layer DIV and populate with the layer.
-          this.createLayerResultsItem(self, resultsDiv_node, resultsEditDiv_node, modalDiv_node);
+          this.createLayerResultsItem(self, layerID, layerName, resultsDiv_node, resultsEditDiv_node, modalDiv_node);
 
           // Reset the URL input.
           this.removeURL();
@@ -858,7 +892,7 @@ class AddLayer extends Widget {
     return new URLServiceResult(featureLayer, message);
   }
 
-  private createLayerResultsItem(self: this, resultsDiv_node: HTMLElement, resultsEditDiv_node: HTMLElement, modalDiv_node: HTMLElement) {
+  private createLayerResultsItem(self: this, _layerID: string, _layerName: string, resultsDiv_node: HTMLElement, resultsEditDiv_node: HTMLElement, modalDiv_node: HTMLElement) {
     var self = this;
     let layerDiv = document.createElement("div");
     let buttonWrapperDiv = document.createElement("div");
@@ -873,20 +907,20 @@ class AddLayer extends Widget {
 
     resultsDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
 
-    layerDiv.id = `${layerID}_divID`;
+    layerDiv.id = `${_layerID}_divID`;
     layerDiv.classList.add(css.default.widget_addlayer_results_layer__div);
 
     buttonWrapperDiv.classList.add(css.default.widget_addlayer_results_button_wrapper__div);
     buttonDiv.classList.add(css.default.widget_addlayer_results_button__div);
 
-    layerLabel.id = `${layerID}_labelID`;
+    layerLabel.id = `${_layerID}_labelID`;
     layerLabel.classList.add(css.default.widget_addlayer_results_layer__label);
-    layerLabel.innerHTML = layerName;
-    layerLabel.title = layerName;
-    layerLabel.ariaLabel = layerName;
+    layerLabel.innerHTML = _layerName;
+    layerLabel.title = _layerName;
+    layerLabel.ariaLabel = _layerName;
 
     // Create the Edit button
-    layerEditButton.id = `${layerID}_editID`;
+    layerEditButton.id = `${_layerID}_editID`;
     layerEditButton.classList.add(css.default.widget_addlayer_results__button, css_esri.esri_widget_button, css_esri.esri_icon_edit);
     layerEditButton.tabIndex = 0;
     layerEditButton.title = t9n.resultsEditButtonLabel;
@@ -963,7 +997,7 @@ class AddLayer extends Widget {
     });
 
     // Create the Zoom button
-    layerZoomButton.id = `${layerID}_zoomID`;
+    layerZoomButton.id = `${_layerID}_zoomID`;
     layerZoomButton.classList.add(css.default.widget_addlayer_results__button, css_esri.esri_widget_button, css_esri.esri_icon_zoom_in_magnifying_glass);
     layerZoomButton.tabIndex = 0;
     layerZoomButton.title = t9n.resultsZoomButtonLabel;
@@ -984,7 +1018,7 @@ class AddLayer extends Widget {
     });
 
     // Create the Remove button
-    layerRemoveButton.id = `${layerID}_removeID`;
+    layerRemoveButton.id = `${_layerID}_removeID`;
     layerRemoveButton.classList.add(css.default.widget_addlayer_results__button, css_esri.esri_widget_button, css_esri.esri_icon_trash);
     layerRemoveButton.tabIndex = 0;
     layerRemoveButton.title = t9n.resultsRemoveButtonLabel;
