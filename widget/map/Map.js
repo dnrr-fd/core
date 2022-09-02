@@ -120,20 +120,22 @@ let Map = class Map extends Widget {
             var self = this;
             portal.authMode = "immediate";
             portal.load().then(() => {
-                const results = { name: portal.user.fullName, username: portal.user.username };
-                // console.log(results);
-                // Set up the sign-out link if the user wishes.
-                var _signoutElement;
-                if (this.signoutElement != null && typeof this.signoutElement != "undefined") {
-                    if (typeof this.signoutElement === "string") {
-                        _signoutElement = document.getElementById(this.signoutElement);
+                if (portal.user) {
+                    let results = { name: portal.user.fullName, username: portal.user.username };
+                    // console.log(results);
+                    // Set up the sign-out link if the user wishes.
+                    var _signoutElement;
+                    if (this.signoutElement != null && typeof this.signoutElement != "undefined") {
+                        if (typeof this.signoutElement === "string") {
+                            _signoutElement = document.getElementById(this.signoutElement);
+                        }
+                        else {
+                            _signoutElement = this.signoutElement;
+                        }
+                        _signoutElement.addEventListener("click", function () {
+                            self._handleSignOut();
+                        });
                     }
-                    else {
-                        _signoutElement = this.signoutElement;
-                    }
-                    _signoutElement.addEventListener("click", function () {
-                        self._handleSignOut();
-                    });
                 }
                 this._loadContent().then(results => {
                     if (results === false) {

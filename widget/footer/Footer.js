@@ -14,7 +14,7 @@ import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
 var css_theme = css_dark;
 var t9n = t9n_en;
-var _expanded = false;
+var _isFooterExpanded = false;
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_widget_button: 'esri-widget--button',
@@ -79,8 +79,8 @@ let Footer = class Footer extends Widget {
         });
     }
     render() {
-        return (tsx("div", { id: elementIDs.footerModalID, afterCreate: this.setFooter, bind: this },
-            tsx("div", { id: elementIDs.footerID, class: this.classes(css_theme.default.widget_footer, css_theme.default.widget_footer_transition, css_esri.esri_widget) },
+        return (tsx("div", { id: elementIDs.footerModalID, afterCreate: this.setFooter, bind: this, class: css_theme.default.widget_footer_modal },
+            tsx("div", { id: elementIDs.footerID, class: this.classes(css_theme.default.widget_footer, css_theme.default.widget_footer_transition, css_esri.esri_widget, css_theme.default.widget_footer_visibility__visible) },
                 tsx("div", { id: elementIDs.footer_buttonBarID, class: css_theme.default.widget_footer_button_bar },
                     tsx("div", { id: elementIDs.footer_buttonID, class: this.classes(css_theme.default.widget_footer_button, css_esri.esri_widget_button), role: "button", "aria-label": t9n.button.collapselabel, title: t9n.button.collapselabel, tabindex: '0', onclick: this._footerButton_click.bind(this), onkeypress: this._footerButton_keypress.bind(this) },
                         tsx("span", { id: elementIDs.footer_button_iconID, "aria-hidden": "true", class: this.classes(css_esri.esri_expand_icon_expanded, css_esri.esri_icon_expand, css_theme.default.widget_footer_transform_90_down) }),
@@ -107,40 +107,46 @@ let Footer = class Footer extends Widget {
     //--------------------------------------------------------------------------
     //  Private Methods
     //--------------------------------------------------------------------------
-    setFooter(expanded) {
+    setFooter(expandFooter) {
         var footerButton_node = document.getElementById(elementIDs.footer_buttonID);
         var footerModal_node = document.getElementById(elementIDs.footerModalID);
+        var ef = (typeof expandFooter === "boolean" ? expandFooter : this.startExpanded ? this.startExpanded : false);
         var self = this;
         if (footerButton_node && footerModal_node) {
-            footerButton_node.addEventListener('keydown', function (e) {
-                let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
-                if (!isEscapePressed) {
-                    return;
+            if (typeof expandFooter === "object") {
+                // This is the initial rendering setup.
+                if (this.startExpanded === false) {
+                    footerModal_node.classList.add(css_theme.default.widget_footer_visibility__hidden);
                 }
-                else {
-                    if (_expanded === true) {
-                        _expanded = self.toggleFooter(true);
-                        // console.log(`Element (${siteMenu_node.id}) is within viewport.`);
+                // Set event listeners
+                footerModal_node.addEventListener('keydown', function (e) {
+                    let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+                    if (!isEscapePressed) {
+                        return;
                     }
                     else {
-                        return;
-                        // console.log(`Element (${siteMenu_node.id}) is NOT within viewport.`);
+                        _isFooterExpanded = self.toggleFooter(false);
                     }
-                }
-            });
+                });
+                footerButton_node.addEventListener('keydown', function (e) {
+                    let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+                    if (!isEscapePressed) {
+                        return;
+                    }
+                    else {
+                        if (_isFooterExpanded === true) {
+                            _isFooterExpanded = self.toggleFooter(false);
+                            // console.log(`Element (${footer_node.id}) is within viewport.`);
+                        }
+                        else {
+                            return;
+                            // console.log(`Element (${footer_node.id}) is NOT within viewport.`);
+                        }
+                    }
+                });
+            }
+            _isFooterExpanded = this.toggleFooter(ef);
         }
-        if (footerModal_node) {
-            footerModal_node.addEventListener('keydown', function (e) {
-                let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
-                if (!isEscapePressed) {
-                    return;
-                }
-                else {
-                    _expanded = self.toggleFooter(true);
-                }
-            });
-        }
-        _expanded = this.toggleFooter(expanded);
     }
     _createReactLinks(linksArray, linkLineDivClass = null, linkDivClass = null, anchorClass = null) {
         var _links = linksArray.map(links => tsx("div", { class: linkLineDivClass }, links.map(link => tsx("div", { class: linkDivClass },
@@ -172,7 +178,8 @@ let Footer = class Footer extends Widget {
     //--------------------------------------------------------------------------
     _footerButton_click(e) {
         e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
-        _expanded = this.toggleFooter(_expanded);
+        let ef = (_isFooterExpanded === true ? false : true);
+        _isFooterExpanded = this.toggleFooter(ef);
         // console.log(`Footer is ${_expanded}`);
     }
     _footerButton_keypress(e) {
@@ -180,14 +187,15 @@ let Footer = class Footer extends Widget {
         let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
         if (isEnterPressed || isSpacePressed) {
             e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
-            _expanded = this.toggleFooter(_expanded);
+            let ef = (_isFooterExpanded === true ? false : true);
+            _isFooterExpanded = this.toggleFooter(ef);
             // console.log(`Footer is ${_expanded}`);
         }
     }
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
-    toggleFooter(expanded) {
+    toggleFooter(_expandFooter) {
         var isExpanded = false;
         var footerModal_node = document.getElementById(elementIDs.footerModalID);
         var footer_node = document.getElementById(elementIDs.footerID);
@@ -195,56 +203,35 @@ let Footer = class Footer extends Widget {
         if (footerButton_node) {
             var footerIcon_node = document.getElementById(elementIDs.footer_button_iconID);
             var footerHeight = footer_node.clientHeight;
-            if (typeof expanded === "object") {
+            if (_expandFooter === true) {
+                footerButton_node.title = t9n.button.collapselabel;
+                footerButton_node.setAttribute('aria-label', t9n.button.collapselabel);
+                footerModal_node.classList.remove(css_theme.default.widget_footer_visibility__hidden);
+                footer_node.setAttribute('style', `transform: -webkit-translate(0px, 0px);transform: -moz-translate(0px, 0px);transform: -ms-translate(0px, 0px);transform: -o-translate(0px, 0px);transform: translate(0px, 0px);`);
+                footer_node.classList.add(css_theme.default.widget_footer_box_shadow);
+                footerIcon_node.classList.remove(css_esri.esri_icon_expand);
+                footerIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
+                footerIcon_node.classList.add(css_esri.esri_icon_collapse);
+                footerIcon_node.classList.add(css_esri.esri_collapse_icon);
+                isExpanded = true;
+                getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
+            }
+            else {
                 footerButton_node.title = t9n.button.label;
                 footerButton_node.setAttribute('aria-label', t9n.button.label);
-                footer_node.setAttribute('style', `transform: translate(0px, ${footerHeight}px);`);
-                footerModal_node.classList.remove(css_theme.default.widget_footer_modal);
+                footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
+                footer_node.setAttribute('style', `transform: -webkit-translate(0px, ${footerHeight}px);transform: -moz-translate(0px, ${footerHeight}px);transform: -ms-translate(0px, ${footerHeight}px);transform: -o-translate(0px, ${footerHeight}px);transform: translate(0px, ${footerHeight}px);`);
+                footerModal_node.classList.add(css_theme.default.widget_footer_visibility__hidden);
                 footerIcon_node.classList.add(css_esri.esri_icon_expand);
                 footerIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
                 footerIcon_node.classList.remove(css_esri.esri_icon_collapse);
                 footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
-                footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
                 if (this.afterFooterCloseFocusElement) {
                     if (typeof this.afterFooterCloseFocusElement === "string") {
                         getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement), null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
                     }
                     else {
                         getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-                    }
-                }
-            }
-            else {
-                if (expanded === false) {
-                    footerButton_node.title = t9n.button.collapselabel;
-                    footerButton_node.setAttribute('aria-label', t9n.button.collapselabel);
-                    footer_node.setAttribute('style', `transform: translate(0px, 0px);`);
-                    footerModal_node.classList.add(css_theme.default.widget_footer_modal);
-                    footer_node.classList.add(css_theme.default.widget_footer_box_shadow);
-                    footerIcon_node.classList.remove(css_esri.esri_icon_expand);
-                    footerIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
-                    footerIcon_node.classList.add(css_esri.esri_icon_collapse);
-                    footerIcon_node.classList.add(css_esri.esri_collapse_icon);
-                    isExpanded = true;
-                    getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
-                }
-                else {
-                    footerButton_node.title = t9n.button.label;
-                    footerButton_node.setAttribute('aria-label', t9n.button.label);
-                    footer_node.setAttribute('style', `transform: translate(0px, ${footerHeight}px);`);
-                    footerModal_node.classList.remove(css_theme.default.widget_footer_modal);
-                    footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
-                    footerIcon_node.classList.add(css_esri.esri_icon_expand);
-                    footerIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
-                    footerIcon_node.classList.remove(css_esri.esri_icon_collapse);
-                    footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
-                    if (this.afterFooterCloseFocusElement) {
-                        if (typeof this.afterFooterCloseFocusElement === "string") {
-                            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement), null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-                        }
-                        else {
-                            getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-                        }
                     }
                 }
             }
@@ -273,6 +260,9 @@ __decorate([
 __decorate([
     property()
 ], Footer.prototype, "copyright", void 0);
+__decorate([
+    property()
+], Footer.prototype, "startExpanded", void 0);
 Footer = __decorate([
     subclass("dnrr.forestry.widgets.footer")
 ], Footer);

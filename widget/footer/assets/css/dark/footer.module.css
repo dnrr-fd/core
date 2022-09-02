@@ -9,11 +9,14 @@
 .widget_footer_box_shadow {
   box-shadow: 0px -2px 6px rgb(50 50 50 / 60%);
 }
-.widget_footer_visible__none {
+.widget_footer_display__none {
   display: none!important;
 }
-.widget_footer_visible__hidden {
+.widget_footer_visibility__hidden {
   visibility: hidden!important;
+}
+.widget_footer_visibility__visible {
+  visibility: visible;
 }
 .widget_footer_modal {
   position: fixed;

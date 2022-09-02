@@ -154,8 +154,8 @@ class Footer extends Widget {
 
   render() {
     return (
-      <div id={elementIDs.footerModalID} afterCreate={this.setFooter} bind={this}>
-        <div id={elementIDs.footerID} class={this.classes(css_theme.default.widget_footer, css_theme.default.widget_footer_transition, css_esri.esri_widget)}>
+      <div id={elementIDs.footerModalID} afterCreate={this.setFooter} bind={this} class={css_theme.default.widget_footer_modal}>
+        <div id={elementIDs.footerID} class={this.classes(css_theme.default.widget_footer, css_theme.default.widget_footer_transition, css_esri.esri_widget, css_theme.default.widget_footer_visibility__visible)}>
           <div id={elementIDs.footer_buttonBarID} class={css_theme.default.widget_footer_button_bar}>
             <div id={elementIDs.footer_buttonID} class={this.classes(css_theme.default.widget_footer_button, css_esri.esri_widget_button)} role="button" aria-label={t9n.button.collapselabel} title={t9n.button.collapselabel} tabindex='0' onclick={this._footerButton_click.bind(this)} onkeypress={this._footerButton_keypress.bind(this)}>
               <span id={elementIDs.footer_button_iconID} aria-hidden="true" class={this.classes(css_esri.esri_expand_icon_expanded, css_esri.esri_icon_expand, css_theme.default.widget_footer_transform_90_down)}></span>
@@ -202,7 +202,7 @@ class Footer extends Widget {
       if (typeof expandFooter === "object") {
         // This is the initial rendering setup.
         if (this.startExpanded === false) {
-          footerModal_node.classList.add(css_theme.default.widget_footer_visible__hidden);
+          footerModal_node.classList.add(css_theme.default.widget_footer_visibility__hidden);
         }
 
         // Set event listeners
@@ -312,7 +312,7 @@ class Footer extends Widget {
       if (_expandFooter === true) {
         footerButton_node.title = t9n.button.collapselabel;
         footerButton_node.setAttribute('aria-label', t9n.button.collapselabel);
-        footerModal_node.classList.remove(css_theme.default.widget_footer_visible__hidden);
+        footerModal_node.classList.remove(css_theme.default.widget_footer_visibility__hidden);
         footer_node.setAttribute('style', `transform: -webkit-translate(0px, 0px);transform: -moz-translate(0px, 0px);transform: -ms-translate(0px, 0px);transform: -o-translate(0px, 0px);transform: translate(0px, 0px);`);
         footer_node.classList.add(css_theme.default.widget_footer_box_shadow);
         footerIcon_node.classList.remove(css_esri.esri_icon_expand);
@@ -320,86 +320,27 @@ class Footer extends Widget {
         footerIcon_node.classList.add(css_esri.esri_icon_collapse);
         footerIcon_node.classList.add(css_esri.esri_collapse_icon);
         isExpanded = true;
-        // elementIDs.footerID is actually off page. Must include the DIV so it is easier for the user to hit <ESC> to close the menu.
-        getFocusableElements(footer_node, footerButton_node, false, `#${elementIDs.footerID}, button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
+        getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
       }
       else {
         footerButton_node.title = t9n.button.label;
         footerButton_node.setAttribute('aria-label', t9n.button.label);
         footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
         footer_node.setAttribute('style', `transform: -webkit-translate(0px, ${footerHeight}px);transform: -moz-translate(0px, ${footerHeight}px);transform: -ms-translate(0px, ${footerHeight}px);transform: -o-translate(0px, ${footerHeight}px);transform: translate(0px, ${footerHeight}px);`);
-        footerModal_node.classList.add(css_theme.default.widget_footer_visible__hidden);
+        footerModal_node.classList.add(css_theme.default.widget_footer_visibility__hidden);
         footerIcon_node.classList.add(css_esri.esri_icon_expand);
         footerIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
         footerIcon_node.classList.remove(css_esri.esri_icon_collapse);
         footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
         if (this.afterFooterCloseFocusElement) {
           if (typeof this.afterFooterCloseFocusElement === "string") {
-            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
+            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           } else {
-            getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
+            getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           }
         }
       }
     }
-
-    // if (footerButton_node) {
-    //   var footerIcon_node = document.getElementById(elementIDs.footer_button_iconID)!;
-    //   var footerHeight = footer_node.clientHeight as number;
-
-    //   if (typeof _expandFooter === "object") {
-    //     footerButton_node.title = t9n.button.label;
-    //     footerButton_node.setAttribute('aria-label', t9n.button.label);
-    //     footer_node.setAttribute('style', `transform: translate(0px, ${footerHeight}px);`);
-    //     footerModal_node.classList.remove(css_theme.default.widget_footer_modal);
-    //     footerIcon_node.classList.add(css_esri.esri_icon_expand);
-    //     footerIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
-    //     footerIcon_node.classList.remove(css_esri.esri_icon_collapse);
-    //     footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
-    //     footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
-    //     if (this.afterFooterCloseFocusElement) {
-    //       if (typeof this.afterFooterCloseFocusElement === "string") {
-    //         getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-    //       } else {
-    //         getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-    //       }
-    //     }
-    //   } else {
-    //     if (_expandFooter === false) {
-    //       footerButton_node.title = t9n.button.collapselabel;
-    //       footerButton_node.setAttribute('aria-label', t9n.button.collapselabel);
-    //       footer_node.setAttribute('style', `transform: translate(0px, 0px);`);
-    //       footerModal_node.classList.add(css_theme.default.widget_footer_modal);
-    //       footer_node.classList.add(css_theme.default.widget_footer_box_shadow);
-    //       footerIcon_node.classList.remove(css_esri.esri_icon_expand);
-    //       footerIcon_node.classList.remove(css_esri.esri_expand_icon_expanded);
-    //       footerIcon_node.classList.add(css_esri.esri_icon_collapse);
-    //       footerIcon_node.classList.add(css_esri.esri_collapse_icon);
-    //       isExpanded = true;
-
-    //       getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
-    //     }
-    //     else {
-    //       footerButton_node.title = t9n.button.label;
-    //       footerButton_node.setAttribute('aria-label', t9n.button.label);
-    //       footer_node.setAttribute('style', `transform: translate(0px, ${footerHeight}px);`);
-    //       footerModal_node.classList.remove(css_theme.default.widget_footer_modal);
-    //       footer_node.classList.remove(css_theme.default.widget_footer_box_shadow);
-    //       footerIcon_node.classList.add(css_esri.esri_icon_expand);
-    //       footerIcon_node.classList.add(css_esri.esri_expand_icon_expanded);
-    //       footerIcon_node.classList.remove(css_esri.esri_icon_collapse);
-    //       footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
-    //       if (this.afterFooterCloseFocusElement) {
-    //         if (typeof this.afterFooterCloseFocusElement === "string") {
-    //           getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-    //         } else {
-    //           getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-
     return isExpanded;  // Returns expanded state.
   }
 }

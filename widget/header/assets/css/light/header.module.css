@@ -40,11 +40,11 @@
   z-index: 5;
 }
 
-.widget_header_visible__none {
-  display: none!important;
+.widget_header_display__none {
+  display: none;
 }
-.widget_header_visible__hidden {
-  visibility: hidden!important;
+.widget_header_visibility__hidden {
+  visibility: hidden;
 }
 
 .widget_header_content {
