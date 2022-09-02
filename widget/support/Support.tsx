@@ -318,15 +318,15 @@ class Support extends Widget {
           <div id={elementIDs.supportContentID} class={this.classes(css_esri.esri_widget, css.default.widget_support_content)}>
             <div class={css.default.widget_support_header}>
               <div class={css.default.widget_support_header__div}>
-                <div class={css.default.widget_support_header_heading__div}>
-                  <h1 role='heading' ariaLevel='1'>
-                    {t9n.headerText}
-                  </h1>
-                </div>
                 <div class={css.default.widget_support_header_close__div}>
                   <button id={elementIDs.supportCloseButtonID} class={this.classes(css_esri.esri_button_tertiary, css.default.widget_support_header_close__button)} ariaLabel={t9n.closeButtonText} title={t9n.closeButtonText} onclick={this._closeButton_click.bind(this)} onkeypress={this._closeButton_keypress.bind(this)} tabindex="0">
                     <span id={elementIDs.supportCloseSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
+                </div>
+                <div class={css.default.widget_support_header_heading__div}>
+                  <h1 role='heading' ariaLevel='1'>
+                    {t9n.headerText}
+                  </h1>
                 </div>
               </div>
             </div>
