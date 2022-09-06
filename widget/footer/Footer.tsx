@@ -46,6 +46,7 @@ const elementIDs = {
 };
 
 var _links: tsx.JSX.Element;
+var _title: tsx.JSX.Element;
 
 interface FooterParams extends __esri.WidgetProperties {
   afterFooterCloseFocusElement?: string|HTMLElement;
@@ -132,6 +133,7 @@ class Footer extends Widget {
     css_theme = (this.theme === 'dark' ? css_dark : css_light);
 
     _links = this._createReactLinks(this.links, css_theme.default.widget_footer_links__linediv, css_theme.default.widget_footer_links__linkdiv, css_theme.default.widget_footer_links__anchor);
+    _title = this._createReactTitle(this.title);
 
     // Watch for changes
     intl.onLocaleChange(function(locale) {
@@ -148,6 +150,14 @@ class Footer extends Widget {
     this.watch("links", function(links_new: Array<Array<Link>>, links_old: Array<Array<Link>>){
       if (links_old) {
         self._modifyDOMLinks(links_new, elementIDs.footer_linksID);
+        self.toggleFooter(self.startExpanded, false);
+      }
+    });
+
+    this.watch("title", function(title_new: string, title_old: string){
+      if (title_old) {
+        self._modifyDOMTitle(title_new, elementIDs.footer_titleID);
+        self.toggleFooter(self.startExpanded, false);
       }
     });
   }
@@ -163,9 +173,7 @@ class Footer extends Widget {
             </div>
           </div>
           <div id={elementIDs.footer_foregroundID} class={css_theme.default.widget_footer_fg}>
-            <div id={elementIDs.footer_titleID} class={css_theme.default.widget_footer_title}>
-              <p>{this.title}</p>
-            </div>
+            {_title}
             <div id={elementIDs.footer_bodytextID} class={css_theme.default.widget_footer_bodytext}>
               <p>{`${this.bodytext?.text? this.bodytext.text: t9n.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor, css_theme.default.widget_footer__ignore)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: t9n.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: t9n.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext} target='_top' tabindex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext}</a>}</p>
             </div>
@@ -236,6 +244,24 @@ class Footer extends Widget {
     }
   }
 
+  private _createReactTitle(title: string) {
+    var _title =
+    <div id={elementIDs.footer_titleID} class={css_theme.default.widget_footer_title}>
+      <p>{title}</p>
+    </div>;
+
+    return _title;
+  }
+
+  private _modifyDOMTitle(title: string, targetID: string) {
+    let div_node = document.getElementById(targetID);
+    let _paragraphs = div_node?.getElementsByTagName('p') as HTMLCollectionOf<HTMLParagraphElement>;
+
+    if (_paragraphs) {
+      _paragraphs[0].innerHTML = title;;
+    }
+  }
+
   private _createReactLinks(linksArray: Array<Array<Link>>, linkLineDivClass=null as string|null, linkDivClass=null as string|null, anchorClass=null as string|null) {
     var _links = linksArray.map(links => 
       <div class={linkLineDivClass}>
@@ -299,7 +325,7 @@ class Footer extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
 
-  toggleFooter(_expandFooter: boolean) {
+  toggleFooter(_expandFooter: boolean, use_transition=true) {
     var isExpanded = false;
     var footerModal_node = document.getElementById(elementIDs.footerModalID)!;
     var footer_node = document.getElementById(elementIDs.footerID)!;
@@ -308,6 +334,11 @@ class Footer extends Widget {
     if (footerButton_node) {
       var footerIcon_node = document.getElementById(elementIDs.footer_button_iconID)!;
       var footerHeight = footer_node.clientHeight as number;
+
+      if (use_transition === false) {
+        footer_node.classList.remove(css_theme.default.widget_footer_transition);
+        footer_node.classList.add(css_theme.default.widget_footer_transition__none);
+      }
 
       if (_expandFooter === true) {
         footerButton_node.title = t9n.button.collapselabel;
@@ -339,6 +370,11 @@ class Footer extends Widget {
             getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           }
         }
+      }
+
+      if (use_transition === false) {
+        footer_node.classList.remove(css_theme.default.widget_footer_transition__none);
+        footer_node.classList.add(css_theme.default.widget_footer_transition);
       }
     }
     return isExpanded;  // Returns expanded state.
