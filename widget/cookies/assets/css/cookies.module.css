@@ -257,6 +257,10 @@
     height: 100%;
   }
   .widget_cookies_settings_subcontent {
+    max-height: -webkit-fit-content;
+    max-height: -moz-fit-content;
+    max-height: -ms-fit-content;
+    max-height: -o-fit-content;
     max-height: fit-content;
   }
 }

@@ -243,7 +243,7 @@ let Support = class Support extends Widget {
                     tsx("div", { class: css.default.widget_support_header },
                         tsx("div", { class: css.default.widget_support_header__div },
                             tsx("div", { class: css.default.widget_support_header_close__div },
-                                tsx("button", { id: elementIDs.supportCloseButtonID, class: this.classes(css_esri.esri_button_tertiary, css.default.widget_support_header_close__button), ariaLabel: t9n.closeButtonText, title: t9n.closeButtonText, onclick: this._closeButton_click.bind(this), onkeypress: this._closeButton_keypress.bind(this), tabindex: "0" },
+                                tsx("button", { id: elementIDs.supportCloseButtonID, type: "button", class: this.classes(css_esri.esri_button_tertiary, css.default.widget_support_header_close__button), ariaLabel: t9n.closeButtonText, title: t9n.closeButtonText, onclick: this._closeButton_click.bind(this), onkeypress: this._closeButton_keypress.bind(this), tabindex: "0" },
                                     tsx("span", { id: elementIDs.supportCloseSpanID, "aria-hidden": 'true', class: css_esri.esri_icon_close }))),
                             tsx("div", { class: css.default.widget_support_header_heading__div },
                                 tsx("h1", { role: 'heading', ariaLevel: '1' }, t9n.headerText)))),
@@ -278,9 +278,9 @@ let Support = class Support extends Widget {
                         tsx("div", { class: css.default.widget_support_buttons },
                             tsx("div", { class: css.default.widget_support_buttons__div },
                                 tsx("div", { class: css.default.widget_support_buttons_submit__div },
-                                    tsx("button", { id: elementIDs.supportSubmitButtonID, class: css_esri.esri_button, "aria-label": t9n.submitButtonText, title: t9n.submitButtonText, onclick: this._submitForm_click.bind(this), onkeypress: this._submitForm_keypress.bind(this), tabindex: "0" }, t9n.submitButtonText)),
+                                    tsx("button", { id: elementIDs.supportSubmitButtonID, type: "button", class: css_esri.esri_button, "aria-label": t9n.submitButtonText, title: t9n.submitButtonText, onclick: this._submitForm_click.bind(this), onkeypress: this._submitForm_keypress.bind(this), tabindex: "0" }, t9n.submitButtonText)),
                                 tsx("div", { class: css.default.widget_support_buttons_cancel__div },
-                                    tsx("button", { id: elementIDs.supportCancelButtonID, class: css_esri.esri_button, "aria-label": t9n.cancelButtonText, title: t9n.cancelButtonText, onclick: this._cancelButton_click.bind(this), onkeypress: this._cancelButton__keypress.bind(this), tabindex: "0" }, t9n.cancelButtonText)))))))));
+                                    tsx("button", { id: elementIDs.supportCancelButtonID, type: "button", class: css_esri.esri_button, "aria-label": t9n.cancelButtonText, title: t9n.cancelButtonText, onclick: this._cancelButton_click.bind(this), onkeypress: this._cancelButton__keypress.bind(this), tabindex: "0" }, t9n.cancelButtonText)))))))));
     }
 };
 __decorate([

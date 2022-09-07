@@ -57,11 +57,11 @@ let MeasurementDNRR = class MeasurementDNRR extends Widget {
     render() {
         return (tsx("div", { id: elementIDs.measurement_MainID, class: this.classes(css.default.widget_measurement, css_esri.esri_component, css_esri.esri_widget) },
             tsx("div", { class: css.default.widget_measurement_button__div },
-                tsx("button", { id: elementIDs.measurement_DistanceButtonID, class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_line), title: t9n.distanceButtonLabel, ariaLabel: t9n.distanceButtonLabel, onclick: this._measureDistance_click.bind(this), tabindex: "0" })),
+                tsx("button", { id: elementIDs.measurement_DistanceButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_line), title: t9n.distanceButtonLabel, ariaLabel: t9n.distanceButtonLabel, onclick: this._measureDistance_click.bind(this), tabindex: "0" })),
             tsx("div", { class: css.default.widget_measurement_button__div },
-                tsx("button", { id: elementIDs.measurement_AreaButtonID, class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_area), title: t9n.areaButtonLabel, ariaLabel: t9n.areaButtonLabel, onclick: this._measureArea_click.bind(this), tabindex: "1" })),
+                tsx("button", { id: elementIDs.measurement_AreaButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_area), title: t9n.areaButtonLabel, ariaLabel: t9n.areaButtonLabel, onclick: this._measureArea_click.bind(this), tabindex: "1" })),
             tsx("div", { class: css.default.widget_measurement_button__div },
-                tsx("button", { id: elementIDs.measurement_ClearButtonID, class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash), title: t9n.clearButtonLabel, ariaLabel: t9n.clearButtonLabel, onclick: this._clearMeasurements_click.bind(this), tabindex: "2" }))));
+                tsx("button", { id: elementIDs.measurement_ClearButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash), title: t9n.clearButtonLabel, ariaLabel: t9n.clearButtonLabel, onclick: this._clearMeasurements_click.bind(this), tabindex: "2" }))));
     }
     //--------------------------------------------------------------------------
     //  Event Methods

@@ -319,7 +319,7 @@ class Support extends Widget {
             <div class={css.default.widget_support_header}>
               <div class={css.default.widget_support_header__div}>
                 <div class={css.default.widget_support_header_close__div}>
-                  <button id={elementIDs.supportCloseButtonID} class={this.classes(css_esri.esri_button_tertiary, css.default.widget_support_header_close__button)} ariaLabel={t9n.closeButtonText} title={t9n.closeButtonText} onclick={this._closeButton_click.bind(this)} onkeypress={this._closeButton_keypress.bind(this)} tabindex="0">
+                  <button id={elementIDs.supportCloseButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_support_header_close__button)} ariaLabel={t9n.closeButtonText} title={t9n.closeButtonText} onclick={this._closeButton_click.bind(this)} onkeypress={this._closeButton_keypress.bind(this)} tabindex="0">
                     <span id={elementIDs.supportCloseSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
                 </div>
@@ -375,12 +375,12 @@ class Support extends Widget {
               <div class={css.default.widget_support_buttons}>
                 <div class={css.default.widget_support_buttons__div}>
                   <div class={css.default.widget_support_buttons_submit__div}>
-                    <button id={elementIDs.supportSubmitButtonID} class={css_esri.esri_button} aria-label={t9n.submitButtonText} title={t9n.submitButtonText} onclick={this._submitForm_click.bind(this)} onkeypress={this._submitForm_keypress.bind(this)} tabindex="0">
+                    <button id={elementIDs.supportSubmitButtonID} type="button" class={css_esri.esri_button} aria-label={t9n.submitButtonText} title={t9n.submitButtonText} onclick={this._submitForm_click.bind(this)} onkeypress={this._submitForm_keypress.bind(this)} tabindex="0">
                       {t9n.submitButtonText}
                     </button>
                   </div>
                   <div class={css.default.widget_support_buttons_cancel__div}>
-                    <button id={elementIDs.supportCancelButtonID} class={css_esri.esri_button} aria-label={t9n.cancelButtonText} title={t9n.cancelButtonText} onclick={this._cancelButton_click.bind(this)} onkeypress={this._cancelButton__keypress.bind(this)} tabindex="0">
+                    <button id={elementIDs.supportCancelButtonID} type="button" class={css_esri.esri_button} aria-label={t9n.cancelButtonText} title={t9n.cancelButtonText} onclick={this._cancelButton_click.bind(this)} onkeypress={this._cancelButton__keypress.bind(this)} tabindex="0">
                       {t9n.cancelButtonText}
                     </button>
                   </div>

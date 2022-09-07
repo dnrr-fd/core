@@ -167,6 +167,7 @@ class AddLayer extends Widget {
         <div id={elementIDs.addlayer_MainID} class={css.default.widget_addlayer} afterCreate={this.afterRenderActions} bind={this}>
           <div class={css.default.widget_addlayer_tab__div}>
             <button id={elementIDs.addlayer_FileTabID}
+              type="button"
               class={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
               title={t9n.addFileTabLabel}
               ariaLabel={t9n.addFileTabLabel}
@@ -174,6 +175,7 @@ class AddLayer extends Widget {
               tabindex="0"
             >{t9n.addFileTabLabel}</button>
             <button id={elementIDs.addlayer_ServiceTabID}
+              type="button"
               class={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
               title={t9n.addServiceTabLabel}
               ariaLabel={t9n.addServiceTabLabel}
@@ -193,6 +195,7 @@ class AddLayer extends Widget {
                 <input id={elementIDs.addlayer_FileFileID} class={css.default.widget_addlayer_visible__none} type="file" name="addlayer_file"/>
                 <span>
                   <button id={elementIDs.addlayer_FileButtonID}
+                    type="button"
                     class={this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button)}
                     title={t9n.addFileButtonLabel}
                     ariaLabel={t9n.addFileButtonLabel}
@@ -209,6 +212,7 @@ class AddLayer extends Widget {
                 </div>
                 <div class={css.default.widget_addlayer_file_uploadstatus_clear_button__div}>
                   <button id={elementIDs.addlayer_FileUpdateStatusClearID}
+                    type="button"
                     class={this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase)}
                     title={t9n.addFileUpdateStatusClearLabel}
                     ariaLabel={t9n.addFileUpdateStatusClearLabel}
@@ -242,6 +246,7 @@ class AddLayer extends Widget {
               </div>
               <div class={css.default.widget_addlayer_service_button__div}>
                 <button id={elementIDs.addlayer_ServiceGoButtonID}
+                  type="button"
                   class={this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled)}
                   title={t9n.addFileServiceGoLabel}
                   ariaLabel={t9n.addFileServiceGoLabel}
@@ -290,6 +295,7 @@ class AddLayer extends Widget {
                 </div>
                 <div class={css.default.widget_addlayer_results_edit_content__div}>
                   <button id={elementIDs.addlayer_ResultsEdit_SaveButtonID}
+                      type="button"
                       class={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
                       title={t9n.resultsEditSaveButton}
                       ariaLabel={t9n.resultsEditSaveButton}
@@ -297,6 +303,7 @@ class AddLayer extends Widget {
                       tabindex="0"
                   >{t9n.resultsEditSaveButton}</button>
                   <button id={elementIDs.addlayer_ResultsEdit_CancelButtonID}
+                      type="button"
                       class={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
                       title={t9n.resultsEditCancelButton}
                       ariaLabel={t9n.resultsEditCancelButton}

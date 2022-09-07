@@ -61,7 +61,7 @@ let Disclaimer = class Disclaimer extends Widget {
                         tsx("input", { id: elementIDs.disclaimerAgreementCheckboxID, type: 'checkbox', value: 'agree', class: css.default.widget_disclaimer_checkbox, ariaLabel: t9n.agreeText, title: t9n.agreeText, onclick: this._agreementCheckbox_click.bind(this) }),
                         tsx("label", { for: elementIDs.disclaimerAgreementCheckboxID, class: css.default.widget_disclaimer_checkbox__label }, t9n.agreeText)),
                     tsx("div", { class: css.default.widget_disclaimer_button__div },
-                        tsx("button", { id: elementIDs.disclaimerAgreementConfirmID, class: this.classes(css.default.widget_disclaimer_button__disabled, css_esri.esri_button, css_esri.esri_button_third, css_esri.esri_button_disabled), "aria-disabled": 'true', onclick: this._confirmButton_click.bind(this) }, t9n.confirmButtonText))))));
+                        tsx("button", { id: elementIDs.disclaimerAgreementConfirmID, type: "button", class: this.classes(css.default.widget_disclaimer_button__disabled, css_esri.esri_button, css_esri.esri_button_third, css_esri.esri_button_disabled), "aria-disabled": 'true', onclick: this._confirmButton_click.bind(this) }, t9n.confirmButtonText))))));
     }
     //--------------------------------------------------------------------------
     //  Private Methods

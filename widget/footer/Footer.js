@@ -40,6 +40,7 @@ const elementIDs = {
     footer_copyrightID: "footer_copyrightID",
 };
 var _links;
+var _title;
 let Footer = class Footer extends Widget {
     constructor(params) {
         super(params);
@@ -62,6 +63,7 @@ let Footer = class Footer extends Widget {
         this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme);
         css_theme = (this.theme === 'dark' ? css_dark : css_light);
         _links = this._createReactLinks(this.links, css_theme.default.widget_footer_links__linediv, css_theme.default.widget_footer_links__linkdiv, css_theme.default.widget_footer_links__anchor);
+        _title = this._createReactTitle(this.title);
         // Watch for changes
         intl.onLocaleChange(function (locale) {
             self.locale = locale;
@@ -75,6 +77,13 @@ let Footer = class Footer extends Widget {
         this.watch("links", function (links_new, links_old) {
             if (links_old) {
                 self._modifyDOMLinks(links_new, elementIDs.footer_linksID);
+                self.toggleFooter(self.startExpanded, false);
+            }
+        });
+        this.watch("title", function (title_new, title_old) {
+            if (title_old) {
+                self._modifyDOMTitle(title_new, elementIDs.footer_titleID);
+                self.toggleFooter(self.startExpanded, false);
             }
         });
     }
@@ -86,8 +95,7 @@ let Footer = class Footer extends Widget {
                         tsx("span", { id: elementIDs.footer_button_iconID, "aria-hidden": "true", class: this.classes(css_esri.esri_expand_icon_expanded, css_esri.esri_icon_expand, css_theme.default.widget_footer_transform_90_down) }),
                         tsx("span", { class: css_esri.esri_icon_font_fallback_text }, t9n.button.label))),
                 tsx("div", { id: elementIDs.footer_foregroundID, class: css_theme.default.widget_footer_fg },
-                    tsx("div", { id: elementIDs.footer_titleID, class: css_theme.default.widget_footer_title },
-                        tsx("p", null, this.title)),
+                    _title,
                     tsx("div", { id: elementIDs.footer_bodytextID, class: css_theme.default.widget_footer_bodytext },
                         tsx("p", null,
                             `${this.bodytext?.text ? this.bodytext.text : t9n.bodytext.text} `,
@@ -148,6 +156,19 @@ let Footer = class Footer extends Widget {
             _isFooterExpanded = this.toggleFooter(ef);
         }
     }
+    _createReactTitle(title) {
+        var _title = tsx("div", { id: elementIDs.footer_titleID, class: css_theme.default.widget_footer_title },
+            tsx("p", null, title));
+        return _title;
+    }
+    _modifyDOMTitle(title, targetID) {
+        let div_node = document.getElementById(targetID);
+        let _paragraphs = div_node?.getElementsByTagName('p');
+        if (_paragraphs) {
+            _paragraphs[0].innerHTML = title;
+            ;
+        }
+    }
     _createReactLinks(linksArray, linkLineDivClass = null, linkDivClass = null, anchorClass = null) {
         var _links = linksArray.map(links => tsx("div", { class: linkLineDivClass }, links.map(link => tsx("div", { class: linkDivClass },
             tsx("a", { id: link.id, class: this.classes(anchorClass, css_theme.default.widget_footer__ignore), href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)))));
@@ -195,7 +216,7 @@ let Footer = class Footer extends Widget {
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
-    toggleFooter(_expandFooter) {
+    toggleFooter(_expandFooter, use_transition = true) {
         var isExpanded = false;
         var footerModal_node = document.getElementById(elementIDs.footerModalID);
         var footer_node = document.getElementById(elementIDs.footerID);
@@ -203,6 +224,10 @@ let Footer = class Footer extends Widget {
         if (footerButton_node) {
             var footerIcon_node = document.getElementById(elementIDs.footer_button_iconID);
             var footerHeight = footer_node.clientHeight;
+            if (use_transition === false) {
+                footer_node.classList.remove(css_theme.default.widget_footer_transition);
+                footer_node.classList.add(css_theme.default.widget_footer_transition__none);
+            }
             if (_expandFooter === true) {
                 footerButton_node.title = t9n.button.collapselabel;
                 footerButton_node.setAttribute('aria-label', t9n.button.collapselabel);
@@ -234,6 +259,10 @@ let Footer = class Footer extends Widget {
                         getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
                     }
                 }
+            }
+            if (use_transition === false) {
+                footer_node.classList.remove(css_theme.default.widget_footer_transition__none);
+                footer_node.classList.add(css_theme.default.widget_footer_transition);
             }
         }
         return isExpanded; // Returns expanded state.

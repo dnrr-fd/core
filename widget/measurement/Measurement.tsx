@@ -97,6 +97,7 @@ class MeasurementDNRR extends Widget {
       <div id={elementIDs.measurement_MainID} class={this.classes(css.default.widget_measurement, css_esri.esri_component, css_esri.esri_widget)}>
         <div class={css.default.widget_measurement_button__div}>
           <button id={elementIDs.measurement_DistanceButtonID}
+            type="button"
             class={this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_line)}
             title={t9n.distanceButtonLabel}
             ariaLabel={t9n.distanceButtonLabel}
@@ -106,6 +107,7 @@ class MeasurementDNRR extends Widget {
         </div>
         <div class={css.default.widget_measurement_button__div}>
           <button id={elementIDs.measurement_AreaButtonID}
+            type="button"
             class={this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_area)}
             title={t9n.areaButtonLabel}
             ariaLabel={t9n.areaButtonLabel}
@@ -115,6 +117,7 @@ class MeasurementDNRR extends Widget {
         </div>
         <div class={css.default.widget_measurement_button__div}>
           <button id={elementIDs.measurement_ClearButtonID}
+            type="button"
             class={this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash)}
             title={t9n.clearButtonLabel}
             ariaLabel={t9n.clearButtonLabel}
