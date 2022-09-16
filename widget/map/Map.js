@@ -10,7 +10,6 @@ import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import identityManager from "@arcgis/core/identity/IdentityManager";
 import MapView from "@arcgis/core/views/MapView";
 import WebMap from "@arcgis/core/WebMap";
-import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import Color from "@arcgis/core/Color";
 import Popup from "@arcgis/core/widgets/Popup";
 import { getWidgetTheme } from '@dnrr_fd/util/web';
@@ -151,14 +150,11 @@ let Map = class Map extends Widget {
             var self = this;
             //var upper_height = document.body.clientHeight;
             var upper_height = 125;
-            var graphicsLayer = new GraphicsLayer();
-            this.graphicsLayer = graphicsLayer;
             // Add the map node content.
             const map = new WebMap({
                 portalItem: {
                     id: this.map.id
-                },
-                layers: [graphicsLayer]
+                }
             });
             _mapView.container = document.getElementById(elementIDs.mapContentID);
             _mapView.map = map;
@@ -232,9 +228,6 @@ __decorate([
 __decorate([
     property()
 ], Map.prototype, "rendered", void 0);
-__decorate([
-    property()
-], Map.prototype, "graphicsLayer", void 0);
 Map = __decorate([
     subclass("dnrr.forestry.widgets.map")
 ], Map);

@@ -9,7 +9,6 @@ import { createWidgetsForWidgetBar, removeWidgetsFromWidgetBar } from './WidgetB
 import { wbwObject, WidgetBarWidget } from '../class/_WidgetBar';
 import { getElementPosition, getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web'
 import { CookiesVM } from "../class/_Cookie";
-import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 
@@ -47,7 +46,6 @@ interface WidgetBarParams extends __esri.WidgetProperties {
   widgets?: Array<WidgetBarWidget>;
   localeList?: Array<string>;
   mapView: MapView;
-  graphicsLayer: GraphicsLayer;
   widgetBarRootURL: string;
   activeWidget?: string;
 }
@@ -70,9 +68,6 @@ class WidgetBar extends Widget {
 
   @property()
   mapView!: MapView;
-
-  @property()
-  graphicsLayer!: GraphicsLayer;
 
   @property()
   widgetBarRootURL!: string;
@@ -214,12 +209,6 @@ class WidgetBar extends Widget {
             if (wbObj.wbWidget instanceof Expand) {
               wbObj.wbWidget.watch("expanded", function(expanded_new: boolean, expanded_old: boolean){
                 wbObj.wbWidget.renderNow();
-                // if (expanded_new === true) {
-                //   console.log(`${wbObj.wbWidget.id.toUpperCase()} widget expanded`);
-                // } else {
-                //   console.log(`${wbObj.wbWidget.id.toUpperCase()} widget collapsed`);
-                // }
-
                 if (afterWidgetCloseFocusElement) {
                   if (typeof afterWidgetCloseFocusElement === "string") {
                     getFocusableElements(document.getElementById(afterWidgetCloseFocusElement)!);
@@ -229,35 +218,11 @@ class WidgetBar extends Widget {
                 }
               });
             }
-            // // Get focusable elements including widget.
-            // button_node.addEventListener('click', evt => {
-            //   this._setFocus(wbObj);
-            // });
-
-            // button_node.addEventListener('keypress', evt => {
-            //   let isEnterPressed = evt.key === 'Enter' || evt.keyCode === 13;
-            //   let isSpacePressed = evt.key === 'Space' || evt.keyCode === 32;
-          
-            //   if (isEnterPressed || isSpacePressed) {
-            //     this._setFocus(wbObj);
-            //   }
-            // });
           }
         }
       });
     }
   }
-
-  // private _setFocus(_wbObj: wbwObject) {
-  //   console.log(`${_wbObj.wbWidget.id.toUpperCase()} widget clicked`);
-  //   if (afterWidgetCloseFocusElement) {
-  //     if (typeof afterWidgetCloseFocusElement === "string") {
-  //       getFocusableElements(document.getElementById(afterWidgetCloseFocusElement)!);
-  //     } else {
-  //       getFocusableElements(afterWidgetCloseFocusElement);
-  //     }
-  //   }
-  // }
 
   //--------------------------------------------------------------------------
   //  Private Event Methods

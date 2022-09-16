@@ -5,6 +5,7 @@ import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Widget from "@arcgis/core/widgets/Widget";
 import Expand from "@arcgis/core/widgets/Expand";
 import Button from "../button/Button";
+import PortalItem from "@arcgis/core/portal/PortalItem";
 
 export class wbwObject {
     constructor(wbWidget: Expand|Button, fireEvent = true as boolean) {
@@ -75,6 +76,12 @@ export class BasemapGalleryWidget extends WidgetBarWidget {
     //----------------------------------
     @property()
     basemapSourcePortal!: string;
+
+    @property()
+    defaultThumbnail!: string;
+
+    @property()
+    basemaps!: Array<_Basemap>;
 }
 
 @subclass('WidgetBarClasses.MeasurementWidget')
@@ -140,7 +147,7 @@ export class _Bookmark extends Accessor {
     id!: string;
 
     @property()
-    label!: BookmarkLabel;
+    label!: _Title;
 
     @property()
     thumbnailURL!: string;
@@ -156,13 +163,56 @@ export class _Bookmark extends Accessor {
 
 }
 
-@subclass('WidgetBarClasses.BookmarkLabel')
-export class BookmarkLabel {
+@subclass('WidgetBarClasses._Basemap')
+export class _Basemap extends Accessor {
+    @property()
+    id!: string;
+
+    @property()
+    title!: _Title;
+
+    @property()
+    thumbnailURL!: string;
+
+    @property()
+    layers!: Array<_Layer>;
+
+    @property()
+    portalItem!: PortalItem;
+
+    @property()
+    spatialReference!: SpatialReference;
+}
+
+@subclass('WidgetBarClasses._Title')
+export class _Title {
     @property()
     en!: string;
 
     @property()
     fr!: string;
+
+}
+
+@subclass('WidgetBarClasses._Layer')
+export class _Layer {
+    @property()
+    id!: string;
+
+    @property()
+    title!: _Title;
+
+    @property()
+    isReference!: boolean;
+
+    @property()
+    opacity!: number;
+
+    @property()
+    visibility!: boolean;
+
+    @property()
+    url!: string;
 
 }
 

@@ -81,6 +81,12 @@ let MeasurementDNRR = class MeasurementDNRR extends Widget {
         areaButton_node.classList.add("active");
     }
     _clearMeasurements_click() {
+        this.clear();
+    }
+    //--------------------------------------------------------------------------
+    //  Private Methods
+    //--------------------------------------------------------------------------
+    clear() {
         let distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
         let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
         distanceButton_node.classList.remove("active");

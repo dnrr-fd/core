@@ -67,6 +67,12 @@ let BasemapGalleryWidget = class BasemapGalleryWidget extends WidgetBarWidget {
 __decorate([
     property()
 ], BasemapGalleryWidget.prototype, "basemapSourcePortal", void 0);
+__decorate([
+    property()
+], BasemapGalleryWidget.prototype, "defaultThumbnail", void 0);
+__decorate([
+    property()
+], BasemapGalleryWidget.prototype, "basemaps", void 0);
 BasemapGalleryWidget = __decorate([
     subclass('WidgetBarClasses.BasemapGalleryWidget')
 ], BasemapGalleryWidget);
@@ -152,18 +158,66 @@ _Bookmark = __decorate([
     subclass('WidgetBarClasses._Bookmark')
 ], _Bookmark);
 export { _Bookmark };
-let BookmarkLabel = class BookmarkLabel {
+let _Basemap = class _Basemap extends Accessor {
 };
 __decorate([
     property()
-], BookmarkLabel.prototype, "en", void 0);
+], _Basemap.prototype, "id", void 0);
 __decorate([
     property()
-], BookmarkLabel.prototype, "fr", void 0);
-BookmarkLabel = __decorate([
-    subclass('WidgetBarClasses.BookmarkLabel')
-], BookmarkLabel);
-export { BookmarkLabel };
+], _Basemap.prototype, "title", void 0);
+__decorate([
+    property()
+], _Basemap.prototype, "thumbnailURL", void 0);
+__decorate([
+    property()
+], _Basemap.prototype, "layers", void 0);
+__decorate([
+    property()
+], _Basemap.prototype, "portalItem", void 0);
+__decorate([
+    property()
+], _Basemap.prototype, "spatialReference", void 0);
+_Basemap = __decorate([
+    subclass('WidgetBarClasses._Basemap')
+], _Basemap);
+export { _Basemap };
+let _Title = class _Title {
+};
+__decorate([
+    property()
+], _Title.prototype, "en", void 0);
+__decorate([
+    property()
+], _Title.prototype, "fr", void 0);
+_Title = __decorate([
+    subclass('WidgetBarClasses._Title')
+], _Title);
+export { _Title };
+let _Layer = class _Layer {
+};
+__decorate([
+    property()
+], _Layer.prototype, "id", void 0);
+__decorate([
+    property()
+], _Layer.prototype, "title", void 0);
+__decorate([
+    property()
+], _Layer.prototype, "isReference", void 0);
+__decorate([
+    property()
+], _Layer.prototype, "opacity", void 0);
+__decorate([
+    property()
+], _Layer.prototype, "visibility", void 0);
+__decorate([
+    property()
+], _Layer.prototype, "url", void 0);
+_Layer = __decorate([
+    subclass('WidgetBarClasses._Layer')
+], _Layer);
+export { _Layer };
 let Centroid = class Centroid {
 };
 __decorate([

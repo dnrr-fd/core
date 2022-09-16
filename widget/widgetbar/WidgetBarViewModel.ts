@@ -5,8 +5,8 @@ import esriConfig from "@arcgis/core/config.js";
 import Portal from "@arcgis/core/portal/Portal";
 import PortalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/PortalBasemapsSource";
 import WidgetBar, { widgetBarRootURL, widgetBarWidgetCloseFocusElement } from "./WidgetBar"
-import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, AddLayerWidget } from "../class/_WidgetBar";
-import { BasemapGalleryWidget, MeasurementWidget, SketchWidget, PrintWidget, SupportWidget, Centroid, wbwObject } from "../class/_WidgetBar";
+import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, AddLayerWidget, _Layer } from "../class/_WidgetBar";
+import { BasemapGalleryWidget, _Basemap, MeasurementWidget, SketchWidget, PrintWidget, SupportWidget, Centroid, wbwObject } from "../class/_WidgetBar";
 import { LegendStyle } from "../class/_Legend";
 import { CookiesVM } from "../class/_Cookie";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
@@ -17,19 +17,26 @@ import Legend from "@arcgis/core/widgets/Legend";
 import BasemapGallery from "@arcgis/core/widgets/BasemapGallery";
 import Sketch from "@arcgis/core/widgets/Sketch";
 import Print from "@arcgis/core/widgets/Print";
-
+import PortalItem from "@arcgis/core/portal/PortalItem";
 import Bookmarks from "@arcgis/core/widgets/Bookmarks";
 import Collection from "@arcgis/core/core/Collection";
 import Bookmark from "@arcgis/core/webmap/Bookmark";
+import LocalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/LocalBasemapsSource";
+import Basemap from "@arcgis/core/Basemap";
 import Viewpoint from "@arcgis/core/Viewpoint";
 import Point from "@arcgis/core/geometry/Point";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Extent from "@arcgis/core/geometry/Extent";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
+import Layer from "@arcgis/core/layers/Layer";
+import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
+import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
+
 import Support from "../support/Support";
 import Button from "../button/Button";
 import MeasurementDNRR from "../measurement/Measurement";
 import AddLayer from "../addlayer/AddLayer"
+
 
 // Import local assets
 import * as legendT9n_en from '../legend/assets/t9n/en.json'
@@ -69,13 +76,13 @@ export var bookmarksWidget: Expand|null;
 var widgetBarWidgets = new Array<wbwObject>();
 var widgetsAssetsPath: string;
 var widgetBarGroup = "widget-bar-group"
+var dnrr_agol_portal = "https://nsdnr-forestry.maps.arcgis.com";
 
 export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<Array<wbwObject>|null> {
     var _mapView = widgetBar.mapView;
     var widgetBarWidgetArray = widgetBar.widgets;
     var _cookies = widgetBar.cookies;
     var _localeList = widgetBar.localeList;
-    var graphicsLayer= widgetBar.graphicsLayer;
 
     return new Promise(resolve => {
         widgetsAssetsPath = `${widgetBarRootURL}assets/widgets/`;
@@ -113,7 +120,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                         });
                         break;
                     case "BASEMAPGALLERY":
-                        await addBasemapGallery(widget as WidgetBarWidget, _mapView).then(basemapgalleryWidget => {
+                        await addBasemapGallery(widget as WidgetBarWidget, _mapView, _localeList).then(basemapgalleryWidget => {
                             if (basemapgalleryWidget) {
                                 basemapgalleryWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(basemapgalleryWidget));
@@ -123,7 +130,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                         });
                         break;
                     case "MEASUREMENT":
-                        await addMeasurement(widget as WidgetBarWidget, _mapView, graphicsLayer).then(measurementWidget => {
+                        await addMeasurement(widget as WidgetBarWidget, _mapView).then(measurementWidget => {
                             if (measurementWidget) {
                                 measurementWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(measurementWidget));
@@ -133,7 +140,7 @@ export async function createWidgetsForWidgetBar(widgetBar: WidgetBar): Promise<A
                         });
                         break;
                     case "SKETCH":
-                        await addSketch(widget as WidgetBarWidget, _mapView, graphicsLayer).then(sketchWidget => {
+                        await addSketch(widget as WidgetBarWidget, _mapView).then(sketchWidget => {
                             if (sketchWidget) {
                                 sketchWidget.when(() => {
                                     widgetBarWidgets.push(new wbwObject(sketchWidget));
@@ -347,7 +354,7 @@ async function addBookmarks(widget: WidgetBarWidget, _mapView: MapView, _cookies
     });
 }
 
-async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Promise<Expand|null> {
+async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _localeList: Array<string>): Promise<Expand|null> {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
 
@@ -361,13 +368,14 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
             configFile = null;
         }
         
-        returnConfig(configFile, null).then( config => {
+        returnConfig(configFile, null).then(config => {
             var basemapGalleryT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
             var _basemapGallery_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
             var _group = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
-            var _portal = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "basemapsourceportal", esriConfig.portalUrl) as string;
+            var _portal = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "basemapsourceportal", undefined) as string|undefined;
+            var _default_thumbnail = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "defaultThumbnail", undefined) as string|undefined;
             var _label: string;
 
             returnConfig(basemapGalleryT9nPath, null).then(t9nResults => {
@@ -376,17 +384,43 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
                     t9nResults = basemapGallery_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Basemap Gallery": "Bibliothèque de fonds de carte") as string;
-            }).then(function (){
+            }).then(async function (){
                 var _basemapGallery = new BasemapGallery({
                     view: _mapView,
-                    source: {
+                    label: _label
+                });
+
+                var _config = config  as BasemapGalleryWidget;
+
+                if (_config.basemaps) {
+                    let basemapArray = _config.basemaps as Array<_Basemap>;
+                    if (basemapArray.length > 0) {
+                        if (_portal) {
+                            var _portalbasemaps = createBasemapArray(basemapArray, _default_thumbnail);
+                            _basemapGallery.source = new PortalBasemapsSource({
+                                portal: new Portal({
+                                    url: _portal
+                                }),
+                                basemaps: _portalbasemaps
+                            });
+                        } else {
+                            var _basemaps = createBasemapArray(basemapArray, _default_thumbnail, false);
+                            _basemapGallery.source = new LocalBasemapsSource({
+                                basemaps: _basemaps
+                            });
+                        }
+                    }
+                } else {
+                    if (typeof _portal === "undefined") {
+                        _portal = dnrr_agol_portal;
+                    }
+                    _basemapGallery.source = new PortalBasemapsSource({
                         portal: new Portal({
                             url: _portal
                         })
-                    } as PortalBasemapsSource,
-                    label: _label
-                });
-    
+                    });
+                }
+
                 _basemapGallery_expand.id = widget.id;
                 _basemapGallery_expand.view = _mapView
                 _basemapGallery_expand.visible = _visible
@@ -397,12 +431,21 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
                 _basemapGallery_expand.collapseIconClass = "esri-icon-up";
     
                 _mapView.when(() => {
-                    //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
                 });
 
                 _basemapGallery_expand.when(() => {
                     console.log("BasemapGallery widget rendered.");
+                    console.log(`API Key: ${esriConfig.apiKey}`);
+                    // esriConfig.apiKey = "";
+                    // console.log(`API Key: ${esriConfig.apiKey}`);
+
+                    _basemapGallery.source.basemaps.forEach(basemap => {
+                        basemap.baseLayers.forEach(layer => {
+                            var lyr = layer as MapImageLayer;
+                            console.log(`Layer URL (${lyr.id}): ${lyr.url}`)
+                        });
+                    });
                     resolve(_basemapGallery_expand);
                 });
             });
@@ -410,7 +453,7 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView): Pr
     });
 }
 
-async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView, _graphicsLayer: GraphicsLayer): Promise<Expand|null> {
+async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView): Promise<Expand|null> {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
 
@@ -458,6 +501,12 @@ async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView, _graph
                 _measurement_expand.collapseIconClass = "esri-icon-up";
                 _measurement_expand.expandIconClass = "esri-icon-measure";
     
+                _measurement_expand.watch("expanded", function(measurementExpandedValue) {
+                    if (measurementExpandedValue === false) {
+                        _measurement.clear();
+                    }
+                });
+
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _measurement_expand.expandTooltip = `${_measurement.label}`;
@@ -472,7 +521,7 @@ async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView, _graph
     });
 }
 
-async function addSketch(widget: WidgetBarWidget, _mapView: MapView, _graphicsLayer: GraphicsLayer): Promise<Expand|null> {
+async function addSketch(widget: WidgetBarWidget, _mapView: MapView): Promise<Expand|null> {
     return new Promise(resolve => {
         var lang = getNormalizedLocale();
 
@@ -490,11 +539,13 @@ async function addSketch(widget: WidgetBarWidget, _mapView: MapView, _graphicsLa
             var sketchT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
             var _sketch = new Sketch();
             var _sketch_expand = new Expand();
+            var _graphicsLayer = new GraphicsLayer();
             var _visible = getWidgetConfigKeyValue(config as SketchWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as SketchWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
             var _group = getWidgetConfigKeyValue(config as SketchWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
             var _mode = getWidgetConfigKeyValue(config as SketchWidget, "mode", "update") as "update"|"single"|"continuous";
             var _label: string;
+            var _layerTitle: string;
 
             returnConfig(sketchT9nPath, null).then(t9nResults => {
                 if (t9nResults === null) {
@@ -502,8 +553,9 @@ async function addSketch(widget: WidgetBarWidget, _mapView: MapView, _graphicsLa
                     t9nResults = sketch_defaultT9n;
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Sketch": "Dessin") as string;
+                _layerTitle = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "layerTitle", lang==="en"? "Sketch Layer": "Couche de Dessin") as string;
             }).then(function (){
-
+                _graphicsLayer.title = _layerTitle;
                 _sketch.label = _label;
                 _sketch.view = _mapView;
                 _sketch.layer = _graphicsLayer;
@@ -517,12 +569,20 @@ async function addSketch(widget: WidgetBarWidget, _mapView: MapView, _graphicsLa
                 _sketch_expand.group = _group
                 _sketch_expand.container = widget.id
                 _sketch_expand.collapseIconClass = "esri-icon-up";
-    
+
+                _sketch_expand.watch("expanded", function(sketchExpandedValue) {
+                    if (sketchExpandedValue === true) {
+                        _mapView.map.add(_graphicsLayer);
+                    } else {
+                        _mapView.map.remove(_graphicsLayer);
+                    }
+                });
+
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
                     _sketch_expand.expandTooltip = `${_sketch.label}`;
                 });
-
+                
                 _sketch_expand.when(() => {
                     console.log("Sketch widget rendered.");
                     resolve(_sketch_expand);
@@ -695,13 +755,13 @@ function getWidgetLocaleConfigKeyValue(widgetLocale: WidgetBarWidgetLocale, conf
     return defaultValue;
 }
 
-async function createBookmarks(_config: BookmarksWidget, _view: MapView, _cookies: Array<CookiesVM>, _localeList: Array<string>, default_thumbnail: string) {
+async function createBookmarks(_config: BookmarksWidget, _view: MapView, _cookies: Array<CookiesVM>, _localeList: Array<string>, default_thumbnail: string): Promise<Bookmarks> {
     return new Promise(resolve => {
         var _editingEnabled = getWidgetConfigKeyValue(_config, "editingEnabled", true);
         var defaultCreateOptions = new DefaultCreateOptions();
         var screenshotSettings = new ScreenshotSettings();
         screenshotSettings.width = 100;
-        screenshotSettings.height = 100;
+        screenshotSettings.height = 62;
         defaultCreateOptions.takeScreenshot = true;
         defaultCreateOptions.captureViewpoint = true;
         defaultCreateOptions.screenshotSettings = screenshotSettings;
@@ -759,6 +819,85 @@ async function createBookmarks(_config: BookmarksWidget, _view: MapView, _cookie
             resolve(_bookmarks);
         });
     });
+}
+
+function createBasemapArray(basemapArray: Array<_Basemap>, default_thumbnail: string|undefined, isPortal=true as boolean): Collection<Basemap> {
+    var basemapResults = new Collection<Basemap>();
+    basemapArray.map (baseMap => {
+        var _basemap: Basemap;
+        var _title = baseMap.id? baseMap.id: "";
+        var lang = getNormalizedLocale();
+        if (lang in baseMap.title) {
+            _title = baseMap.title[lang];
+        }
+
+        var _portalItem = new PortalItem();
+        if (baseMap.portalItem) {
+            _portalItem = baseMap.portalItem;
+        }
+
+        var _spatialReference = new SpatialReference();
+        if (baseMap.spatialReference) {
+            _spatialReference = baseMap.spatialReference;
+        }
+
+        _basemap = new Basemap({
+            id: baseMap.id,
+            title: _title,
+            thumbnailUrl: baseMap.thumbnailURL ? baseMap.thumbnailURL : default_thumbnail,
+            spatialReference: _spatialReference? _spatialReference: undefined
+        });
+
+        if (baseMap.layers && baseMap.layers.length > 0) {
+            var _layers = new Collection<MapImageLayer>();
+            var _refLayers = new Collection<MapImageLayer>();
+
+            baseMap.layers.map(layer => {
+                if (layer.url && typeof layer.url === "string") {
+                    var lyr = getLayer(layer)
+                    if (lyr) {
+                        if (layer.isReference && layer.isReference === true) {
+                            _refLayers.add(lyr);
+                        } else {
+                            _layers.add(lyr);
+                        }
+                    }
+                }
+            });
+        
+            _basemap.baseLayers = _layers;
+            _basemap.referenceLayers = _refLayers;
+        };
+
+        if (isPortal === true) {
+            _basemap.portalItem = _portalItem;
+        }
+
+        basemapResults.add(_basemap);
+    });
+
+    return basemapResults;
+}
+
+function getLayer(_layer: _Layer): MapImageLayer {
+    var _title = _layer.id? _layer.id: "";
+    var lang = getNormalizedLocale();
+    if (lang in _layer.title) {
+        _title = _layer.title[lang];
+    }
+
+    var lyr = undefined;
+
+    lyr = new MapImageLayer({
+        id: _layer.id,
+        title: _title,
+        opacity: _layer.opacity,
+        visible: _layer.visibility,
+        url: _layer.url
+    });
+
+    // console.log(`Layer LoadError (${lyr.id}): ${lyr.loadError}`);
+    return lyr;
 }
 
 function convertJSONBookmarksToEsriBookmarks(_bookmarks_list: Array<_Bookmark>, _default_thumbnail: string) {
@@ -833,31 +972,30 @@ function convertEsriBookmarksToJSONBookmarks(bookmarkCollection: Collection<Book
             _thumbnailURL = bookmark.thumbnail.url? bookmark.thumbnail.url: "";
         }
 
-        if(bookmark.viewpoint.targetGeometry.spatialReference.isGeographic === true) {
-            if(bookmark.viewpoint.targetGeometry.type === "point") {
-                let _point = bookmark.viewpoint.targetGeometry as Point;
+        if(bookmark.viewpoint.targetGeometry.type === "point") {
+            let _point = bookmark.viewpoint.targetGeometry as Point;
+            if (_point.longitude) {
                 _centroid.x = _point.longitude;
                 _centroid.y = _point.latitude;
-            } else if (bookmark.viewpoint.targetGeometry.type === "polygon") {
-                let _poly = bookmark.viewpoint.targetGeometry as Polygon;
-                _centroid.x = _poly.centroid.longitude;
-                _centroid.y = _poly.centroid.latitude;
-            } else if (bookmark.viewpoint.targetGeometry.type === "extent") {
-                let _ext = bookmark.viewpoint.targetGeometry as Extent;
-                _centroid.x = _ext.center.longitude;
-                _centroid.y = _ext.center.latitude;
-            }
-        } else {
-            if(bookmark.viewpoint.targetGeometry.type === "point") {
-                let _point = bookmark.viewpoint.targetGeometry as Point;
+            } else {
                 _centroid.x = _point.x;
                 _centroid.y = _point.y;
-            } else if (bookmark.viewpoint.targetGeometry.type === "polygon"){
-                let _poly = bookmark.viewpoint.targetGeometry as Polygon;
+            }
+        } else if (bookmark.viewpoint.targetGeometry.type === "polygon") {
+            let _poly = bookmark.viewpoint.targetGeometry as Polygon;
+            if (_poly.centroid.longitude) {
+                _centroid.x = _poly.centroid.longitude;
+                _centroid.y = _poly.centroid.latitude;
+            } else {
                 _centroid.x = _poly.centroid.x;
                 _centroid.y = _poly.centroid.y;
-            } else if (bookmark.viewpoint.targetGeometry.type === "extent") {
-                let _ext = bookmark.viewpoint.targetGeometry as Extent;
+            }
+        } else if (bookmark.viewpoint.targetGeometry.type === "extent") {
+            let _ext = bookmark.viewpoint.targetGeometry as Extent;
+            if (_ext.center.longitude) {
+                _centroid.x = _ext.center.longitude;
+                _centroid.y = _ext.center.latitude;
+            } else {
                 _centroid.x = _ext.center.x;
                 _centroid.y = _ext.center.y;
             }

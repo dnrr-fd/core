@@ -9,7 +9,6 @@ import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import identityManager from "@arcgis/core/identity/IdentityManager";
 import MapView from "@arcgis/core/views/MapView";
 import WebMap from "@arcgis/core/WebMap";
-import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import Color from "@arcgis/core/Color";
 import Popup from "@arcgis/core/widgets/Popup";
 import { MapConfig } from '../class/_Map'
@@ -95,9 +94,6 @@ class Map extends Widget {
 
   @property()
   rendered!: boolean;
-
-  @property()
-  graphicsLayer!: GraphicsLayer;
  
   //--------------------------------------------------------------------------
   //  Public Methods
@@ -231,15 +227,11 @@ class Map extends Widget {
       //var upper_height = document.body.clientHeight;
       var upper_height = 125;
   
-      var graphicsLayer = new GraphicsLayer();
-      this.graphicsLayer = graphicsLayer;
-      
       // Add the map node content.
       const map = new WebMap({
           portalItem: {
               id: this.map.id
-          },
-          layers: [graphicsLayer]
+          }
       });
 
       _mapView.container = document.getElementById(elementIDs.mapContentID) as HTMLDivElement;

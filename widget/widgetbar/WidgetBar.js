@@ -122,11 +122,6 @@ let WidgetBar = class WidgetBar extends Widget {
                         if (wbObj.wbWidget instanceof Expand) {
                             wbObj.wbWidget.watch("expanded", function (expanded_new, expanded_old) {
                                 wbObj.wbWidget.renderNow();
-                                // if (expanded_new === true) {
-                                //   console.log(`${wbObj.wbWidget.id.toUpperCase()} widget expanded`);
-                                // } else {
-                                //   console.log(`${wbObj.wbWidget.id.toUpperCase()} widget collapsed`);
-                                // }
                                 if (afterWidgetCloseFocusElement) {
                                     if (typeof afterWidgetCloseFocusElement === "string") {
                                         getFocusableElements(document.getElementById(afterWidgetCloseFocusElement));
@@ -137,17 +132,6 @@ let WidgetBar = class WidgetBar extends Widget {
                                 }
                             });
                         }
-                        // // Get focusable elements including widget.
-                        // button_node.addEventListener('click', evt => {
-                        //   this._setFocus(wbObj);
-                        // });
-                        // button_node.addEventListener('keypress', evt => {
-                        //   let isEnterPressed = evt.key === 'Enter' || evt.keyCode === 13;
-                        //   let isSpacePressed = evt.key === 'Space' || evt.keyCode === 32;
-                        //   if (isEnterPressed || isSpacePressed) {
-                        //     this._setFocus(wbObj);
-                        //   }
-                        // });
                     }
                 }
             });
@@ -163,9 +147,6 @@ __decorate([
 __decorate([
     property()
 ], WidgetBar.prototype, "mapView", void 0);
-__decorate([
-    property()
-], WidgetBar.prototype, "graphicsLayer", void 0);
 __decorate([
     property()
 ], WidgetBar.prototype, "widgetBarRootURL", void 0);
