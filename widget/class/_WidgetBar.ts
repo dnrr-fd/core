@@ -78,7 +78,13 @@ export class BasemapGalleryWidget extends WidgetBarWidget {
     basemapSourcePortal!: string;
 
     @property()
+    basemapGalleryGroupID!: string;
+
+    @property()
     defaultThumbnail!: string;
+
+    @property()
+    apiKey!: string;
 
     @property()
     basemaps!: Array<_Basemap>;
@@ -170,6 +176,12 @@ export class _Basemap extends Accessor {
 
     @property()
     title!: _Title;
+
+    @property()
+    summary!: _Title;
+
+    @property()
+    description!: _Title;
 
     @property()
     thumbnailURL!: string;

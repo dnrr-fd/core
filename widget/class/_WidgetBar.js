@@ -69,7 +69,13 @@ __decorate([
 ], BasemapGalleryWidget.prototype, "basemapSourcePortal", void 0);
 __decorate([
     property()
+], BasemapGalleryWidget.prototype, "basemapGalleryGroupID", void 0);
+__decorate([
+    property()
 ], BasemapGalleryWidget.prototype, "defaultThumbnail", void 0);
+__decorate([
+    property()
+], BasemapGalleryWidget.prototype, "apiKey", void 0);
 __decorate([
     property()
 ], BasemapGalleryWidget.prototype, "basemaps", void 0);
@@ -166,6 +172,12 @@ __decorate([
 __decorate([
     property()
 ], _Basemap.prototype, "title", void 0);
+__decorate([
+    property()
+], _Basemap.prototype, "summary", void 0);
+__decorate([
+    property()
+], _Basemap.prototype, "description", void 0);
 __decorate([
     property()
 ], _Basemap.prototype, "thumbnailURL", void 0);

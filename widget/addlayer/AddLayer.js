@@ -15,7 +15,6 @@ import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import Color from "@arcgis/core/Color";
 import Field from "@arcgis/core/layers/support/Field";
 import esriRequest from "@arcgis/core/request";
-import esriConfig from "@arcgis/core/config";
 import * as intl from "@arcgis/core/intl";
 import { getWidgetTheme, getFocusableElements, ariaDisable } from "@dnrr_fd/util/web";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
@@ -37,7 +36,6 @@ var addedLayers = new Array();
 var currentEditLayer;
 var pickr_outline;
 var pickr_main;
-esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_component: 'esri-component',
