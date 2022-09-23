@@ -52,6 +52,9 @@ export class AddLayerWidget extends WidgetBarWidget {
     //----------------------------------
     @property()
     generateURL!: string;
+
+    @property()
+    apiKey!: string;
 }
 
 @subclass('WidgetBarClasses.BookmarksWidget')
@@ -75,13 +78,13 @@ export class BasemapGalleryWidget extends WidgetBarWidget {
     //  Properties
     //----------------------------------
     @property()
+    defaultThumbnail!: string;
+
+    @property()
     basemapSourcePortal!: string;
 
     @property()
-    basemapGalleryGroupID!: string;
-
-    @property()
-    defaultThumbnail!: string;
+    basemapGalleryGroups!: Array<_BasemapGalleryGroup>;
 
     @property()
     apiKey!: string;
@@ -203,6 +206,28 @@ export class _Title {
 
     @property()
     fr!: string;
+
+}
+
+@subclass('WidgetBarClasses._BasemapGalleryGroup')
+export class _BasemapGalleryGroup {
+    @property()
+    id!: string;
+
+    @property()
+    query!: string;
+
+    @property()
+    filter!: string;
+
+    @property()
+    maxResults!: number;
+
+    @property()
+    sortField!: "modified"|"title"|"uploaded"|"username"|"created"|"type"|"owner"|"avg-rating"|"num-ratings"|"num-comments"|"num-views";
+
+    @property()
+    sortOrder!: "desc"|"asc";
 
 }
 

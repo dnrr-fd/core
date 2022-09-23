@@ -176,6 +176,9 @@ __decorate([
 ], MapConfig.prototype, "portalUrl", void 0);
 __decorate([
     property()
+], MapConfig.prototype, "apiKey", void 0);
+__decorate([
+    property()
 ], MapConfig.prototype, "popupLocation", void 0);
 __decorate([
     property()

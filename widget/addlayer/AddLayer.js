@@ -36,6 +36,7 @@ var addedLayers = new Array();
 var currentEditLayer;
 var pickr_outline;
 var pickr_main;
+// esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_component: 'esri-component',
@@ -97,6 +98,7 @@ let AddLayer = class AddLayer extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
+        // esriConfig.apiKey = this.apiKey;
         var _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         t9n = (_locale === 'en' ? t9n_en : t9n_fr);
@@ -846,6 +848,9 @@ __decorate([
 __decorate([
     property()
 ], AddLayer.prototype, "generateURL", void 0);
+__decorate([
+    property()
+], AddLayer.prototype, "apiKey", void 0);
 __decorate([
     property()
 ], AddLayer.prototype, "rootFocusElement", void 0);

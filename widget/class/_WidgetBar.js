@@ -43,6 +43,9 @@ let AddLayerWidget = class AddLayerWidget extends WidgetBarWidget {
 __decorate([
     property()
 ], AddLayerWidget.prototype, "generateURL", void 0);
+__decorate([
+    property()
+], AddLayerWidget.prototype, "apiKey", void 0);
 AddLayerWidget = __decorate([
     subclass('WidgetBarClasses.AddLayerWidget')
 ], AddLayerWidget);
@@ -66,13 +69,13 @@ let BasemapGalleryWidget = class BasemapGalleryWidget extends WidgetBarWidget {
 };
 __decorate([
     property()
+], BasemapGalleryWidget.prototype, "defaultThumbnail", void 0);
+__decorate([
+    property()
 ], BasemapGalleryWidget.prototype, "basemapSourcePortal", void 0);
 __decorate([
     property()
-], BasemapGalleryWidget.prototype, "basemapGalleryGroupID", void 0);
-__decorate([
-    property()
-], BasemapGalleryWidget.prototype, "defaultThumbnail", void 0);
+], BasemapGalleryWidget.prototype, "basemapGalleryGroups", void 0);
 __decorate([
     property()
 ], BasemapGalleryWidget.prototype, "apiKey", void 0);
@@ -206,6 +209,30 @@ _Title = __decorate([
     subclass('WidgetBarClasses._Title')
 ], _Title);
 export { _Title };
+let _BasemapGalleryGroup = class _BasemapGalleryGroup {
+};
+__decorate([
+    property()
+], _BasemapGalleryGroup.prototype, "id", void 0);
+__decorate([
+    property()
+], _BasemapGalleryGroup.prototype, "query", void 0);
+__decorate([
+    property()
+], _BasemapGalleryGroup.prototype, "filter", void 0);
+__decorate([
+    property()
+], _BasemapGalleryGroup.prototype, "maxResults", void 0);
+__decorate([
+    property()
+], _BasemapGalleryGroup.prototype, "sortField", void 0);
+__decorate([
+    property()
+], _BasemapGalleryGroup.prototype, "sortOrder", void 0);
+_BasemapGalleryGroup = __decorate([
+    subclass('WidgetBarClasses._BasemapGalleryGroup')
+], _BasemapGalleryGroup);
+export { _BasemapGalleryGroup };
 let _Layer = class _Layer {
 };
 __decorate([

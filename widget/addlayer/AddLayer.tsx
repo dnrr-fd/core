@@ -50,6 +50,8 @@ var currentEditLayer: FeatureLayer;
 var pickr_outline: Pickr;
 var pickr_main: Pickr;
 
+// esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
+
 const css_esri = {
   esri_widget: 'esri-widget',
   esri_component: 'esri-component',
@@ -133,6 +135,9 @@ class AddLayer extends Widget {
   generateURL!: string;
 
   @property()
+  apiKey!: string;
+
+  @property()
   rootFocusElement!: string;
 
   @property()
@@ -143,6 +148,8 @@ class AddLayer extends Widget {
   //--------------------------------------------------------------------------
 
   postInitialize(): void {
+    // esriConfig.apiKey = this.apiKey;
+
     var _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
 

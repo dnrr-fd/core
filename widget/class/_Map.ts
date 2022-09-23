@@ -198,6 +198,9 @@ export class MapConfig extends Accessor {
   portalUrl!: string;
 
   @property()
+  apiKey!: string;
+
+  @property()
   popupLocation!: "top-right"|"top-left"|"botton-right"|"bottom-left";
 
   @property()

@@ -42,6 +42,7 @@ interface MapParams extends __esri.WidgetProperties {
   theme: string;
   title?: string;
   appid: string;
+  apiKey: string;
   portalUrl: string;
   signoutElement?: HTMLAnchorElement|string|null;
   map: MapConfig;
@@ -72,6 +73,9 @@ class Map extends Widget {
   portalUrl!: string;
 
   @property()
+  apiKey!: string;
+
+  @property()
   appid!: string;
 
   @property()
@@ -100,6 +104,9 @@ class Map extends Widget {
   //--------------------------------------------------------------------------
 
   postInitialize(): void {
+    esriConfig.apiKey = this.apiKey;
+    console.log(`API Key: ${esriConfig.apiKey}`);
+
     var _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {

@@ -40,6 +40,8 @@ let Map = class Map extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
+        esriConfig.apiKey = this.apiKey;
+        console.log(`API Key: ${esriConfig.apiKey}`);
         var _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
@@ -204,6 +206,9 @@ __decorate([
 __decorate([
     property()
 ], Map.prototype, "portalUrl", void 0);
+__decorate([
+    property()
+], Map.prototype, "apiKey", void 0);
 __decorate([
     property()
 ], Map.prototype, "appid", void 0);
