@@ -8,7 +8,7 @@ import PortalItem from "@arcgis/core/portal/PortalItem";
 import PortalQueryResult from "@arcgis/core/portal/PortalQueryResult";
 import PortalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/PortalBasemapsSource";
 import WidgetBar, { widgetBarRootURL, widgetBarWidgetCloseFocusElement } from "./WidgetBar"
-import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, AddLayerWidget, _Layer, _BasemapGalleryGroup } from "../class/_WidgetBar";
+import { WidgetBarWidget, BookmarksWidget, _Bookmark, WidgetBarWidgetLocale, DefaultCreateOptions, ScreenshotSettings, AddLayerWidget, _Layer, _BMGGroup, _BasemapGalleryGroups, _Basemaps } from "../class/_WidgetBar";
 import { BasemapGalleryWidget, _Basemap, MeasurementWidget, SketchWidget, PrintWidget, SupportWidget, Centroid, wbwObject } from "../class/_WidgetBar";
 import { LegendStyle } from "../class/_Legend";
 import { CookiesVM } from "../class/_Cookie";
@@ -379,10 +379,9 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
             var _visible = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
             var _group = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "group", widget.group? widget.group: widgetBarGroup) as string;
-            var _portal = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "basemapSourcePortal", undefined) as string|undefined;
-            var _bmGalleryArray = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "basemapGalleryGroups", undefined) as Array<_BasemapGalleryGroup>|undefined;
-            var _default_thumbnail = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "defaultThumbnail", undefined) as string|undefined;
-            var _apiKey = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "apiKey", undefined) as string|undefined;
+            var _bmGalleryGroups = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "basemapGalleryGroups") as _BasemapGalleryGroups|null;
+            var _default_thumbnail = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "defaultThumbnail") as string|null;
+            var _apiKey = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "apiKey") as string|null;
             var _label: string;
 
             returnConfig(basemapGalleryT9nPath, null).then(t9nResults => {
@@ -402,25 +401,22 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
 
                 var _basemapGallery: BasemapGallery;
                 var _config = config  as BasemapGalleryWidget;
-
-                if (typeof _portal === "undefined") {
-                    esriConfig.portalUrl = dnrr_agol_portal;
-                } else {
-                    esriConfig.portalUrl = _portal;
-                }
+                esriConfig.portalUrl = dnrr_agol_portal
 
                 thePortal = new Portal();
                 thePortal.load().then(() => {
-                    if (typeof _bmGalleryArray != "undefined" ) {
+                    var _basemapArray = new Array<Basemap>();
+                    var _basemapIds = new Array<string>();
+                    var useCurrentBasemap = true;
+
+                    if (_bmGalleryGroups && _bmGalleryGroups[lang]) {
+                        if (_bmGalleryGroups.basemapSourcePortal && _bmGalleryGroups.basemapSourcePortal.length > 0) {
+                            esriConfig.portalUrl = _bmGalleryGroups.basemapSourcePortal;
+                        }
                         thePortal = new Portal();
-                        var _basemapArray = new Array<Basemap>();
-                        var _basemapIds = new Array<string>();
-                        var currentBasemap = _mapView.map.basemap;
-                        var useCurrentBasemap = true;
-                        
                         thePortal.load().then(async () => {
                             var getBMArray = new Promise<void>((resolve) => {
-                                _bmGalleryArray!.forEach((_bmGallery, index, array) => {
+                                _bmGalleryGroups![lang]!.forEach((_bmGallery: _BMGGroup, index: number, array: string | any[]) => {
                                     thePortal.queryGroups({
                                         query: `id: ${_bmGallery.id}`
                                     }).then(portalGroups => {
@@ -431,24 +427,7 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
                                                 sortOrder: _bmGallery.sortOrder,
                                                 query: _bmGallery.query
                                             }).then(function(pqr: PortalQueryResult) {
-                                                pqr.results.forEach(function(portalItem: PortalItem) {
-                                                    var pID = portalItem.id.toLowerCase();
-                                                    var pTitle = portalItem.title.toLowerCase();
-                                                    var cTitle = currentBasemap.title.toLowerCase();
-                                                    if (!_basemapIds.includes(pID)) {
-                                                        _basemapIds.push(pID);
-                                                        _basemapArray.push(new Basemap({
-                                                            portalItem: portalItem
-                                                        }));
-                                                    } else {
-                                                        console.log(`Basemap: ${portalItem.title} already exists and will not be added.`)
-                                                    }
-
-                                                    if (pTitle == cTitle) {
-                                                        useCurrentBasemap = false;
-                                                        console.log(`Basemap: ${portalItem.title} already exists in the current map.`)
-                                                    }
-                                                });
+                                                useCurrentBasemap = catalogBasemaps(pqr, _mapView, _basemapIds, _basemapArray, useCurrentBasemap);
                                             });
                                         });
                                     }).finally(() => {
@@ -458,180 +437,135 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
                             });
 
                             getBMArray.then(() => {
-                                _basemapGallery = new BasemapGallery({
-                                    view: _mapView,
-                                    label: _label,
-                                    source: new PortalBasemapsSource({
-                                        updateBasemapsCallback:  function(items) {
-                                            if (useCurrentBasemap === true) {
-                                                // add basemap to the array
-                                                _basemapArray.unshift(_mapView.map.basemap);
-                                            }
-                                            // Clear the default list of items
-                                            items = _basemapArray;
-                                            // return the array of basemaps
-                                            return items;
-                                        }
-                                    })
-                                });
-                                _basemapGallery_expand.id = widget.id;
-                                _basemapGallery_expand.view = _mapView
-                                _basemapGallery_expand.visible = _visible
-                                _basemapGallery_expand.content = _basemapGallery
-                                _basemapGallery_expand.expanded = _expanded
-                                _basemapGallery_expand.group = _group
-                                _basemapGallery_expand.container = widget.id
-                                _basemapGallery_expand.collapseIconClass = "esri-icon-up";
-                    
-                                _mapView.when(() => {
-                                    _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
-                                });
-                
-                                _basemapGallery_expand.when(() => {
-                                    _basemapGallery.source.basemaps.forEach(basemap => {
-                                        basemap.baseLayers.forEach(layer => {
-                                            var lyr = layer as MapImageLayer;
-                                            console.log(`Layer URL (${lyr.id}): ${lyr.url}`)
-                                        });
-                                    });
-                                    resolve(_basemapGallery_expand);
-                                });
+                                _basemapGallery = createPortalBasemapGallery(_basemapGallery, _mapView, _label, useCurrentBasemap, _basemapArray, _basemapGallery_expand, widget, _visible, _expanded, _group, resolve);
                             });
                         });
                     } else {
                         if (_config.basemaps) {
-                            let basemapArray = _config.basemaps as Array<_Basemap>;
-                            if (basemapArray.length > 0) {
+                            let basemaps = _config.basemaps as _Basemaps;
+                            var _portal = null;
+                            if (basemaps.basemapSourcePortal && basemaps.basemapSourcePortal.length > 0) {
+                                _portal = basemaps.basemapSourcePortal;
+                                esriConfig.portalUrl = _portal;
+                            }
+                            if (basemaps[lang] && basemaps[lang].length > 0) {
+                                let basemapArray = basemaps[lang] as Array<_Basemap>;
                                 if (_portal) {
                                     var _portalbasemaps = createBasemapArray(basemapArray, _default_thumbnail);
-                                    _basemapGallery = new BasemapGallery({
-                                        view: _mapView,
-                                        label: _label,
-                                        source: new PortalBasemapsSource({
-                                            updateBasemapsCallback:  function(items) {
-                                                // add basemap to the array
-                                                _portalbasemaps.forEach(pbm => {
-                                                    items.unshift(pbm);
-                                                });
-                                                // return the array of basemaps
-                                                return items;
-                                            }
-                                        })
-                                    });                       
-                                    _basemapGallery_expand.id = widget.id;
-                                    _basemapGallery_expand.view = _mapView
-                                    _basemapGallery_expand.visible = _visible
-                                    _basemapGallery_expand.content = _basemapGallery
-                                    _basemapGallery_expand.expanded = _expanded
-                                    _basemapGallery_expand.group = _group
-                                    _basemapGallery_expand.container = widget.id
-                                    _basemapGallery_expand.collapseIconClass = "esri-icon-up";
-                        
-                                    _mapView.when(() => {
-                                        _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
-                                    });
-                    
-                                    _basemapGallery_expand.when(() => {
-                                        _basemapGallery.source.basemaps.forEach(basemap => {
-                                            basemap.baseLayers.forEach(layer => {
-                                                var lyr = layer as MapImageLayer;
-                                                console.log(`Layer URL (${lyr.id}): ${lyr.url}`)
+                                    // add basemap to the array
+                                    var verifyPortalBMs = new Promise<void>((resolve) => {
+                                        _portalbasemaps!.forEach((pbm: Basemap, index: number, array: string | any[]) => {
+                                            // Query the portal to see if the basemap exists
+                                            thePortal.queryItems({
+                                                query: `id: ${pbm.portalItem.id}`
+                                            }).then((pqr: PortalQueryResult) => {
+                                                useCurrentBasemap = catalogBasemaps(pqr, _mapView, _basemapIds, _basemapArray, useCurrentBasemap);
+                                            }).finally(() => {
+                                                if (index === array.length -1) resolve();                                    
                                             });
-                                        });
-                                        resolve(_basemapGallery_expand);
+                                        })
+                                    });
+
+                                    verifyPortalBMs.then(() => {
+                                        _basemapGallery = createPortalBasemapGallery(_basemapGallery, _mapView, _label, useCurrentBasemap, _basemapArray, _basemapGallery_expand, widget, _visible, _expanded, _group, resolve);
                                     });
                                 } else {
                                     var _basemaps = createBasemapArray(basemapArray, _default_thumbnail, false);
-                                    _basemapGallery = new BasemapGallery({
-                                        view: _mapView,
-                                        label: _label,
-                                        source: new LocalBasemapsSource({
-                                            basemaps: _basemaps
-                                        })
-                                    });                            
-                                    _basemapGallery_expand.id = widget.id;
-                                    _basemapGallery_expand.view = _mapView
-                                    _basemapGallery_expand.visible = _visible
-                                    _basemapGallery_expand.content = _basemapGallery
-                                    _basemapGallery_expand.expanded = _expanded
-                                    _basemapGallery_expand.group = _group
-                                    _basemapGallery_expand.container = widget.id
-                                    _basemapGallery_expand.collapseIconClass = "esri-icon-up";
-                        
-                                    _mapView.when(() => {
-                                        _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
-                                    });
-                    
-                                    _basemapGallery_expand.when(() => {
-                                        _basemapGallery.source.basemaps.forEach(basemap => {
-                                            basemap.baseLayers.forEach(layer => {
-                                                var lyr = layer as MapImageLayer;
-                                                console.log(`Layer URL (${lyr.id}): ${lyr.url}`)
-                                            });
-                                        });
-                                        resolve(_basemapGallery_expand);
-                                    });
+                                    _basemaps.unshift(_mapView.map.basemap);
+                                    _basemapGallery = createLocalBasemapGallery(_basemapGallery, _mapView, _label, _basemaps, _basemapGallery_expand, widget, _visible, _expanded, _group, resolve);
                                 }
                             } else {
-                                _basemapGallery = new BasemapGallery({
-                                    view: _mapView,
-                                    label: _label
-                                });                            
-                                _basemapGallery_expand.id = widget.id;
-                                _basemapGallery_expand.view = _mapView
-                                _basemapGallery_expand.visible = _visible
-                                _basemapGallery_expand.content = _basemapGallery
-                                _basemapGallery_expand.expanded = _expanded
-                                _basemapGallery_expand.group = _group
-                                _basemapGallery_expand.container = widget.id
-                                _basemapGallery_expand.collapseIconClass = "esri-icon-up";
-                    
-                                _mapView.when(() => {
-                                    _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
-                                });
-                
-                                _basemapGallery_expand.when(() => {
-                                    _basemapGallery.source.basemaps.forEach(basemap => {
-                                        basemap.baseLayers.forEach(layer => {
-                                            var lyr = layer as MapImageLayer;
-                                            console.log(`Layer URL (${lyr.id}): ${lyr.url}`)
-                                        });
-                                    });
-                                    resolve(_basemapGallery_expand);
-                                });
+                                var _basemaps = [_mapView.map.basemap];
+                                _basemapGallery = createLocalBasemapGallery(_basemapGallery, _mapView, _label, _basemaps, _basemapGallery_expand, widget, _visible, _expanded, _group, resolve);
                             }
                         } else {
-                            _basemapGallery = new BasemapGallery({
-                                view: _mapView,
-                                label: _label
-                            });                            
-                            _basemapGallery_expand.id = widget.id;
-                            _basemapGallery_expand.view = _mapView
-                            _basemapGallery_expand.visible = _visible
-                            _basemapGallery_expand.content = _basemapGallery
-                            _basemapGallery_expand.expanded = _expanded
-                            _basemapGallery_expand.group = _group
-                            _basemapGallery_expand.container = widget.id
-                            _basemapGallery_expand.collapseIconClass = "esri-icon-up";
-                
-                            _mapView.when(() => {
-                                _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
-                            });
-            
-                            _basemapGallery_expand.when(() => {
-                                _basemapGallery.source.basemaps.forEach(basemap => {
-                                    basemap.baseLayers.forEach(layer => {
-                                        var lyr = layer as MapImageLayer;
-                                        console.log(`Layer URL (${lyr.id}): ${lyr.url}`)
-                                    });
-                                });
-                                resolve(_basemapGallery_expand);
-                            });
+                            var _basemaps = [_mapView.map.basemap];
+                            _basemapGallery = createLocalBasemapGallery(_basemapGallery, _mapView, _label, _basemaps, _basemapGallery_expand, widget, _visible, _expanded, _group, resolve);
                         }
                     }
                 });
             });
         });
+    });
+}
+
+function createPortalBasemapGallery(_basemapGallery: BasemapGallery, _mapView: MapView, _label: string, useCurrentBasemap: boolean, _basemapArray: Basemap[], _basemapGallery_expand: Expand, widget: WidgetBarWidget, _visible: boolean, _expanded: boolean, _group: string, resolve: (value: Expand | PromiseLike<Expand | null> | null) => void) {
+    _basemapGallery = new BasemapGallery({
+        view: _mapView,
+        label: _label,
+        source: new PortalBasemapsSource({
+            updateBasemapsCallback: function (items) {
+                if (useCurrentBasemap === true) {
+                    // add basemap to the array
+                    _basemapArray.unshift(_mapView.map.basemap);
+                }
+                // Clear the default list of items
+                items = _basemapArray;
+                // return the array of basemaps
+                return items;
+            }
+        })
+    });
+    completeBookmarkGallery(_basemapGallery_expand, widget, _mapView, _visible, _basemapGallery, _expanded, _group, resolve);
+    return _basemapGallery;
+}
+
+function createLocalBasemapGallery(_basemapGallery: BasemapGallery, _mapView: MapView, _label: string, _basemaps: Basemap[], _basemapGallery_expand: Expand, widget: WidgetBarWidget, _visible: boolean, _expanded: boolean, _group: string, resolve: (value: Expand | PromiseLike<Expand | null> | null) => void) {
+    _basemapGallery = new BasemapGallery({
+        view: _mapView,
+        label: _label,
+        source: new LocalBasemapsSource({
+            basemaps: _basemaps
+        })
+    });
+    completeBookmarkGallery(_basemapGallery_expand, widget, _mapView, _visible, _basemapGallery, _expanded, _group, resolve);
+    return _basemapGallery;
+}
+
+function catalogBasemaps(pqr: PortalQueryResult, _mapView: MapView, _basemapIds: string[], _basemapArray: Basemap[], useCurrentBasemap: boolean) {
+    pqr.results.forEach(function (portalItem: PortalItem) {
+        var pID = portalItem.id;
+        var pTitle = portalItem.title.toLowerCase();
+        var cTitle = _mapView.map.basemap.title.toLowerCase();
+        if (!_basemapIds.includes(pID)) {
+            _basemapIds.push(pID);
+            _basemapArray.push(new Basemap({
+                portalItem: portalItem
+            }));
+        } else {
+            console.log(`Basemap: ${portalItem.title} already exists and will not be added.`);
+        }
+
+        if (pTitle == cTitle) {
+            useCurrentBasemap = false;
+            console.log(`Basemap: ${portalItem.title} already exists in the current map.`);
+        }
+    });
+    return useCurrentBasemap;
+}
+
+function completeBookmarkGallery(_basemapGallery_expand: Expand, widget: WidgetBarWidget, _mapView: MapView, _visible: boolean, _basemapGallery: BasemapGallery, _expanded: boolean, _group: string, resolve: (value: Expand | PromiseLike<Expand | null> | null) => void) {
+    _basemapGallery_expand.id = widget.id;
+    _basemapGallery_expand.view = _mapView;
+    _basemapGallery_expand.visible = _visible;
+    _basemapGallery_expand.content = _basemapGallery;
+    _basemapGallery_expand.expanded = _expanded;
+    _basemapGallery_expand.group = _group;
+    _basemapGallery_expand.container = widget.id;
+    _basemapGallery_expand.collapseIconClass = "esri-icon-up";
+
+    _mapView.when(() => {
+        _basemapGallery_expand.expandTooltip = `${_basemapGallery.label}`;
+    });
+
+    _basemapGallery_expand.when(() => {
+        _basemapGallery.source.basemaps.forEach(basemap => {
+            basemap.baseLayers.forEach(layer => {
+                var lyr = layer as MapImageLayer;
+                console.log(`Layer URL (${lyr.id}): ${lyr.url}`);
+            });
+        });
+        resolve(_basemapGallery_expand);
     });
 }
 
@@ -907,7 +841,7 @@ export function removeWidgetsFromWidgetBar(_mapView: MapView) {
     widgetBarWidgets = [];
 }
 
-function getWidgetConfigKeyValue(widget: WidgetBarWidget, configKey: string, defaultValue=null as string|number|boolean|null|undefined) {
+function getWidgetConfigKeyValue(widget: WidgetBarWidget, configKey: string, defaultValue=null as string|number|boolean|null) {
     if (widget) {
         var keys = Object.keys(widget);
         if (keys.includes(configKey)) {
@@ -1003,26 +937,12 @@ async function createBookmarks(_config: BookmarksWidget, _view: MapView, _cookie
     });
 }
 
-function createBasemapArray(basemapArray: Array<_Basemap>, default_thumbnail: string|undefined, isPortal=true as boolean): Collection<Basemap> {
-    var basemapResults = new Collection<Basemap>();
+function createBasemapArray(basemapArray: Array<_Basemap>, default_thumbnail: string|null, isPortal=true as boolean): Array<Basemap> {
+    var basemapResults = new Array<Basemap>();
     basemapArray.map (baseMap => {
         var _basemap: Basemap;
-        var _title = baseMap.id? baseMap.id: "";
+        var _title = baseMap.title? baseMap.title: baseMap.id? baseMap.id: "";
         var _portalItem = new PortalItem();
-
-        var lang = getNormalizedLocale();
-        if (lang in baseMap.title) {
-            _title = baseMap.title[lang];
-            _portalItem.title = _title;
-        }
-
-        if (lang in baseMap.summary) {
-            _portalItem.snippet = baseMap.summary[lang];
-        }
-
-        if (lang in baseMap.description) {
-            _portalItem.description = baseMap.description[lang];
-        }
 
         if (baseMap.portalItem) {
             _portalItem = baseMap.portalItem;
@@ -1036,7 +956,7 @@ function createBasemapArray(basemapArray: Array<_Basemap>, default_thumbnail: st
         _basemap = new Basemap({
             id: baseMap.id,
             title: _title,
-            thumbnailUrl: baseMap.thumbnailURL ? baseMap.thumbnailURL : default_thumbnail,
+            thumbnailUrl: baseMap.thumbnailURL? baseMap.thumbnailURL : default_thumbnail? default_thumbnail: undefined,
             spatialReference: _spatialReference? _spatialReference: undefined
         });
 
@@ -1065,19 +985,14 @@ function createBasemapArray(basemapArray: Array<_Basemap>, default_thumbnail: st
             _basemap.portalItem = _portalItem;
         }
 
-        basemapResults.add(_basemap);
+        basemapResults.push(_basemap);
     });
 
     return basemapResults;
 }
 
 function getLayer(_layer: _Layer): MapImageLayer {
-    var _title = _layer.id? _layer.id: "";
-    var lang = getNormalizedLocale();
-    if (lang in _layer.title) {
-        _title = _layer.title[lang];
-    }
-
+    var _title = _layer.title? _layer.title: _layer.id? _layer.id: "";
     var lyr = undefined;
 
     lyr = new MapImageLayer({

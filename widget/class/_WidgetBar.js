@@ -167,6 +167,21 @@ _Bookmark = __decorate([
     subclass('WidgetBarClasses._Bookmark')
 ], _Bookmark);
 export { _Bookmark };
+let _Basemaps = class _Basemaps extends Accessor {
+};
+__decorate([
+    property()
+], _Basemaps.prototype, "basemapSourcePortal", void 0);
+__decorate([
+    property()
+], _Basemaps.prototype, "en", void 0);
+__decorate([
+    property()
+], _Basemaps.prototype, "fr", void 0);
+_Basemaps = __decorate([
+    subclass('WidgetBarClasses._Basemaps')
+], _Basemaps);
+export { _Basemaps };
 let _Basemap = class _Basemap extends Accessor {
 };
 __decorate([
@@ -175,12 +190,6 @@ __decorate([
 __decorate([
     property()
 ], _Basemap.prototype, "title", void 0);
-__decorate([
-    property()
-], _Basemap.prototype, "summary", void 0);
-__decorate([
-    property()
-], _Basemap.prototype, "description", void 0);
 __decorate([
     property()
 ], _Basemap.prototype, "thumbnailURL", void 0);
@@ -209,30 +218,45 @@ _Title = __decorate([
     subclass('WidgetBarClasses._Title')
 ], _Title);
 export { _Title };
-let _BasemapGalleryGroup = class _BasemapGalleryGroup {
+let _BasemapGalleryGroups = class _BasemapGalleryGroups {
 };
 __decorate([
     property()
-], _BasemapGalleryGroup.prototype, "id", void 0);
+], _BasemapGalleryGroups.prototype, "basemapSourcePortal", void 0);
 __decorate([
     property()
-], _BasemapGalleryGroup.prototype, "query", void 0);
+], _BasemapGalleryGroups.prototype, "en", void 0);
 __decorate([
     property()
-], _BasemapGalleryGroup.prototype, "filter", void 0);
+], _BasemapGalleryGroups.prototype, "fr", void 0);
+_BasemapGalleryGroups = __decorate([
+    subclass('WidgetBarClasses._BasemapGalleryGroups')
+], _BasemapGalleryGroups);
+export { _BasemapGalleryGroups };
+let _BMGGroup = class _BMGGroup {
+};
 __decorate([
     property()
-], _BasemapGalleryGroup.prototype, "maxResults", void 0);
+], _BMGGroup.prototype, "id", void 0);
 __decorate([
     property()
-], _BasemapGalleryGroup.prototype, "sortField", void 0);
+], _BMGGroup.prototype, "query", void 0);
 __decorate([
     property()
-], _BasemapGalleryGroup.prototype, "sortOrder", void 0);
-_BasemapGalleryGroup = __decorate([
-    subclass('WidgetBarClasses._BasemapGalleryGroup')
-], _BasemapGalleryGroup);
-export { _BasemapGalleryGroup };
+], _BMGGroup.prototype, "filter", void 0);
+__decorate([
+    property()
+], _BMGGroup.prototype, "maxResults", void 0);
+__decorate([
+    property()
+], _BMGGroup.prototype, "sortField", void 0);
+__decorate([
+    property()
+], _BMGGroup.prototype, "sortOrder", void 0);
+_BMGGroup = __decorate([
+    subclass('WidgetBarClasses._BMGGroup')
+], _BMGGroup);
+export { _BMGGroup };
 let _Layer = class _Layer {
 };
 __decorate([

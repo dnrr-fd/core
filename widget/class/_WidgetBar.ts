@@ -84,13 +84,13 @@ export class BasemapGalleryWidget extends WidgetBarWidget {
     basemapSourcePortal!: string;
 
     @property()
-    basemapGalleryGroups!: Array<_BasemapGalleryGroup>;
+    basemapGalleryGroups!: Array<_BasemapGalleryGroups>;
 
     @property()
     apiKey!: string;
 
     @property()
-    basemaps!: Array<_Basemap>;
+    basemaps!: _Basemaps;
 }
 
 @subclass('WidgetBarClasses.MeasurementWidget')
@@ -172,19 +172,25 @@ export class _Bookmark extends Accessor {
 
 }
 
+@subclass('WidgetBarClasses._Basemaps')
+export class _Basemaps extends Accessor {
+    @property()
+    basemapSourcePortal!: string;
+
+    @property()
+    en!: Array<_Basemap>;
+
+    @property()
+    fr!: Array<_Basemap>;
+}
+
 @subclass('WidgetBarClasses._Basemap')
 export class _Basemap extends Accessor {
     @property()
     id!: string;
 
     @property()
-    title!: _Title;
-
-    @property()
-    summary!: _Title;
-
-    @property()
-    description!: _Title;
+    title!: string;
 
     @property()
     thumbnailURL!: string;
@@ -209,8 +215,21 @@ export class _Title {
 
 }
 
-@subclass('WidgetBarClasses._BasemapGalleryGroup')
-export class _BasemapGalleryGroup {
+@subclass('WidgetBarClasses._BasemapGalleryGroups')
+export class _BasemapGalleryGroups {
+    @property()
+    basemapSourcePortal!: string;
+
+    @property()
+    en!: Array<_BMGGroup>;
+
+    @property()
+    fr!: Array<_BMGGroup>;
+
+}
+
+@subclass('WidgetBarClasses._BMGGroup')
+export class _BMGGroup {
     @property()
     id!: string;
 
@@ -237,7 +256,7 @@ export class _Layer {
     id!: string;
 
     @property()
-    title!: _Title;
+    title!: string;
 
     @property()
     isReference!: boolean;
