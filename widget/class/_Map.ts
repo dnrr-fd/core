@@ -1,6 +1,7 @@
 // @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from '@arcgis/core/core/Accessor';
+import Extent from "@arcgis/core/geometry/Extent";
 
 @subclass('MapClasses.MapWidget')
 export class MapWidget extends Accessor {
@@ -214,4 +215,34 @@ export class MapConfig extends Accessor {
 
   @property()
   widgets!: Array<MapWidget>;
+}
+
+@subclass('MapClasses.MapExtentObject')
+export class MapExtentObject extends Accessor {
+  //----------------------------------
+  //  Properties
+  //----------------------------------
+  @property()
+  extent!: Extent;
+
+  @property()
+  scale!: number;
+
+  toString() {
+    return stringifyMapExtentObject(this);
+  }
+}
+
+export function stringifyMapExtentObject(meo: MapExtentObject) {
+  if (meo) {
+    return (
+`xmin: ${(Math.round(meo.extent.xmin * 100) / 100).toFixed(4)},
+ymin: ${(Math.round(meo.extent.ymin * 100) / 100).toFixed(4)},
+xmax: ${(Math.round(meo.extent.xmax * 100) / 100).toFixed(4)},
+ymax: ${(Math.round(meo.extent.ymax * 100) / 100).toFixed(4)},
+spatialReference: ${meo.extent.spatialReference.wkid},
+scale: ${(Math.round(meo.scale * 100) / 100).toFixed(0)}`
+    );
+  }
+  return "";
 }

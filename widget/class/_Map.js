@@ -193,4 +193,30 @@ MapConfig = __decorate([
     subclass('MapClasses.MapConfig')
 ], MapConfig);
 export { MapConfig };
+let MapExtentObject = class MapExtentObject extends Accessor {
+    toString() {
+        return stringifyMapExtentObject(this);
+    }
+};
+__decorate([
+    property()
+], MapExtentObject.prototype, "extent", void 0);
+__decorate([
+    property()
+], MapExtentObject.prototype, "scale", void 0);
+MapExtentObject = __decorate([
+    subclass('MapClasses.MapExtentObject')
+], MapExtentObject);
+export { MapExtentObject };
+export function stringifyMapExtentObject(meo) {
+    if (meo) {
+        return (`xmin: ${(Math.round(meo.extent.xmin * 100) / 100).toFixed(4)},
+ymin: ${(Math.round(meo.extent.ymin * 100) / 100).toFixed(4)},
+xmax: ${(Math.round(meo.extent.xmax * 100) / 100).toFixed(4)},
+ymax: ${(Math.round(meo.extent.ymax * 100) / 100).toFixed(4)},
+spatialReference: ${meo.extent.spatialReference.wkid},
+scale: ${(Math.round(meo.scale * 100) / 100).toFixed(0)}`);
+    }
+    return "";
+}
 //# sourceMappingURL=_Map.js.map

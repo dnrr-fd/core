@@ -12,11 +12,14 @@ import MapView from "@arcgis/core/views/MapView";
 import WebMap from "@arcgis/core/WebMap";
 import Color from "@arcgis/core/Color";
 import Popup from "@arcgis/core/widgets/Popup";
+import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
+import { MapExtentObject } from '../class/_Map';
 import { getWidgetTheme } from '@dnrr_fd/util/web';
 import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 import { loadWidgetsIntoMap, removeWidgetsFromMap } from "./MapViewModel";
 export var mapRootURL;
 export var mapParentElement;
+export var mapExtentArray = new Array();
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
 import * as css_dark from './assets/css/dark/map.module.css';
@@ -26,6 +29,7 @@ import * as t9n_fr from './assets/t9n/fr.json';
 var t9n = t9n_en;
 var css_theme = css_dark;
 var _mapView = new MapView();
+var mapExtentObject = new MapExtentObject();
 const elementIDs = {
     esriThemeID: "esriThemeID",
     mapID: "_mapID",
@@ -180,6 +184,22 @@ let Map = class Map extends Widget {
             _mapView.padding.left = 0;
             _mapView.padding.right = 0;
             _mapView.when(async function () {
+                // Get the current extents and scale
+                mapExtentObject.extent = _mapView.extent;
+                mapExtentObject.scale = _mapView.scale;
+                mapExtentArray.push(mapExtentObject);
+                console.log(mapExtentObject.toString());
+                // Watch for any changes in extent
+                reactiveUtils.watch(() => !_mapView.stationary, (stationary, wasStationary) => {
+                    if (wasStationary) {
+                        mapExtentObject.scale = _mapView.scale;
+                        mapExtentObject.extent = _mapView.extent;
+                        console.log(`New Extent Object:`);
+                        console.log(mapExtentObject.toString());
+                        mapExtentArray.push(mapExtentObject);
+                    }
+                    return "";
+                });
                 if (typeof self.map.widgets === "object") {
                     await loadWidgetsIntoMap(_mapView, self.map.widgets);
                 }
