@@ -1,16 +1,19 @@
 /* General */
-.widget_extentnavigator {
-  margin-left: -8px; /* Bug? */
-}
 .widget_extentnavigator_content_horizontal {
-  display: inline-block;
+  display: flex;
 }
 .widget_extentnavigator_content_vertical {
-  display: flex;
+  display: inline-block;
 }
 .widget_extentnavigator_previous_extent__button {
   
 }
 .widget_extentnavigator_next_extent__button {
 
+}
+.widget_extentnavigator_content_vertical > .widget_extentnavigator_next_extent__button {
+  border-top: solid 1px rgba(110,110,110,.3);
+}
+.widget_extentnavigator_content_horizontal > .widget_extentnavigator_next_extent__button {
+  border-left: solid 1px rgba(110,110,110,.3);  
 }
