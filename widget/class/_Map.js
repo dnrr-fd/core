@@ -26,6 +26,15 @@ MapWidget = __decorate([
     subclass('MapClasses.MapWidget')
 ], MapWidget);
 export { MapWidget };
+let ExtentNavigationWidget = class ExtentNavigationWidget extends MapWidget {
+};
+__decorate([
+    property()
+], ExtentNavigationWidget.prototype, "horizontal_align_buttons", void 0);
+ExtentNavigationWidget = __decorate([
+    subclass('MapClasses.ExtentNavigationWidget')
+], ExtentNavigationWidget);
+export { ExtentNavigationWidget };
 let ScaleBarWidget = class ScaleBarWidget extends MapWidget {
 };
 __decorate([

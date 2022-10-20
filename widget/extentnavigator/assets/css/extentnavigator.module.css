@@ -1,0 +1,16 @@
+/* General */
+.widget_extentnavigator {
+  margin-left: -8px; /* Bug? */
+}
+.widget_extentnavigator_content_horizontal {
+  display: inline-block;
+}
+.widget_extentnavigator_content_vertical {
+  display: flex;
+}
+.widget_extentnavigator_previous_extent__button {
+  
+}
+.widget_extentnavigator_next_extent__button {
+
+}

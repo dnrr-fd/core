@@ -1,7 +1,7 @@
 // @ts-check
 import MapView from "@arcgis/core/views/MapView";
 import { mapRootURL } from "./Map"
-import { MapWidget, ScaleBarWidget, LayerListWidget, MapWidgetLocale, MapWidgetSearch, SearchWidget, SearchWidgetSource, SearchConfig } from "../class/_Map";
+import { MapWidget, ExtentNavigationWidget, ScaleBarWidget, LayerListWidget, MapWidgetLocale, MapWidgetSearch, SearchWidget, SearchWidgetSource, SearchConfig } from "../class/_Map";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
 import { returnConfig } from "@dnrr_fd/util";
 
@@ -13,6 +13,7 @@ import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 import Home from "@arcgis/core/widgets/Home";
 import Zoom from "@arcgis/core/widgets/Zoom";
+import ExtentNavigator from "@dnrr_fd/core/widget/extentnavigator/ExtentNavigator";
 import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";
@@ -58,6 +59,7 @@ export var scaleBarWidget = null as ScaleBar|null;
 export var coordinateConversionWidget = null as CoordinateConversion|null;
 export var homeWidget = null as Home|null;
 export var zoomWidget = null as Zoom|null;
+export var extentnavigatorWidget = null as ExtentNavigator|null;
 export var locateWidget = null as Locate|null;
 export var fullscreenWidget = null as Fullscreen|null;
 export var layerListWidget = null as Expand|null;
@@ -86,6 +88,9 @@ export async function loadWidgetsIntoMap(_mapView: MapView, mapWidgetArray: Arra
                 case "ZOOM":
                     zoomWidget = await addZoom(widget as MapWidget, _mapView) as Zoom|null;
                     break;
+                case "EXTENTNAVIGATION":
+                    extentnavigatorWidget = await addExtentNavigator(widget as ExtentNavigationWidget, _mapView) as ExtentNavigator|null;
+                    break;
                 case "LOCATE":
                     locateWidget = await addLocate(widget as MapWidget, _mapView) as Locate|null;
                     break;
@@ -110,6 +115,7 @@ export function removeWidgetsFromMap(_mapView: MapView) {
       coordinateConversionWidget,
       homeWidget,
       zoomWidget,
+      extentnavigatorWidget,
       locateWidget,
       fullscreenWidget,
       layerListWidget
@@ -338,6 +344,40 @@ async function addZoom(widget: MapWidget, view: MapView){
                 }
             ]);
             resolve(_zoom);
+        });
+    });
+}
+
+async function addExtentNavigator(widget: ExtentNavigationWidget, view: MapView){
+    return new Promise(resolve => {
+        var configFile: string|null;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        } else {
+            configFile = null;
+        }
+        
+        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
+        var _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true) as boolean;
+        var _extentNavigator = new ExtentNavigator();
+
+        returnConfig(configFile, null).then(config => {
+            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+
+            _extentNavigator.label = widget.id;
+            _extentNavigator.horizontalAlignButtons = _horizontalAlignButtons;
+            _extentNavigator.view = view;
+            _extentNavigator.visible = _visible;
+
+            view.ui.add([
+                {
+                    component: _extentNavigator,
+                    position: _position,
+                    index: _index
+                }
+            ]);
+            resolve(_extentNavigator);
         });
     });
 }

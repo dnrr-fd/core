@@ -28,6 +28,16 @@ export class MapWidget extends Accessor {
 
 }
 
+@subclass('MapClasses.ExtentNavigationWidget')
+export class ExtentNavigationWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    horizontal_align_buttons!: boolean;
+
+}
+
 @subclass('MapClasses.ScaleBarWidget')
 export class ScaleBarWidget extends MapWidget {
     //----------------------------------

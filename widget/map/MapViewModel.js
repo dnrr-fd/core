@@ -9,6 +9,7 @@ import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 import Home from "@arcgis/core/widgets/Home";
 import Zoom from "@arcgis/core/widgets/Zoom";
+import ExtentNavigator from "@dnrr_fd/core/widget/extentnavigator/ExtentNavigator";
 import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";
@@ -43,6 +44,7 @@ export var scaleBarWidget = null;
 export var coordinateConversionWidget = null;
 export var homeWidget = null;
 export var zoomWidget = null;
+export var extentnavigatorWidget = null;
 export var locateWidget = null;
 export var fullscreenWidget = null;
 export var layerListWidget = null;
@@ -69,6 +71,9 @@ export async function loadWidgetsIntoMap(_mapView, mapWidgetArray) {
                 case "ZOOM":
                     zoomWidget = await addZoom(widget, _mapView);
                     break;
+                case "EXTENTNAVIGATION":
+                    extentnavigatorWidget = await addExtentNavigator(widget, _mapView);
+                    break;
                 case "LOCATE":
                     locateWidget = await addLocate(widget, _mapView);
                     break;
@@ -93,6 +98,7 @@ export function removeWidgetsFromMap(_mapView) {
         coordinateConversionWidget,
         homeWidget,
         zoomWidget,
+        extentnavigatorWidget,
         locateWidget,
         fullscreenWidget,
         layerListWidget
@@ -302,6 +308,36 @@ async function addZoom(widget, view) {
                 }
             ]);
             resolve(_zoom);
+        });
+    });
+}
+async function addExtentNavigator(widget, view) {
+    return new Promise(resolve => {
+        var configFile;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        }
+        else {
+            configFile = null;
+        }
+        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
+        var _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true);
+        var _extentNavigator = new ExtentNavigator();
+        returnConfig(configFile, null).then(config => {
+            var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
+            _extentNavigator.label = widget.id;
+            _extentNavigator.horizontalAlignButtons = _horizontalAlignButtons;
+            _extentNavigator.view = view;
+            _extentNavigator.visible = _visible;
+            view.ui.add([
+                {
+                    component: _extentNavigator,
+                    position: _position,
+                    index: _index
+                }
+            ]);
+            resolve(_extentNavigator);
         });
     });
 }
