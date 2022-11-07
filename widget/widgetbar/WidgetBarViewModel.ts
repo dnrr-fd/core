@@ -30,8 +30,6 @@ import Point from "@arcgis/core/geometry/Point";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Extent from "@arcgis/core/geometry/Extent";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
-import Layer from "@arcgis/core/layers/Layer";
-import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 
 import Support from "../support/Support";
@@ -1007,7 +1005,7 @@ function getLayer(_layer: _Layer): MapImageLayer {
     return lyr;
 }
 
-function convertJSONBookmarksToEsriBookmarks(_bookmarks_list: Array<_Bookmark>, _default_thumbnail: string) {
+export function convertJSONBookmarksToEsriBookmarks(_bookmarks_list: Array<_Bookmark>, _default_thumbnail: string) {
     var lang = getNormalizedLocale();
     let final_bookmarks = new Collection();
 

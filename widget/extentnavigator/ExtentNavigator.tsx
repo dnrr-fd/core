@@ -7,18 +7,22 @@ import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 // Import Assets
-import * as css from '@dnrr_fd/core/widget/extentnavigator/assets/css/extentnavigator.module.css';
+import * as css from './assets/css/extentnavigator.module.css';
 
-import * as t9n_en from '@dnrr_fd/core/widget/extentnavigator/assets/t9n/en.json'
-import * as t9n_fr from '@dnrr_fd/core/widget/extentnavigator/assets/t9n/fr.json'
+import * as t9n_en from './assets/t9n/en.json'
+import * as t9n_fr from './assets/t9n/fr.json'
 import MapView from "@arcgis/core/views/MapView";
-import { MapExtentObject } from "@dnrr_fd/core/widget/class/_Map";
+import { MapExtentObject } from "../class/_Map";
 import { ariaDisable } from "@dnrr_fd/util";
+import Extent from "@arcgis/core/geometry/Extent";
 
 var t9n = t9n_en;
 var alignmentClass: string;
+var navButtonClicked = false;
 
-export var mapExtentArray = new Array<MapExtentObject>();
+var mapExtentArray = new Array<MapExtentObject>();
+var mapExtentArrayPosition = 0;
+var self: ExtentNavigator;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -65,6 +69,7 @@ class ExtentNavigator extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
   postInitialize(): void {
+    self = this;
     var _locale = getNormalizedLocale();
 
     if (_locale === "en") {
@@ -85,18 +90,50 @@ class ExtentNavigator extends Widget {
       alignmentClass = css.default.widget_extentnavigator_content_vertical;
     }
 
-    var mapExtentObject = new MapExtentObject();
-
     // Watch for any changes in extent
     reactiveUtils.watch(
       () => !this.view.stationary,
       (stationary, wasStationary) => {
         if (wasStationary) {
+          let mapExtentObject = new MapExtentObject();
           mapExtentObject.scale = this.view.scale;
           mapExtentObject.extent = this.view.extent;
-          console.log(`New Extent Object:`);
-          console.log(mapExtentObject.toString());
-          mapExtentArray.push(mapExtentObject);
+          // console.log(`New Extent Object:`);
+          // console.log(mapExtentObject.toString());
+          
+          // ****************************************************************************
+          // Determine if the extent navigator buttons were clicked first before pushing.
+          // ****************************************************************************
+          if (navButtonClicked === false) {
+            // Pop the array based on mapExtentArrayPosition
+            // console.log(`Before: mapExtentArray.length: ${mapExtentArray.length}, mapExtentArrayPosition: ${mapExtentArrayPosition}`);
+            var ltp = mapExtentArray.length - mapExtentArrayPosition;
+            if (ltp > 0) {
+              for (let i=0; i<ltp; i++) {
+                mapExtentArray.pop();
+              }
+            }
+
+            mapExtentArray.push(mapExtentObject);
+            mapExtentArrayPosition = mapExtentArray.length;
+            // console.log(`After: mapExtentArray.length: ${mapExtentArray.length}, mapExtentArrayPosition: ${mapExtentArrayPosition}`);
+            
+            // Enable the previous extent button
+            let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID)!;
+            if (mapExtentArrayPosition > 1) {
+              ariaDisable(previousExtentButton_node, [css_esri.esri_disabled], false);
+            } else {
+              ariaDisable(previousExtentButton_node, [css_esri.esri_disabled], true);
+            }
+
+            // Disable the next extent button
+            let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID)!;
+            if (nextExtentButton_node.ariaDisabled === "false") {
+              ariaDisable(nextExtentButton_node, [css_esri.esri_disabled], true);
+            }
+          } else {
+            navButtonClicked = false;
+          }
         }
         return "";
       }
@@ -126,7 +163,10 @@ class ExtentNavigator extends Widget {
     if (previousExtentButton_node.ariaDisabled === "true") {
       e.preventDefault();
     } else {
-      // this.addURLServiceToMap(urlValue);
+      let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID)!;
+      mapExtentArrayPosition -= 1;
+      navButtonClicked = true;
+      this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition-1].extent);
     }
   }
 
@@ -139,9 +179,12 @@ class ExtentNavigator extends Widget {
       if (previousExtentButton_node.ariaDisabled === "true") {
         e.preventDefault();
       } else {
-        // this.addURLServiceToMap(urlValue);
+        let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID)!;
+        mapExtentArrayPosition -= 1;
+        navButtonClicked = true;
+        this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition-1].extent);
       }
-      }
+    }
   }
 
   private _nextExtent_click(e: MouseEvent) {
@@ -149,7 +192,10 @@ class ExtentNavigator extends Widget {
     if (nextExtentButton_node.ariaDisabled === "true") {
       e.preventDefault();
     } else {
-      // this.addURLServiceToMap(urlValue);
+      let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID)!;
+      mapExtentArrayPosition += 1;
+      navButtonClicked = true;
+      this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition-1].extent);
     }
   }
 
@@ -162,7 +208,10 @@ class ExtentNavigator extends Widget {
       if (nextExtentButton_node.ariaDisabled === "true") {
         e.preventDefault();
       } else {
-        // this.addURLServiceToMap(urlValue);
+        let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID)!;
+        mapExtentArrayPosition += 1;
+        navButtonClicked = true;
+        this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition-1].extent);
       }
     }
   }
@@ -173,5 +222,29 @@ class ExtentNavigator extends Widget {
     ariaDisable(previousExtentButton_node, [css_esri.esri_disabled], true);
     ariaDisable(nextExtentButton_node, [css_esri.esri_disabled], true);
   }
+
+  private gotoExtent(forwardButton_node: HTMLElement, reverseButton_node: HTMLElement, extent: Extent) {
+    // Disable the reverse extent button if you reach the start of the extent array
+    // console.log(`Navigation: mapExtentArray.length: ${mapExtentArray.length}, mapExtentArrayPosition: ${mapExtentArrayPosition}`);
+
+    if (mapExtentArrayPosition > 1) {
+      ariaDisable(reverseButton_node, [css_esri.esri_disabled], false);
+    } else {
+      ariaDisable(reverseButton_node, [css_esri.esri_disabled], true);
+    }
+
+    // Disable the forward extent button if you reach the end of the extent array
+    if (mapExtentArrayPosition === mapExtentArray.length) {
+      ariaDisable(forwardButton_node, [css_esri.esri_disabled], true);
+    } else {
+      ariaDisable(forwardButton_node, [css_esri.esri_disabled], false);
+    }
+
+    // Go to the extent.
+    self.view.goTo(extent).catch((error) => {
+      console.error(error);
+    });
+  }
+
 }
 export default ExtentNavigator;

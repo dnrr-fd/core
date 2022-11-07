@@ -26,6 +26,7 @@ import * as t9n_fr from './assets/t9n/fr.json';
 var t9n = t9n_en;
 var css_theme = css_dark;
 var _mapView = new MapView();
+var initialExtent;
 const elementIDs = {
     esriThemeID: "esriThemeID",
     mapID: "_mapID",
@@ -41,7 +42,7 @@ let Map = class Map extends Widget {
     //--------------------------------------------------------------------------
     postInitialize() {
         esriConfig.apiKey = this.apiKey;
-        console.log(`API Key: ${esriConfig.apiKey}`);
+        // console.log(`API Key: ${esriConfig.apiKey}`);
         var _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
@@ -158,40 +159,66 @@ let Map = class Map extends Widget {
                     id: this.map.id
                 }
             });
-            _mapView.container = document.getElementById(elementIDs.mapContentID);
-            _mapView.map = map;
-            _mapView.highlightOptions = {
-                fillOpacity: this.map.highlightOptions.fillOpacity,
-                color: new Color(this.map.highlightOptions.color)
-            };
-            _mapView.popup = new Popup({
-                dockEnabled: true,
-                dockOptions: {
-                    position: this.map.popupLocation,
-                    breakpoint: false
+            // Check for cookies
+            this.cookieVMAsyncForEach(this.cookies, async (cookie) => {
+                if (cookie.id.toLowerCase() === "extent" && cookie.accepted === true) {
+                    await cookie.getCookie().then(() => {
+                        if (cookie.value) {
+                            initialExtent = JSON.parse(cookie.value);
+                        }
+                    });
+                    return;
                 }
-            });
-            _mapView.constraints = {
-                minZoom: 0
-            };
-            _mapView.ui.components = this.map.defaultWidgets;
-            _mapView.padding.top = upper_height;
-            _mapView.padding.bottom = 0;
-            _mapView.padding.left = 0;
-            _mapView.padding.right = 0;
-            _mapView.when(async function () {
-                if (typeof self.map.widgets === "object") {
-                    await loadWidgetsIntoMap(_mapView, self.map.widgets);
+            }).then(() => {
+                if (initialExtent) {
+                    _mapView.extent = initialExtent;
                 }
-                resolve(true);
-            }, function () {
-                resolve(false);
+                _mapView.container = document.getElementById(elementIDs.mapContentID);
+                _mapView.map = map;
+                _mapView.highlightOptions = {
+                    fillOpacity: this.map.highlightOptions.fillOpacity,
+                    color: new Color(this.map.highlightOptions.color)
+                };
+                _mapView.popup = new Popup({
+                    dockEnabled: true,
+                    dockOptions: {
+                        position: this.map.popupLocation,
+                        breakpoint: false
+                    }
+                });
+                _mapView.constraints = {
+                    minZoom: 0
+                };
+                _mapView.ui.components = this.map.defaultWidgets;
+                _mapView.padding.top = upper_height;
+                _mapView.padding.bottom = 0;
+                _mapView.padding.left = 0;
+                _mapView.padding.right = 0;
+                _mapView.when(async function () {
+                    if (typeof self.map.widgets === "object") {
+                        await loadWidgetsIntoMap(_mapView, self.map.widgets);
+                    }
+                    resolve(true);
+                }, function () {
+                    resolve(false);
+                });
             });
         });
     }
     _handleSignOut() {
         identityManager.destroyCredentials();
         window.location.reload();
+    }
+    async cookieVMAsyncForEach(array, callback) {
+        if (typeof array === "object") {
+            for (let index = 0; index < array.length; index++) {
+                // console.log("Promise: callback()");
+                await callback(array[index], index, array);
+            }
+        }
+        else {
+            return null;
+        }
     }
 };
 __decorate([
@@ -218,6 +245,9 @@ __decorate([
 __decorate([
     property()
 ], Map.prototype, "signoutElement", void 0);
+__decorate([
+    property()
+], Map.prototype, "cookies", void 0);
 __decorate([
     property()
 ], Map.prototype, "map", void 0);

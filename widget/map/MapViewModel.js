@@ -9,7 +9,7 @@ import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 import Home from "@arcgis/core/widgets/Home";
 import Zoom from "@arcgis/core/widgets/Zoom";
-import ExtentNavigator from "@dnrr_fd/core/widget/extentnavigator/ExtentNavigator";
+import ExtentNavigator from "../extentnavigator/ExtentNavigator";
 import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";

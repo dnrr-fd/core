@@ -11,7 +11,9 @@ import MapView from "@arcgis/core/views/MapView";
 import WebMap from "@arcgis/core/WebMap";
 import Color from "@arcgis/core/Color";
 import Popup from "@arcgis/core/widgets/Popup";
+import Extent from "@arcgis/core/geometry/Extent";
 import { MapConfig } from '../class/_Map'
+import { CookiesVM } from "../class/_Cookie";
 import { getWidgetTheme } from '@dnrr_fd/util/web'
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
 import { loadWidgetsIntoMap, removeWidgetsFromMap } from "./MapViewModel"
@@ -30,6 +32,8 @@ import * as t9n_fr from './assets/t9n/fr.json'
 var t9n = t9n_en;
 var css_theme = css_dark;
 var _mapView = new MapView();
+var initialExtent: Extent;
+
 
 const elementIDs = {
   esriThemeID: "esriThemeID",
@@ -45,6 +49,7 @@ interface MapParams extends __esri.WidgetProperties {
   apiKey: string;
   portalUrl: string;
   signoutElement?: HTMLAnchorElement|string|null;
+  cookies?: Array<CookiesVM>|undefined;
   map: MapConfig;
   mapRootURL: string;
 }
@@ -85,6 +90,9 @@ class Map extends Widget {
   signoutElement!: HTMLAnchorElement|string|null;
 
   @property()
+  cookies!: Array<CookiesVM>|undefined;
+
+  @property()
   map!: MapConfig;
 
   @property()
@@ -105,7 +113,7 @@ class Map extends Widget {
 
   postInitialize(): void {
     esriConfig.apiKey = this.apiKey;
-    console.log(`API Key: ${esriConfig.apiKey}`);
+    // console.log(`API Key: ${esriConfig.apiKey}`);
 
     var _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
@@ -150,6 +158,7 @@ class Map extends Widget {
     });
 
     identityManager.registerOAuthInfos([info]);
+
     identityManager.checkSignInStatus(info.portalUrl + "/sharing")
     .then(async () => {
         await this._handleSignIn().then(results => {
@@ -241,35 +250,50 @@ class Map extends Widget {
           }
       });
 
-      _mapView.container = document.getElementById(elementIDs.mapContentID) as HTMLDivElement;
-      _mapView.map = map;
-      _mapView.highlightOptions = {
-          fillOpacity: this.map.highlightOptions.fillOpacity,
-          color: new Color(this.map.highlightOptions.color)
-      };
-      _mapView.popup = new Popup({
-        dockEnabled: true,
-        dockOptions: {
-          position: this.map.popupLocation,
-          breakpoint: false
+      // Check for cookies
+      this.cookieVMAsyncForEach(this.cookies, async (cookie: CookiesVM) => {
+        if (cookie.id.toLowerCase() === "extent" && cookie.accepted === true) {
+          await cookie.getCookie().then(() => {
+            if (cookie.value) {
+              initialExtent = JSON.parse(cookie.value);
+            }
+          });
+          return;
         }
-      });
-      _mapView.constraints = {
-          minZoom: 0
-      };
-      _mapView.ui.components = this.map.defaultWidgets;
-      _mapView.padding.top = upper_height;
-      _mapView.padding.bottom = 0;
-      _mapView.padding.left = 0;
-      _mapView.padding.right = 0;
-
-      _mapView.when(async function() {
-        if (typeof self.map.widgets === "object") {
-          await loadWidgetsIntoMap(_mapView, self.map.widgets);
+      }).then(() => {
+        if (initialExtent) {
+          _mapView.extent = initialExtent;
         }
-        resolve(true);
-      }, function() {
-        resolve(false);
+        _mapView.container = document.getElementById(elementIDs.mapContentID) as HTMLDivElement;
+        _mapView.map = map;
+        _mapView.highlightOptions = {
+            fillOpacity: this.map.highlightOptions.fillOpacity,
+            color: new Color(this.map.highlightOptions.color)
+        };
+        _mapView.popup = new Popup({
+          dockEnabled: true,
+          dockOptions: {
+            position: this.map.popupLocation,
+            breakpoint: false
+          }
+        });
+        _mapView.constraints = {
+            minZoom: 0
+        };
+        _mapView.ui.components = this.map.defaultWidgets;
+        _mapView.padding.top = upper_height;
+        _mapView.padding.bottom = 0;
+        _mapView.padding.left = 0;
+        _mapView.padding.right = 0;
+  
+        _mapView.when(async function() {
+          if (typeof self.map.widgets === "object") {
+            await loadWidgetsIntoMap(_mapView, self.map.widgets);
+          }
+          resolve(true);
+        }, function() {
+          resolve(false);
+        });
       });
     });
   }
@@ -279,9 +303,21 @@ class Map extends Widget {
     window.location.reload();    
   }
 
+  private async cookieVMAsyncForEach(array: Array<CookiesVM>|undefined, callback: { (cookie: CookiesVM): Promise<void>; (arg0: CookiesVM, arg1: number, arg2: CookiesVM[]): any; }) {
+    if (typeof array === "object") {
+      for (let index = 0; index < array.length; index++) {
+        // console.log("Promise: callback()");
+        await callback(array[index], index, array);
+      }
+    } else {
+      return null;
+    }
+  }
+
   //--------------------------------------------------------------------------
   //  Private Event Methods
   //--------------------------------------------------------------------------
+
 
   //--------------------------------------------------------------------------
   //  Public Methods

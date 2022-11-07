@@ -55,7 +55,7 @@ const elementIDs = {
 var switches: tsx.JSX.Element;
 
 interface CookiesParams extends __esri.WidgetProperties {
-  afterDestroyFocusElement?: string|HTMLElement;
+  afterHideFocusElement?: string|HTMLElement;
 
   position?: "bottom"|"top";
 
@@ -70,6 +70,7 @@ interface CookiesParams extends __esri.WidgetProperties {
     type: "url"|"email",
     value: string
   };
+
 }
 
 @subclass("dnrr.forestry.widgets.cookies")
@@ -83,7 +84,7 @@ class Cookies extends Widget {
   //  Properties
   //----------------------------------
   @property()
-  afterDestroyFocusElement!: string|HTMLElement;
+  afterHideFocusElement!: string|HTMLElement;
 
   @property()
   position: "bottom"|"top" = 'bottom';
@@ -109,11 +110,14 @@ class Cookies extends Widget {
   @property()
   theme!: 'light'|'dark';
 
+  @property()
+  acceptionchange!: boolean;
 
   //--------------------------------------------------------------------------
   //  Public Methods
   //--------------------------------------------------------------------------
   async postInitialize(): Promise<void> {
+    var self = this;
     var _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
@@ -124,6 +128,7 @@ class Cookies extends Widget {
 
     this.label = t9n.title;
     this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme) as 'light'|'dark';
+    this.acceptionchange = false;
 
     intl.onLocaleChange(function(locale) {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
@@ -306,12 +311,12 @@ class Cookies extends Widget {
   }
 
   private _main_closeButton_click () {
-    this.destroy();
-    if (this.afterDestroyFocusElement) {
-      if (typeof this.afterDestroyFocusElement === "string") {
-        getFocusableElements(document.getElementById(this.afterDestroyFocusElement)!);
+    this.visible = false;
+    if (this.afterHideFocusElement) {
+      if (typeof this.afterHideFocusElement === "string") {
+        getFocusableElements(document.getElementById(this.afterHideFocusElement)!);
       } else {
-        getFocusableElements(this.afterDestroyFocusElement);
+        getFocusableElements(this.afterHideFocusElement);
       }
     }
   }
@@ -438,27 +443,29 @@ class Cookies extends Widget {
   private _acceptAllButton_click () {
     this._setCookies();
     this._setCookieSwitch();
-    this.destroy();
-    if (this.afterDestroyFocusElement) {
-      if (typeof this.afterDestroyFocusElement === "string") {
-        getFocusableElements(document.getElementById(this.afterDestroyFocusElement)!);
+    this.visible = false;
+    if (this.afterHideFocusElement) {
+      if (typeof this.afterHideFocusElement === "string") {
+        getFocusableElements(document.getElementById(this.afterHideFocusElement)!);
       } else {
-        getFocusableElements(this.afterDestroyFocusElement);
+        getFocusableElements(this.afterHideFocusElement);
       }
     }
+    this.acceptionchange = true;
   }
 
   private _rejectAllButton_click () {
     this._deleteCookies();
     this._setCookieSwitch();
-    this.destroy();
-    if (this.afterDestroyFocusElement) {
-      if (typeof this.afterDestroyFocusElement === "string") {
-        getFocusableElements(document.getElementById(this.afterDestroyFocusElement)!);
+    this.visible = false;
+    if (this.afterHideFocusElement) {
+      if (typeof this.afterHideFocusElement === "string") {
+        getFocusableElements(document.getElementById(this.afterHideFocusElement)!);
       } else {
-        getFocusableElements(this.afterDestroyFocusElement);
+        getFocusableElements(this.afterHideFocusElement);
       }
     }
+    this.acceptionchange = true;
   }
 
   private _switchToggle_change(switchID: string) {
@@ -481,7 +488,7 @@ class Cookies extends Widget {
     const cookiesSettings_saveButtonNode = document.getElementById(elementIDs.cookiesSettings_saveButtonID) as HTMLInputElement;
     
     var resultObj = [];
-    for (let cookie of this.cookiesVM) {
+    for (var cookie of this.cookiesVM) {
       var switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`) as HTMLInputElement;
       let _message: string;
       if (switchToggleCheckbox.checked === true) {
@@ -506,30 +513,31 @@ class Cookies extends Widget {
       alertMessage += `\n     ${result.label}: ${result.message}.`;
     }
     alert(alertMessage);
-    this.destroy();
-    if (this.afterDestroyFocusElement) {
-      if (typeof this.afterDestroyFocusElement === "string") {
-        getFocusableElements(document.getElementById(this.afterDestroyFocusElement)!);
+    this.visible = false;
+    if (this.afterHideFocusElement) {
+      if (typeof this.afterHideFocusElement === "string") {
+        getFocusableElements(document.getElementById(this.afterHideFocusElement)!);
       } else {
-        getFocusableElements(this.afterDestroyFocusElement);
+        getFocusableElements(this.afterHideFocusElement);
       }
     }
+    this.acceptionchange = true;
   }
 
   private _setCookies() {
-    for (let cookie of this.cookiesVM) {
+    for (var cookie of this.cookiesVM) {
       cookie.setCookie();
     }
   }
 
   private _deleteCookies() {
-    for (let cookie of this.cookiesVM) {
+    for (var cookie of this.cookiesVM) {
       cookie.deleteCookie();
     }
   }
 
   private _setCookieSwitch() {
-    for (let cookie of this.cookiesVM) {
+    for (var cookie of this.cookiesVM) {
       var switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`) as HTMLInputElement;
       if (cookie.accepted === true) {
         switchToggleCheckbox.checked = true;
@@ -543,9 +551,10 @@ class Cookies extends Widget {
     var _cookiesVM = new Array<CookiesVM>();
     // Build the cookie object.
     for (let conf_cookie of this.cookies) {
-      let _cookie = new CookiesVM();
+      var _cookie = new CookiesVM();
       _cookie.id = conf_cookie.id;
       _cookie.label = conf_cookie.label;
+      _cookie.accepted = false;
 
       if (conf_cookie.expiry) {
         _cookie.expiry = conf_cookie.expiry;

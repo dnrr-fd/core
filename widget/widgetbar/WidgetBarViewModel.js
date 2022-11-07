@@ -894,7 +894,7 @@ function getLayer(_layer) {
     // console.log(`Layer LoadError (${lyr.id}): ${lyr.loadError}`);
     return lyr;
 }
-function convertJSONBookmarksToEsriBookmarks(_bookmarks_list, _default_thumbnail) {
+export function convertJSONBookmarksToEsriBookmarks(_bookmarks_list, _default_thumbnail) {
     var lang = getNormalizedLocale();
     let final_bookmarks = new Collection();
     _bookmarks_list.forEach(_bookmark => {

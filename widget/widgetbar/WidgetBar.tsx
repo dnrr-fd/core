@@ -23,7 +23,6 @@ export var widgetBarWidgetCloseFocusElement: string|HTMLElement;
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 import Expand from "@arcgis/core/widgets/Expand";
-import Button from "../button/Button";
 
 var t9n = t9n_en;
 var css_theme = css_dark;
@@ -93,6 +92,9 @@ class WidgetBar extends Widget {
   @property()
   activeWidget!: string;
 
+  @property()
+  widgetBarWidgets!: Array<wbwObject>|null;
+
   //--------------------------------------------------------------------------
   //  Public Methods
   //--------------------------------------------------------------------------
@@ -132,8 +134,9 @@ class WidgetBar extends Widget {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
       self.locale = locale;
       removeWidgetsFromWidgetBar(self.mapView);
-      await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
-        self.widgetStylize(_mapBarWidgets);
+      await createWidgetsForWidgetBar(widgetBar).then(_widgetBarWidgets => {
+        self.widgetBarWidgets = _widgetBarWidgets;
+        self.widgetStylize(_widgetBarWidgets);
       });
     });
 
@@ -146,8 +149,9 @@ class WidgetBar extends Widget {
     });
 
     // Create widget bar widgets
-    await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
-      this.widgetStylize(_mapBarWidgets);
+    await createWidgetsForWidgetBar(widgetBar).then(_widgetBarWidgets => {
+      self.widgetBarWidgets = _widgetBarWidgets;
+      this.widgetStylize(_widgetBarWidgets);
     });
   }
 
@@ -176,9 +180,9 @@ class WidgetBar extends Widget {
       this.rendered = true;
   }
 
-  private widgetStylize(_mapBarWidgets: Array<wbwObject>|null) {
-    if (_mapBarWidgets) {
-      _mapBarWidgets.forEach(wbObj => {
+  private widgetStylize(_widgetBarWidgets: Array<wbwObject>|null) {
+    if (_widgetBarWidgets) {
+      _widgetBarWidgets.forEach(wbObj => {
         // Make valid widget bar widget styling changes.
         var wbw_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
         if (wbw_node) {
@@ -191,7 +195,7 @@ class WidgetBar extends Widget {
           wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
         }
       });
-      _mapBarWidgets.forEach(wbObj => {
+      _widgetBarWidgets.forEach(wbObj => {
         // Adjust the expand menus after final render from above class changes.
         var button_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
         if (button_node) {

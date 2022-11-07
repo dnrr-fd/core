@@ -54,6 +54,7 @@ let Cookies = class Cookies extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     async postInitialize() {
+        var self = this;
         var _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
@@ -64,6 +65,7 @@ let Cookies = class Cookies extends Widget {
         }
         this.label = t9n.title;
         this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme);
+        this.acceptionchange = false;
         intl.onLocaleChange(function (locale) {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);
         });
@@ -170,13 +172,13 @@ let Cookies = class Cookies extends Widget {
         // });
     }
     _main_closeButton_click() {
-        this.destroy();
-        if (this.afterDestroyFocusElement) {
-            if (typeof this.afterDestroyFocusElement === "string") {
-                getFocusableElements(document.getElementById(this.afterDestroyFocusElement));
+        this.visible = false;
+        if (this.afterHideFocusElement) {
+            if (typeof this.afterHideFocusElement === "string") {
+                getFocusableElements(document.getElementById(this.afterHideFocusElement));
             }
             else {
-                getFocusableElements(this.afterDestroyFocusElement);
+                getFocusableElements(this.afterHideFocusElement);
             }
         }
     }
@@ -273,28 +275,30 @@ let Cookies = class Cookies extends Widget {
     _acceptAllButton_click() {
         this._setCookies();
         this._setCookieSwitch();
-        this.destroy();
-        if (this.afterDestroyFocusElement) {
-            if (typeof this.afterDestroyFocusElement === "string") {
-                getFocusableElements(document.getElementById(this.afterDestroyFocusElement));
+        this.visible = false;
+        if (this.afterHideFocusElement) {
+            if (typeof this.afterHideFocusElement === "string") {
+                getFocusableElements(document.getElementById(this.afterHideFocusElement));
             }
             else {
-                getFocusableElements(this.afterDestroyFocusElement);
+                getFocusableElements(this.afterHideFocusElement);
             }
         }
+        this.acceptionchange = true;
     }
     _rejectAllButton_click() {
         this._deleteCookies();
         this._setCookieSwitch();
-        this.destroy();
-        if (this.afterDestroyFocusElement) {
-            if (typeof this.afterDestroyFocusElement === "string") {
-                getFocusableElements(document.getElementById(this.afterDestroyFocusElement));
+        this.visible = false;
+        if (this.afterHideFocusElement) {
+            if (typeof this.afterHideFocusElement === "string") {
+                getFocusableElements(document.getElementById(this.afterHideFocusElement));
             }
             else {
-                getFocusableElements(this.afterDestroyFocusElement);
+                getFocusableElements(this.afterHideFocusElement);
             }
         }
+        this.acceptionchange = true;
     }
     _switchToggle_change(switchID) {
         const cookiesSettings_saveButtonNode = document.getElementById(elementIDs.cookiesSettings_saveButtonID);
@@ -314,7 +318,7 @@ let Cookies = class Cookies extends Widget {
     _saveButtonAction(acceptMessage, rejectMessage) {
         const cookiesSettings_saveButtonNode = document.getElementById(elementIDs.cookiesSettings_saveButtonID);
         var resultObj = [];
-        for (let cookie of this.cookiesVM) {
+        for (var cookie of this.cookiesVM) {
             var switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`);
             let _message;
             if (switchToggleCheckbox.checked === true) {
@@ -338,28 +342,29 @@ let Cookies = class Cookies extends Widget {
             alertMessage += `\n     ${result.label}: ${result.message}.`;
         }
         alert(alertMessage);
-        this.destroy();
-        if (this.afterDestroyFocusElement) {
-            if (typeof this.afterDestroyFocusElement === "string") {
-                getFocusableElements(document.getElementById(this.afterDestroyFocusElement));
+        this.visible = false;
+        if (this.afterHideFocusElement) {
+            if (typeof this.afterHideFocusElement === "string") {
+                getFocusableElements(document.getElementById(this.afterHideFocusElement));
             }
             else {
-                getFocusableElements(this.afterDestroyFocusElement);
+                getFocusableElements(this.afterHideFocusElement);
             }
         }
+        this.acceptionchange = true;
     }
     _setCookies() {
-        for (let cookie of this.cookiesVM) {
+        for (var cookie of this.cookiesVM) {
             cookie.setCookie();
         }
     }
     _deleteCookies() {
-        for (let cookie of this.cookiesVM) {
+        for (var cookie of this.cookiesVM) {
             cookie.deleteCookie();
         }
     }
     _setCookieSwitch() {
-        for (let cookie of this.cookiesVM) {
+        for (var cookie of this.cookiesVM) {
             var switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`);
             if (cookie.accepted === true) {
                 switchToggleCheckbox.checked = true;
@@ -373,9 +378,10 @@ let Cookies = class Cookies extends Widget {
         var _cookiesVM = new Array();
         // Build the cookie object.
         for (let conf_cookie of this.cookies) {
-            let _cookie = new CookiesVM();
+            var _cookie = new CookiesVM();
             _cookie.id = conf_cookie.id;
             _cookie.label = conf_cookie.label;
+            _cookie.accepted = false;
             if (conf_cookie.expiry) {
                 _cookie.expiry = conf_cookie.expiry;
             }
@@ -429,7 +435,7 @@ let Cookies = class Cookies extends Widget {
 };
 __decorate([
     property()
-], Cookies.prototype, "afterDestroyFocusElement", void 0);
+], Cookies.prototype, "afterHideFocusElement", void 0);
 __decorate([
     property()
 ], Cookies.prototype, "position", void 0);
@@ -448,6 +454,9 @@ __decorate([
 __decorate([
     property()
 ], Cookies.prototype, "theme", void 0);
+__decorate([
+    property()
+], Cookies.prototype, "acceptionchange", void 0);
 Cookies = __decorate([
     subclass("dnrr.forestry.widgets.cookies")
 ], Cookies);

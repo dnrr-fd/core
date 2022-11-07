@@ -60,8 +60,9 @@ let WidgetBar = class WidgetBar extends Widget {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);
             self.locale = locale;
             removeWidgetsFromWidgetBar(self.mapView);
-            await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
-                self.widgetStylize(_mapBarWidgets);
+            await createWidgetsForWidgetBar(widgetBar).then(_widgetBarWidgets => {
+                self.widgetBarWidgets = _widgetBarWidgets;
+                self.widgetStylize(_widgetBarWidgets);
             });
         });
         this.watch("theme", function (theme_new, theme_old) {
@@ -72,8 +73,9 @@ let WidgetBar = class WidgetBar extends Widget {
             }
         });
         // Create widget bar widgets
-        await createWidgetsForWidgetBar(widgetBar).then(_mapBarWidgets => {
-            this.widgetStylize(_mapBarWidgets);
+        await createWidgetsForWidgetBar(widgetBar).then(_widgetBarWidgets => {
+            self.widgetBarWidgets = _widgetBarWidgets;
+            this.widgetStylize(_widgetBarWidgets);
         });
     }
     render() {
@@ -90,9 +92,9 @@ let WidgetBar = class WidgetBar extends Widget {
     _setRendered() {
         this.rendered = true;
     }
-    widgetStylize(_mapBarWidgets) {
-        if (_mapBarWidgets) {
-            _mapBarWidgets.forEach(wbObj => {
+    widgetStylize(_widgetBarWidgets) {
+        if (_widgetBarWidgets) {
+            _widgetBarWidgets.forEach(wbObj => {
                 // Make valid widget bar widget styling changes.
                 var wbw_node = document.getElementById(wbObj.wbWidget.id);
                 if (wbw_node) {
@@ -105,7 +107,7 @@ let WidgetBar = class WidgetBar extends Widget {
                     wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
                 }
             });
-            _mapBarWidgets.forEach(wbObj => {
+            _widgetBarWidgets.forEach(wbObj => {
                 // Adjust the expand menus after final render from above class changes.
                 var button_node = document.getElementById(wbObj.wbWidget.id);
                 if (button_node) {
@@ -171,6 +173,9 @@ __decorate([
 __decorate([
     property()
 ], WidgetBar.prototype, "activeWidget", void 0);
+__decorate([
+    property()
+], WidgetBar.prototype, "widgetBarWidgets", void 0);
 WidgetBar = __decorate([
     subclass("dnrr.forestry.widgets.widgetbar")
 ], WidgetBar);
