@@ -2,6 +2,64 @@
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from '@arcgis/core/core/Accessor';
 import Extent from "@arcgis/core/geometry/Extent";
+import Expand from "@arcgis/core/widgets/Expand";
+import Widget from "@arcgis/core/widgets/Widget";
+import CookiesButton from "../cookies/button/CookiesButton";
+import ScaleBar from "@arcgis/core/widgets/ScaleBar";
+import Search from "@arcgis/core/widgets/Search";
+import Cookies from "../cookies/Cookies";
+import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
+import Home from "@arcgis/core/widgets/Home";
+import Zoom from "@arcgis/core/widgets/Zoom";
+import ExtentNavigator from "../extentnavigator/ExtentNavigator";
+import Locate from "@arcgis/core/widgets/Locate";
+import Fullscreen from "@arcgis/core/widgets/Fullscreen";
+import { CookiesVM } from "../class/_Cookie";
+
+export class WebObject {
+  constructor(
+    type: "email"|"url",
+    value: string,
+  ) {
+      this.type = type;
+      this.value = value;
+  }
+
+  @property()
+  type!: "email"|"url";
+
+  @property()
+  value!: string;
+}
+
+export class WebUrlObject {
+  constructor(
+    type: "url",
+    value: string,
+  ) {
+      this.type = type;
+      this.value = value;
+  }
+
+  @property()
+  type!: "url";
+
+  @property()
+  value!: string;
+}
+
+export class mwObject {
+  constructor(mWidget: Expand|CookiesButton|Search|Cookies|ScaleBar|CoordinateConversion|Home|Zoom|ExtentNavigator|Locate|Fullscreen|Widget, fireEvent = true as boolean) {
+      this.mWidget = mWidget;
+      this.fireEvent = fireEvent;
+  }
+
+  @property()
+  mWidget!: Expand|CookiesButton|Search|Cookies|ScaleBar|CoordinateConversion|Home|Zoom|ExtentNavigator|Locate|Fullscreen|Widget;
+
+  @property()
+  fireEvent!: boolean;
+}
 
 @subclass('MapClasses.MapWidget')
 export class MapWidget extends Accessor {
@@ -25,6 +83,30 @@ export class MapWidget extends Accessor {
 
     @property()
     t9nPath!: string|null;
+}
+
+@subclass('MapClasses.CookiesWidget')
+export class CookiesWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    expanded!: boolean|null;
+
+    @property()
+    visible!: boolean;
+
+    @property()
+    privacyPolicy!: WebUrlObject;
+
+    @property()
+    contactUs!: WebObject;
+
+    @property()
+    position!: "top"|"bottom";
+
+    @property()
+    cookies!: Array<CookiesVM>;
 
 }
 
@@ -135,6 +217,22 @@ export class SearchWidgetSourceT9n {
   suggestionTemplate!: string;
 }
 
+export class CookiesWidgetSourceT9n {
+  constructor(
+    id: string,
+    label: string,
+  ) {
+      this.id = id;
+      this.label = label;
+  }
+
+  @property()
+  id!: string;
+
+  @property()
+  label!: string;
+}
+
 @subclass('MapClasses.SearchWidget')
 export class SearchWidget extends MapWidget {
     //----------------------------------
@@ -173,6 +271,25 @@ export class MapWidgetSearch {
 
     @property()
     sources!: Array<SearchWidgetSourceT9n>;
+
+}
+
+@subclass('MapClasses.MapWidgetCookies')
+export class MapWidgetCookies {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    id!: string;
+
+    @property()
+    label!: string;
+
+    @property()
+    allPlaceholder!: string;
+
+    @property()
+    cookies!: Array<CookiesWidgetSourceT9n>;
 
 }
 

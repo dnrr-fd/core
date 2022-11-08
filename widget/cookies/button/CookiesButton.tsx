@@ -5,8 +5,8 @@ import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
 import { getWidgetTheme } from '@dnrr_fd/util/web'
 
-import * as t9n_en from './assets/t9n/en.json'
-import * as t9n_fr from './assets/t9n/fr.json'
+import * as t9n_en from '../button/assets/t9n/en.json'
+import * as t9n_fr from '../button/assets/t9n/fr.json'
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
 var t9n = t9n_en;
@@ -24,20 +24,20 @@ const elementIDs = {
   esriThemeID: "esriThemeID"
 };
 
-var buttonLabel: string;
-var buttonIconClass: string;
+let buttonLabel: string;
+let buttonIconClass: string;
 
-interface ButtonParams extends __esri.WidgetProperties {
+interface CookiesButtonParams extends __esri.WidgetProperties {
   id: string;
   content?: string|Widget|Node;
   iconClass?: string;
   toolTip?: string;
 }
 
-@subclass("esri.widgets.button")
-class Button extends Widget {
+@subclass("esri.widgets.cookiesbutton")
+class CookiesButton extends Widget {
 
-  constructor(params?: ButtonParams) {
+  constructor(params?: CookiesButtonParams) {
     super(params);
   }
 
@@ -138,6 +138,12 @@ class Button extends Widget {
         if (this.content instanceof Widget) {
           // Activate the widget content.
           this.content.visible = true;
+
+          // Backup in case esri content.visible doesn't work
+          let content_node = this.content.container as HTMLDivElement;
+          if (content_node.style) {
+            content_node.removeAttribute("style");
+          }
         } else {
           // alert("Node");
         }
@@ -145,4 +151,4 @@ class Button extends Widget {
     }
   }
 }
-export default Button;
+export default CookiesButton;

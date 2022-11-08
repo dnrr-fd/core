@@ -2,6 +2,42 @@ import { __decorate } from "tslib";
 // @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from '@arcgis/core/core/Accessor';
+export class WebObject {
+    constructor(type, value) {
+        this.type = type;
+        this.value = value;
+    }
+}
+__decorate([
+    property()
+], WebObject.prototype, "type", void 0);
+__decorate([
+    property()
+], WebObject.prototype, "value", void 0);
+export class WebUrlObject {
+    constructor(type, value) {
+        this.type = type;
+        this.value = value;
+    }
+}
+__decorate([
+    property()
+], WebUrlObject.prototype, "type", void 0);
+__decorate([
+    property()
+], WebUrlObject.prototype, "value", void 0);
+export class mwObject {
+    constructor(mWidget, fireEvent = true) {
+        this.mWidget = mWidget;
+        this.fireEvent = fireEvent;
+    }
+}
+__decorate([
+    property()
+], mwObject.prototype, "mWidget", void 0);
+__decorate([
+    property()
+], mwObject.prototype, "fireEvent", void 0);
 let MapWidget = class MapWidget extends Accessor {
 };
 __decorate([
@@ -26,6 +62,30 @@ MapWidget = __decorate([
     subclass('MapClasses.MapWidget')
 ], MapWidget);
 export { MapWidget };
+let CookiesWidget = class CookiesWidget extends MapWidget {
+};
+__decorate([
+    property()
+], CookiesWidget.prototype, "expanded", void 0);
+__decorate([
+    property()
+], CookiesWidget.prototype, "visible", void 0);
+__decorate([
+    property()
+], CookiesWidget.prototype, "privacyPolicy", void 0);
+__decorate([
+    property()
+], CookiesWidget.prototype, "contactUs", void 0);
+__decorate([
+    property()
+], CookiesWidget.prototype, "position", void 0);
+__decorate([
+    property()
+], CookiesWidget.prototype, "cookies", void 0);
+CookiesWidget = __decorate([
+    subclass('MapClasses.CookiesWidget')
+], CookiesWidget);
+export { CookiesWidget };
 let ExtentNavigationWidget = class ExtentNavigationWidget extends MapWidget {
 };
 __decorate([
@@ -115,6 +175,18 @@ __decorate([
 __decorate([
     property()
 ], SearchWidgetSourceT9n.prototype, "suggestionTemplate", void 0);
+export class CookiesWidgetSourceT9n {
+    constructor(id, label) {
+        this.id = id;
+        this.label = label;
+    }
+}
+__decorate([
+    property()
+], CookiesWidgetSourceT9n.prototype, "id", void 0);
+__decorate([
+    property()
+], CookiesWidgetSourceT9n.prototype, "label", void 0);
 let SearchWidget = class SearchWidget extends MapWidget {
 };
 __decorate([
@@ -154,6 +226,24 @@ MapWidgetSearch = __decorate([
     subclass('MapClasses.MapWidgetSearch')
 ], MapWidgetSearch);
 export { MapWidgetSearch };
+let MapWidgetCookies = class MapWidgetCookies {
+};
+__decorate([
+    property()
+], MapWidgetCookies.prototype, "id", void 0);
+__decorate([
+    property()
+], MapWidgetCookies.prototype, "label", void 0);
+__decorate([
+    property()
+], MapWidgetCookies.prototype, "allPlaceholder", void 0);
+__decorate([
+    property()
+], MapWidgetCookies.prototype, "cookies", void 0);
+MapWidgetCookies = __decorate([
+    subclass('MapClasses.MapWidgetCookies')
+], MapWidgetCookies);
+export { MapWidgetCookies };
 let SearchConfig = class SearchConfig extends Accessor {
 };
 __decorate([

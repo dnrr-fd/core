@@ -1,4 +1,5 @@
 import { mapRootURL } from "./Map";
+import { mwObject } from "../class/_Map";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 import { returnConfig } from "@dnrr_fd/util";
 import Collection from "@arcgis/core/core/Collection";
@@ -14,10 +15,16 @@ import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
+import Cookies from "../cookies/Cookies";
+import { Cookie } from "../class/_Cookie";
+import CookiesButton from "../cookies/button/CookiesButton";
 // Import local assets
 import * as searchT9n_en from '../search/assets/t9n/en.json';
 import * as searchT9n_fr from '../search/assets/t9n/fr.json';
 var search_defaultT9n = searchT9n_en;
+import * as cookiesT9n_en from '../cookies/assets/t9n/en.json';
+import * as cookiesT9n_fr from '../cookies/assets/t9n/fr.json';
+var cookies_defaultT9n = cookiesT9n_en;
 // import * as scaleBarT9n_en from '../scalebar/assets/t9n/en.json'
 // import * as scaleBarT9n_fr from '../scalebar/assets/t9n/fr.json'
 // var scaleBar_defaultT9n = scaleBarT9n_en;
@@ -39,74 +46,110 @@ var search_defaultT9n = searchT9n_en;
 import * as layerListT9n_en from '../layerlist/assets/t9n/en.json';
 import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json';
 var layerList_defaultT9n = layerListT9n_en;
-export var searchWidget = null;
-export var scaleBarWidget = null;
-export var coordinateConversionWidget = null;
-export var homeWidget = null;
-export var zoomWidget = null;
-export var extentnavigatorWidget = null;
-export var locateWidget = null;
-export var fullscreenWidget = null;
-export var layerListWidget = null;
+var mapWidgets = new Array();
 var widgetsAssetsPath;
 var lang;
 export async function loadWidgetsIntoMap(_mapView, mapWidgetArray) {
-    widgetsAssetsPath = `${mapRootURL}assets/widgets/`;
-    lang = getNormalizedLocale();
-    mapWidgetArray.forEach(widget => (async () => {
-        if (widget.id && typeof widget.id === "string") {
-            switch (widget.id.toUpperCase()) {
-                case "SEARCH":
-                    searchWidget = await addSearch(widget, _mapView);
-                    break;
-                case "SCALEBAR":
-                    scaleBarWidget = await addScaleBar(widget, _mapView);
-                    break;
-                case "COORDINATECONVERSION":
-                    coordinateConversionWidget = await addCoordinateConversion(widget, _mapView);
-                    break;
-                case "HOME":
-                    homeWidget = await addHome(widget, _mapView);
-                    break;
-                case "ZOOM":
-                    zoomWidget = await addZoom(widget, _mapView);
-                    break;
-                case "EXTENTNAVIGATION":
-                    extentnavigatorWidget = await addExtentNavigator(widget, _mapView);
-                    break;
-                case "LOCATE":
-                    locateWidget = await addLocate(widget, _mapView);
-                    break;
-                case "FULLSCREEN":
-                    fullscreenWidget = await addFullscreen(widget, _mapView);
-                    break;
-                case "LAYERLIST":
-                    layerListWidget = await addLayerList(widget, _mapView);
-                    break;
-                default:
-                    console.log(`Map Widget: ${widget.id} is not configured for this application!`);
+    return new Promise(resolve => {
+        widgetsAssetsPath = `${mapRootURL}assets/widgets/`;
+        lang = getNormalizedLocale();
+        mwAsyncForEach(mapWidgetArray, async (widget) => {
+            if (widget.id && typeof widget.id === "string") {
+                switch (widget.id.toUpperCase()) {
+                    case "SEARCH":
+                        await addSearch(widget, _mapView).then(searchWidget => {
+                            if (searchWidget) {
+                                mapWidgets.push(new mwObject(searchWidget));
+                            }
+                        });
+                        break;
+                    case "COOKIES":
+                        await addCookies(widget, _mapView).then(cookiesWidget => {
+                            if (cookiesWidget) {
+                                mapWidgets.push(new mwObject(cookiesWidget));
+                            }
+                        });
+                        break;
+                    case "SCALEBAR":
+                        await addScaleBar(widget, _mapView).then(scaleBarWidget => {
+                            if (scaleBarWidget) {
+                                mapWidgets.push(new mwObject(scaleBarWidget));
+                            }
+                        });
+                        break;
+                    case "COORDINATECONVERSION":
+                        await addCoordinateConversion(widget, _mapView).then(coordinateConversionWidget => {
+                            if (coordinateConversionWidget) {
+                                mapWidgets.push(new mwObject(coordinateConversionWidget));
+                            }
+                        });
+                        break;
+                    case "HOME":
+                        await addHome(widget, _mapView).then(homeWidget => {
+                            if (homeWidget) {
+                                mapWidgets.push(new mwObject(homeWidget));
+                            }
+                        });
+                        break;
+                    case "ZOOM":
+                        await addZoom(widget, _mapView).then(zoomWidget => {
+                            if (zoomWidget) {
+                                mapWidgets.push(new mwObject(zoomWidget));
+                            }
+                        });
+                        break;
+                    case "EXTENTNAVIGATION":
+                        await addExtentNavigator(widget, _mapView).then(extentnavigatorWidget => {
+                            if (extentnavigatorWidget) {
+                                mapWidgets.push(new mwObject(extentnavigatorWidget));
+                            }
+                        });
+                        break;
+                    case "LOCATE":
+                        await addLocate(widget, _mapView).then(locateWidget => {
+                            if (locateWidget) {
+                                mapWidgets.push(new mwObject(locateWidget));
+                            }
+                        });
+                        break;
+                    case "FULLSCREEN":
+                        await addFullscreen(widget, _mapView).then(fullscreenWidget => {
+                            if (fullscreenWidget) {
+                                mapWidgets.push(new mwObject(fullscreenWidget));
+                            }
+                        });
+                        break;
+                    case "LAYERLIST":
+                        await addLayerList(widget, _mapView).then(layerListWidget => {
+                            if (layerListWidget) {
+                                mapWidgets.push(new mwObject(layerListWidget));
+                            }
+                        });
+                        break;
+                    default:
+                        console.log(`Map Widget: ${widget.id} is not configured for this application!`);
+                }
             }
-        }
-        else {
-            console.log("Improper configuration of a map widget! Please check the configuration file.");
-        }
-    })());
+            else {
+                console.log("Improper configuration of a map widget! Please check the configuration file.");
+            }
+        }).then(() => {
+            // console.log("Resolved: createWidgetsForWidgetBar()");
+            resolve(mapWidgets);
+        });
+    });
 }
 export function removeWidgetsFromMap(_mapView) {
-    [searchWidget,
-        scaleBarWidget,
-        coordinateConversionWidget,
-        homeWidget,
-        zoomWidget,
-        extentnavigatorWidget,
-        locateWidget,
-        fullscreenWidget,
-        layerListWidget
-    ].forEach(widget => {
-        if (widget) {
-            _mapView.ui.remove(widget);
+    mapWidgets.forEach(mwObj => {
+        if (mwObj) {
+            _mapView.ui.remove(mwObj.mWidget);
+            var widget_node = document.getElementById(mwObj.mWidget.id);
+            if (widget_node) {
+                widget_node.innerHTML = "";
+            }
         }
     });
+    mapWidgets = [];
 }
 async function addSearch(widget, view) {
     return new Promise(resolve => {
@@ -186,6 +229,92 @@ async function addSearch(widget, view) {
                     }
                 ]);
                 resolve(_search);
+            });
+        });
+    });
+}
+async function addCookies(widget, view) {
+    return new Promise(resolve => {
+        var _cookiesID = "cookiesID";
+        var lang = getNormalizedLocale();
+        var cookiesWidget;
+        // Get the default asset from language.
+        cookies_defaultT9n = (lang === 'fr' ? cookiesT9n_fr : cookiesT9n_en);
+        var configFile;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        }
+        else {
+            configFile = null;
+        }
+        var _map_position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
+        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        returnConfig(configFile, null).then(config => {
+            var cookiesT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
+            var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
+            var _container = getWidgetConfigKeyValue(config, "container", _cookiesID);
+            var _expanded = getWidgetConfigKeyValue(config, "expanded", widget.expanded ? widget.expanded : true);
+            var _cookies = getWidgetConfigKeyValue(config, "cookies", widget.cookies ? widget.cookies : null);
+            var _privacyPolicy = getWidgetConfigKeyValue(config, "privacyPolicy", widget.privacyPolicy ? widget.privacyPolicy : null);
+            var _contactUs = getWidgetConfigKeyValue(config, "contactUs", widget.contactUs ? widget.contactUs : null);
+            var _position = getWidgetConfigKeyValue(config, "position", widget.position ? widget.position : "bottom");
+            var _label;
+            var _cookiesT9n;
+            returnConfig(cookiesT9nPath, null).then(async (t9nResults) => {
+                if (t9nResults === null) {
+                    console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                    t9nResults = cookies_defaultT9n;
+                }
+                _label = getWidgetLocaleConfigKeyValue(t9nResults, "allPlaceholder", lang === "en" ? "Cookies Settings" : "Paramètres des Cookies");
+                _cookiesT9n = getWidgetLocaleConfigKeyValue(t9nResults, "cookies", null);
+                // Create the cookies widget and set its properties.
+                var cookie_array = new Array();
+                _cookies.forEach(conf_cookie => {
+                    _cookiesT9n.forEach(t9n_cookie => {
+                        if (conf_cookie.id === t9n_cookie.id) {
+                            if (t9n_cookie.label) {
+                                cookie_array.push(new Cookie(t9n_cookie.id, t9n_cookie.label));
+                            }
+                            else {
+                                cookie_array.push(new Cookie(conf_cookie.id, conf_cookie.id));
+                            }
+                        }
+                    });
+                });
+                cookiesWidget = new Cookies({
+                    // Get the following from the config file as an example.
+                    afterHideFocusElement: "mainID",
+                    container: _container,
+                    visible: _expanded,
+                    privacyPolicy: _privacyPolicy,
+                    contactUs: _contactUs,
+                    position: _position,
+                    cookies: cookie_array
+                });
+                await cookiesWidget.initCookies();
+            }).then(function () {
+                cookiesWidget.label = _label;
+                var _cookies_button = new CookiesButton({
+                    id: widget.id,
+                    visible: _visible,
+                    content: cookiesWidget,
+                    iconClass: "esri-icon-settings"
+                });
+                view.ui.add([
+                    {
+                        component: _cookies_button,
+                        position: _map_position,
+                        index: _index
+                    }
+                ]);
+                view.when(() => {
+                    //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
+                    // _cookies_button.toolTip = `${_label}`;
+                });
+                _cookies_button.when(() => {
+                    console.log("Cookies widget rendered.");
+                    resolve(_cookies_button);
+                });
             });
         });
     });
@@ -476,5 +605,11 @@ function getWidgetLocaleConfigKeyValue(widgetLocale, configKey, defaultValue = n
         }
     }
     return result;
+}
+async function mwAsyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        // console.log("Promise: callback()");
+        await callback(array[index], index, array);
+    }
 }
 //# sourceMappingURL=MapViewModel.js.map

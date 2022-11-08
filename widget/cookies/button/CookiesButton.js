@@ -5,8 +5,8 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import * as intl from "@arcgis/core/intl";
 import { getWidgetTheme } from '@dnrr_fd/util/web';
-import * as t9n_en from './assets/t9n/en.json';
-import * as t9n_fr from './assets/t9n/fr.json';
+import * as t9n_en from '../button/assets/t9n/en.json';
+import * as t9n_fr from '../button/assets/t9n/fr.json';
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 var t9n = t9n_en;
 const css_esri = {
@@ -20,9 +20,9 @@ const css_esri = {
 const elementIDs = {
     esriThemeID: "esriThemeID"
 };
-var buttonLabel;
-var buttonIconClass;
-let Button = class Button extends Widget {
+let buttonLabel;
+let buttonIconClass;
+let CookiesButton = class CookiesButton extends Widget {
     constructor(params) {
         super(params);
     }
@@ -99,6 +99,11 @@ let Button = class Button extends Widget {
                 if (this.content instanceof Widget) {
                     // Activate the widget content.
                     this.content.visible = true;
+                    // Backup in case esri content.visible doesn't work
+                    let content_node = this.content.container;
+                    if (content_node.style) {
+                        content_node.removeAttribute("style");
+                    }
                 }
                 else {
                     // alert("Node");
@@ -109,21 +114,21 @@ let Button = class Button extends Widget {
 };
 __decorate([
     property()
-], Button.prototype, "id", void 0);
+], CookiesButton.prototype, "id", void 0);
 __decorate([
     property()
-], Button.prototype, "content", void 0);
+], CookiesButton.prototype, "content", void 0);
 __decorate([
     property()
-], Button.prototype, "iconClass", void 0);
+], CookiesButton.prototype, "iconClass", void 0);
 __decorate([
     property()
-], Button.prototype, "toolTip", void 0);
+], CookiesButton.prototype, "toolTip", void 0);
 __decorate([
     property()
-], Button.prototype, "theme", void 0);
-Button = __decorate([
-    subclass("esri.widgets.button")
-], Button);
-export default Button;
-//# sourceMappingURL=Button.js.map
+], CookiesButton.prototype, "theme", void 0);
+CookiesButton = __decorate([
+    subclass("esri.widgets.cookiesbutton")
+], CookiesButton);
+export default CookiesButton;
+//# sourceMappingURL=CookiesButton.js.map

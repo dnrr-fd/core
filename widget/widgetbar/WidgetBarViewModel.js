@@ -24,7 +24,7 @@ import Point from "@arcgis/core/geometry/Point";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import Support from "../support/Support";
-import Button from "../button/Button";
+import SupportButton from "../support/button/SupportButton";
 import MeasurementDNRR from "../measurement/Measurement";
 import AddLayer from "../addlayer/AddLayer";
 // Import local assets
@@ -723,7 +723,7 @@ async function addSupport(widget, _mapView) {
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Support Form" : "Formulaire d'assistance");
             }).then(function () {
                 _support.label = _label;
-                var _support_button = new Button({
+                var _support_button = new SupportButton({
                     id: widget.id,
                     visible: _visible,
                     content: _support,
@@ -732,7 +732,7 @@ async function addSupport(widget, _mapView) {
                 });
                 _mapView.when(() => {
                     //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
-                    _support_button.toolTip = `${_support.label}`;
+                    // _support_button.toolTip = `${_support.label}`;
                 });
                 _support_button.when(() => {
                     console.log("Support widget rendered.");

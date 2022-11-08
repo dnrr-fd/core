@@ -12,7 +12,7 @@ import WebMap from "@arcgis/core/WebMap";
 import Color from "@arcgis/core/Color";
 import Popup from "@arcgis/core/widgets/Popup";
 import Extent from "@arcgis/core/geometry/Extent";
-import { MapConfig } from '../class/_Map'
+import { MapConfig, mwObject } from '../class/_Map'
 import { CookiesVM } from "../class/_Cookie";
 import { getWidgetTheme } from '@dnrr_fd/util/web'
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
@@ -28,6 +28,8 @@ import * as css_light from './assets/css/light/map.module.css';
 
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
+import CookiesButton from "../cookies/button/CookiesButton";
+import Cookies from "../cookies/Cookies";
 
 var t9n = t9n_en;
 var css_theme = css_dark;
@@ -105,6 +107,9 @@ class Map extends Widget {
   mapHeight!: number;
 
   @property()
+  mapWidgets!: Array<mwObject>|null;
+
+  @property()
   rendered!: boolean;
  
   //--------------------------------------------------------------------------
@@ -163,23 +168,26 @@ class Map extends Widget {
     .then(async () => {
         await this._handleSignIn().then(results => {
             // console.log("Resolved: loadArcGISContent() " + results);
-            this.rendered = true;
+            this.cookiesCheck();
         });
     })
     .catch(async () => {
         await this._handleSignIn().then(results => {
             // console.log("Resolved: loadArcGISContent() " + results);
-            this.rendered = true;
+            this.cookiesCheck();
+
         });
     });
 
-    intl.onLocaleChange(function(locale) {
+    intl.onLocaleChange(async function(locale) {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
       self.locale = locale;
       info.locale = locale;
 
       removeWidgetsFromMap(_mapView)
-      loadWidgetsIntoMap(_mapView, self.map.widgets);
+      await loadWidgetsIntoMap(_mapView, self.map.widgets).then(_mapWidgets => {
+        self.mapWidgets = _mapWidgets;
+      });
     });
 
     this.watch("theme", function(theme_new: string, theme_old: string){
@@ -187,6 +195,33 @@ class Map extends Widget {
         css_theme = (theme_new === 'dark' ? css_dark : css_light);
         // self.render();
         // console.log(`Watch: Theme (Map) is now ${theme_new}`);
+      }
+    });
+  }
+
+  private cookiesCheck() {
+    this.rendered = true;
+
+    // Check for cookies
+    this.mapWidgets?.forEach(mapWidget => {
+      if (mapWidget.mWidget instanceof CookiesButton) {
+        let _cookies_button = mapWidget.mWidget as CookiesButton;
+        if (_cookies_button.content instanceof Cookies) {
+          this.cookies = _cookies_button.content.cookiesVM;
+          return;
+        }
+      }
+    });
+
+    // Set the extent to the cookie value
+    this.cookieVMAsyncForEach(this.cookies, async (cookie: CookiesVM) => {
+      if (cookie.id.toLowerCase() === "extent" && cookie.accepted === true) {
+        await cookie.getCookie().then(() => {
+          if (cookie.value && this.mapView) {
+            this.mapView.extent = JSON.parse(cookie.value) as Extent;      
+          }
+        });
+        return;
       }
     });
   }
@@ -250,50 +285,37 @@ class Map extends Widget {
           }
       });
 
-      // Check for cookies
-      this.cookieVMAsyncForEach(this.cookies, async (cookie: CookiesVM) => {
-        if (cookie.id.toLowerCase() === "extent" && cookie.accepted === true) {
-          await cookie.getCookie().then(() => {
-            if (cookie.value) {
-              initialExtent = JSON.parse(cookie.value);
-            }
+      _mapView.container = document.getElementById(elementIDs.mapContentID) as HTMLDivElement;
+      _mapView.map = map;
+      _mapView.highlightOptions = {
+          fillOpacity: this.map.highlightOptions.fillOpacity,
+          color: new Color(this.map.highlightOptions.color)
+      };
+      _mapView.popup = new Popup({
+        dockEnabled: true,
+        dockOptions: {
+          position: this.map.popupLocation,
+          breakpoint: false
+        }
+      });
+      _mapView.constraints = {
+          minZoom: 0
+      };
+      _mapView.ui.components = this.map.defaultWidgets;
+      _mapView.padding.top = upper_height;
+      _mapView.padding.bottom = 0;
+      _mapView.padding.left = 0;
+      _mapView.padding.right = 0;
+
+      _mapView.when(async function() {
+        if (typeof self.map.widgets === "object") {
+          await loadWidgetsIntoMap(_mapView, self.map.widgets).then(_mapWidgets => {
+            self.mapWidgets = _mapWidgets;
           });
-          return;
         }
-      }).then(() => {
-        if (initialExtent) {
-          _mapView.extent = initialExtent;
-        }
-        _mapView.container = document.getElementById(elementIDs.mapContentID) as HTMLDivElement;
-        _mapView.map = map;
-        _mapView.highlightOptions = {
-            fillOpacity: this.map.highlightOptions.fillOpacity,
-            color: new Color(this.map.highlightOptions.color)
-        };
-        _mapView.popup = new Popup({
-          dockEnabled: true,
-          dockOptions: {
-            position: this.map.popupLocation,
-            breakpoint: false
-          }
-        });
-        _mapView.constraints = {
-            minZoom: 0
-        };
-        _mapView.ui.components = this.map.defaultWidgets;
-        _mapView.padding.top = upper_height;
-        _mapView.padding.bottom = 0;
-        _mapView.padding.left = 0;
-        _mapView.padding.right = 0;
-  
-        _mapView.when(async function() {
-          if (typeof self.map.widgets === "object") {
-            await loadWidgetsIntoMap(_mapView, self.map.widgets);
-          }
-          resolve(true);
-        }, function() {
-          resolve(false);
-        });
+        resolve(true);
+      }, function() {
+        resolve(false);
       });
     });
   }

@@ -4,17 +4,17 @@ import Accessor from '@arcgis/core/core/Accessor';
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import Widget from "@arcgis/core/widgets/Widget";
 import Expand from "@arcgis/core/widgets/Expand";
-import Button from "../button/Button";
+import SupportButton from "../support/button/SupportButton";
 import PortalItem from "@arcgis/core/portal/PortalItem";
 
 export class wbwObject {
-    constructor(wbWidget: Expand|Button, fireEvent = true as boolean) {
+    constructor(wbWidget: Expand|SupportButton, fireEvent = true as boolean) {
         this.wbWidget = wbWidget;
         this.fireEvent = fireEvent;
     }
 
     @property()
-    wbWidget!: Expand|Button;
+    wbWidget!: Expand|SupportButton;
 
     @property()
     fireEvent!: boolean;
