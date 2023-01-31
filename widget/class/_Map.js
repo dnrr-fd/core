@@ -119,6 +119,21 @@ LayerListWidget = __decorate([
     subclass('MapClasses.LayerListWidget')
 ], LayerListWidget);
 export { LayerListWidget };
+let AdvancedSearchWidget = class AdvancedSearchWidget extends MapWidget {
+};
+__decorate([
+    property()
+], AdvancedSearchWidget.prototype, "expanded", void 0);
+__decorate([
+    property()
+], AdvancedSearchWidget.prototype, "advancedSearchContainer", void 0);
+__decorate([
+    property()
+], AdvancedSearchWidget.prototype, "rootFocusElement", void 0);
+AdvancedSearchWidget = __decorate([
+    subclass('MapClasses.AdvancedSearchWidget')
+], AdvancedSearchWidget);
+export { AdvancedSearchWidget };
 export class SearchWidgetSource {
     constructor(id, url, searchFields, outFields, exactMatch, maxResults, maxSuggestions) {
         this.id = id;

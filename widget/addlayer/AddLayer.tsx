@@ -329,7 +329,13 @@ class AddLayer extends Widget {
   //--------------------------------------------------------------------------
   private _addFileTab_click() {
     let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
+    let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
+    fileTab_node.setAttribute("style", "border-bottom: none;");
+
     let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
+    let serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID)!;
+    serviceButton_node.removeAttribute("style");
+
     fileDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
     serviceDiv_node.classList.add(css.default.widget_addlayer_visible__none);
   
@@ -340,7 +346,13 @@ class AddLayer extends Widget {
 
   private _addServiceTab_click() {
     let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
+    let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
+    fileTab_node.removeAttribute("style");
+
     let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
+    let serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID)!;
+    serviceButton_node.setAttribute("style", "border-bottom: none;");
+
     fileDiv_node.classList.add(css.default.widget_addlayer_visible__none);
     serviceDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
 
@@ -505,6 +517,9 @@ class AddLayer extends Widget {
 
     let serviceInput_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
     let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
+
+    let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
+    fileTab_node.setAttribute("style", "border-bottom: none;");
 
     // Re-build the results layers if they exist.
     let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;

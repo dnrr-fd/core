@@ -1,0 +1,38 @@
+{
+    "label": "Recherche Avancée",
+
+    "loadingText": "Chargement des Résultats...",
+
+    "closeButtonText": "Fermer",
+    "minimizeButtonText": "Réduire",
+    "maximizeButtonText": "Agrandir",
+    "restoreButtonText": "Rétablir",
+    "sketchLayerTitle": "Couche Graphique de Recherche Avancée",
+
+    "commonSearchLayerLabel": "Couche de Recherche",
+    "commonSelectTypeLabel": "Type de sélection",
+    "commonSelectTypeNewLabel": "Nouvelle sélection",
+    "commonSelectTypeAddLabel": "Ajouter à la sélection",
+    "commonSelectTypeRemoveLabel": "Supprimer de la sélection",
+    "commonSelectTypeSubsetLabel": "Sous-ensemble de la sélection",
+    "commonSelectClearText": "Effacer les résultats",
+    "commonSelectSwapText": "Inverser la sélection",
+    "commonSelectZoomFirstRecordLabel": "Zoom sur le premier résultat",
+
+    "byShapeTabLabel": "Par Forme",
+    "byShapeHeaderLabel": "Par Forme...",
+    "byShapeRectangle": "Sélectionner les zones par rectangle",
+    "byShapePolygon": "Sélectionner les zones par polygone",
+    "byShapeCircle": "Sélectionnez les zones par cercle",
+    "byShapePolyline": "Sélectionner des zones par polyligne",
+    "byShapePoint": "Sélectionner les zones par point",
+
+    "byValueTabLabel": "Par Valeur",
+    "byValueHeaderLabel": "Par Valeur...",
+    "byValueSearchButtonLabel": "Chercher",
+    "byValueLimitResultsExtentLabel": "Limiter la recherche à l'étendue de la carte",
+    "byValueFieldValidationMessage": "Une valeur pour [field] doit être entrée.",
+
+    "resultsTabLabel": "Résultats",
+    "resultsNoResultsLabel": "Aucun résultat."
+}

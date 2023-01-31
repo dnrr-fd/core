@@ -25,7 +25,7 @@
   padding: 14px 16px!important;
   width: calc(50% - 4px)!important;
   margin: 2px!important;
-  border: none;
+  /* border: none; */
 }
 
 .widget_addlayer_file_button__div {

@@ -1,0 +1,78 @@
+/*! * Calcite Web - Calcite Design Components in CSS, JS and HTML * @version v1.2.5 * @license Apache-2.0 * @copyright 2018 Esri * @link https://github.com/Esri/calcite-web */
+.loader-bars:before,.loader-bars:after,.loader-bars{
+    background:#8b8b8b;
+    -webkit-animation:load 0.8s infinite ease-in-out;
+    animation:load 0.8s infinite ease-in-out;
+    width:0.85rem;
+    height:2rem;
+}
+.loader-bars:before,.loader-bars:after{
+    position:absolute;
+    top:0;
+    content:'';
+}
+@-webkit-keyframes load{
+    0%,80%,100%{
+        opacity:.75;
+        box-shadow:0 0 #8b8b8b;
+        height:2rem;
+    }
+    40%{
+        opacity:1;
+        box-shadow:0 -0.5rem #8b8b8b;
+        height:2.5rem;
+    }
+}
+@keyframes load{
+    0%,80%,100%{
+        opacity:.75;
+        box-shadow:0 0 #8b8b8b;
+        height:2rem;
+    }
+    40%{
+        opacity:1;
+        box-shadow:0 -0.5rem #8b8b8b;
+        height:2.5rem;
+    }
+}
+.loader{
+    display:none;
+    position:relative;
+}
+.loader.is-active{
+    display:block;
+}
+.loader-bars{
+    text-indent:-9999em;
+    margin:auto;
+    position:absolute;
+    right:calc(50% - 0.425rem);
+    font-size:11px;
+    -webkit-animation-delay:0.16s;
+    animation-delay:0.16s;
+}
+.loader-bars:before{
+    left:-1.25rem
+}
+.loader-bars:after{
+    left:1.25rem;
+    -webkit-animation-delay:0.32s;
+    animation-delay:0.32s;
+}
+.loader-text{
+    text-align:center;
+    padding-top:4rem;
+    color: #d1d1d1;
+}
+.padding-leader-3{
+    padding-top:4.5rem;
+}
+.padding-trailer-3{
+    padding-bottom:4.5rem;
+}
+.modal-background {
+    background-color: rgba(0,0,0,0.8);
+}
+
+
+

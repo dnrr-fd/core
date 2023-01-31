@@ -1,0 +1,38 @@
+{
+    "label": "Advanced Search",
+
+    "loadingText": "Loading Results...",
+
+    "closeButtonText": "Close",
+    "minimizeButtonText": "Minimize",
+    "maximizeButtonText": "Maximize",
+    "restoreButtonText": "Restore",
+    "sketchLayerTitle": "Advanced Search Graphics Layer",
+
+    "commonSearchLayerLabel": "Search Layer",
+    "commonSelectTypeLabel": "Selection Type",
+    "commonSelectTypeNewLabel": "New Selection",
+    "commonSelectTypeAddLabel": "Add to the Selection",
+    "commonSelectTypeRemoveLabel": "Remove from the Selection",
+    "commonSelectTypeSubsetLabel": "Subset of the Selection",
+    "commonSelectClearText": "Clear Results",
+    "commonSelectSwapText": "Invert Selection",
+    "commonSelectZoomFirstRecordLabel": "Zoom to first result",
+
+    "byShapeTabLabel": "By Shape",
+    "byShapeHeaderLabel": "By Shape...",
+    "byShapeRectangle": "Select features by rectangle",
+    "byShapePolygon": "Select features by polygon",
+    "byShapeCircle": "Select features by circle",
+    "byShapePolyline": "Select features by polyline",
+    "byShapePoint": "Select features by point",
+
+    "byValueTabLabel": "By Value",
+    "byValueHeaderLabel": "By Value...",
+    "byValueSearchButtonLabel": "Search",
+    "byValueLimitResultsExtentLabel": "Limit search to the map extent",
+    "byValueFieldValidationMessage": "A value for [field] must be entered.",
+
+    "resultsTabLabel": "Results",
+    "resultsNoResultsLabel": "No results."
+}

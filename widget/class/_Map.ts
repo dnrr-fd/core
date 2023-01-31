@@ -146,6 +146,22 @@ export class LayerListWidget extends MapWidget {
 
 }
 
+@subclass('MapClasses.AdvancedSearchWidget')
+export class AdvancedSearchWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    expanded!: boolean|null;
+
+    @property()
+    advancedSearchContainer!: string|null;
+
+    @property()
+    rootFocusElement!: string|null;
+
+  }
+
 export class SearchWidgetSource {
   constructor(
     id: string,

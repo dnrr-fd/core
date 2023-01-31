@@ -18,6 +18,8 @@ import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import Cookies from "../cookies/Cookies";
 import { Cookie } from "../class/_Cookie";
 import CookiesButton from "../cookies/button/CookiesButton";
+import AdvancedSearch from "../advancedsearch/AdvancedSearch";
+import AdvancedSearchButton from "../advancedsearch/button/AdvancedSearchButton";
 // Import local assets
 import * as searchT9n_en from '../search/assets/t9n/en.json';
 import * as searchT9n_fr from '../search/assets/t9n/fr.json';
@@ -25,24 +27,9 @@ var search_defaultT9n = searchT9n_en;
 import * as cookiesT9n_en from '../cookies/assets/t9n/en.json';
 import * as cookiesT9n_fr from '../cookies/assets/t9n/fr.json';
 var cookies_defaultT9n = cookiesT9n_en;
-// import * as scaleBarT9n_en from '../scalebar/assets/t9n/en.json'
-// import * as scaleBarT9n_fr from '../scalebar/assets/t9n/fr.json'
-// var scaleBar_defaultT9n = scaleBarT9n_en;
-// import * as coordinateConversionT9n_en from '../coordinateconversion/assets/t9n/en.json'
-// import * as coordinateConversionT9n_fr from '../coordinateconversion/assets/t9n/fr.json'
-// var coordinateConversion_defaultT9n = coordinateConversionT9n_en;
-// import * as homeT9n_en from '../home/assets/t9n/en.json'
-// import * as homeT9n_fr from '../home/assets/t9n/fr.json'
-// var home_defaultT9n = homeT9n_en;
-// import * as zoomT9n_en from '../zoom/assets/t9n/en.json'
-// import * as zoomT9n_fr from '../zoom/assets/t9n/fr.json'
-// var zoom_defaultT9n = zoomT9n_en;
-// import * as locateT9n_en from '../locate/assets/t9n/en.json'
-// import * as locateT9n_fr from '../locate/assets/t9n/fr.json'
-// var locate_defaultT9n = locateT9n_en;
-// import * as fullscreenT9n_en from '../fullscreen/assets/t9n/en.json'
-// import * as fullscreenT9n_fr from '../fullscreen/assets/t9n/fr.json'
-// var fullscreen_defaultT9n = fullscreenT9n_en;
+import * as advancedSearchT9n_en from '../advancedsearch/assets/t9n/en.json';
+import * as advancedSearchT9n_fr from '../advancedsearch/assets/t9n/fr.json';
+var advancedSearch_defaultT9n = advancedSearchT9n_en;
 import * as layerListT9n_en from '../layerlist/assets/t9n/en.json';
 import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json';
 var layerList_defaultT9n = layerListT9n_en;
@@ -123,6 +110,13 @@ export async function loadWidgetsIntoMap(_mapView, mapWidgetArray) {
                         await addLayerList(widget, _mapView).then(layerListWidget => {
                             if (layerListWidget) {
                                 mapWidgets.push(new mwObject(layerListWidget));
+                            }
+                        });
+                        break;
+                    case "ADVANCEDSEARCH":
+                        await addAdvancedSearch(widget, _mapView).then(advancedSearchWidget => {
+                            if (advancedSearchWidget) {
+                                mapWidgets.push(new mwObject(advancedSearchWidget));
                             }
                         });
                         break;
@@ -583,6 +577,101 @@ async function addLayerList(widget, view) {
                 });
                 resolve(_layerList_expand);
             });
+        });
+    });
+}
+async function addAdvancedSearch(widget, view) {
+    return new Promise(resolve => {
+        var _advancedSearchID = "advancedSearchID";
+        var lang = getNormalizedLocale();
+        var advancedSearchWidget;
+        // Get the default asset from language.
+        advancedSearch_defaultT9n = (lang === 'fr' ? advancedSearchT9n_fr : advancedSearchT9n_en);
+        var configFile;
+        if (widget.config && typeof widget.config === "string") {
+            configFile = widget.config;
+        }
+        else {
+            configFile = null;
+        }
+        var _map_position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
+        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        var advancedSearchT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
+        var _visible = getWidgetConfigKeyValue(widget, "visible", widget.visible ? widget.visible : true);
+        var _container = getWidgetConfigKeyValue(widget, "advancedSearchContainer", _advancedSearchID);
+        var _rootFocusElement = getWidgetConfigKeyValue(widget, "rootFocusElement", widget.rootFocusElement ? widget.rootFocusElement : "mainID");
+        var _expanded = getWidgetConfigKeyValue(widget, "expanded", widget.expanded ? widget.expanded : true);
+        var _label;
+        returnConfig(configFile, null).then(config => {
+            var asConfig = config;
+            var _addMissingSearchLayers = asConfig.addMissingSearchLayers ? asConfig.addMissingSearchLayers : true;
+            var _layers = asConfig.layers ? asConfig.layers : null;
+            if (_layers === null) {
+                resolve(null);
+            }
+            else {
+                returnConfig(advancedSearchT9nPath, null).then(async function (t9nResults) {
+                    if (t9nResults === null) {
+                        console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
+                        t9nResults = advancedSearch_defaultT9n;
+                    }
+                    if (t9nResults.label && t9nResults.label.length > 0) {
+                        _label = t9nResults.label;
+                    }
+                    else {
+                        _label = lang === "en" ? "Advanced Search" : "Recherche Avancée";
+                    }
+                    // Check if the container exists and if it is empty
+                    let containerElement = document.getElementById(_container);
+                    if (containerElement) {
+                        if (containerElement.innerHTML.length > 0) {
+                            containerElement.innerHTML = "";
+                        }
+                    }
+                    else {
+                        let rootElement = document.getElementById(_rootFocusElement);
+                        if (rootElement) {
+                            let ce = document.createElement("div");
+                            ce.id = _container;
+                            rootElement.appendChild(ce);
+                        }
+                        else {
+                            resolve(null);
+                        }
+                    }
+                    advancedSearchWidget = new AdvancedSearch({
+                        view: view,
+                        layers: _layers,
+                        container: _container,
+                        visible: _expanded,
+                        rootFocusElement: _rootFocusElement,
+                        addMissingSearchLayers: _addMissingSearchLayers
+                    });
+                }).then(function () {
+                    advancedSearchWidget.label = _label;
+                    var _advancedSearch_button = new AdvancedSearchButton({
+                        id: widget.id,
+                        visible: _visible,
+                        content: advancedSearchWidget,
+                        iconClass: "esri-icon-review"
+                    });
+                    view.ui.add([
+                        {
+                            component: _advancedSearch_button,
+                            position: _map_position,
+                            index: _index
+                        }
+                    ]);
+                    view.when(() => {
+                        //layerList_Expand.expandTooltip = `${layerList_Expand.label} ${layerList.label}`;
+                        // _cookies_button.toolTip = `${_label}`;
+                    });
+                    _advancedSearch_button.when(() => {
+                        console.log("Advanced Search widget rendered.");
+                        resolve(_advancedSearch_button);
+                    });
+                });
+            }
         });
     });
 }
