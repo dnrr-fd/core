@@ -1,6 +1,6 @@
 {
   "name": "@dnrr_fd/core",
-  "version": "1.6.1",
+  "version": "1.6.5",
   "description": "Core modules to use with JavaScript 4.x",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,8 +21,13 @@
   },
   "homepage": "https://github.com/dnrr-fd/core#readme",
   "dependencies": {
-    "@dnrr_fd/util": "^1.0.14",
     "@simonwep/pickr": "^1.8.2",
+    "calcite-web": "github:Esri/calcite-web"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "@dnrr_fd/util": "^1.0.16",
+    "@arcgis/core": "^4.25.5",
     "@types/react-dom": "^18.0.10",
     "color": "^4.2.3",
     "color-convert": "^2.0.1",
@@ -48,9 +53,5 @@
     "tslib": "^2.5.0",
     "typescript": "^4.9.5",
     "xss": "^1.0.14"
-  },
-  "main": "index.js",
-  "devDependencies": {
-    "@arcgis/core": "^4.25.5"
   }
 }
