@@ -14,6 +14,7 @@ const css_esri = {
     esri_widget_button: 'esri-widget--button',
     esri_component: 'esri-component',
     esri_expand__container: 'esri-expand__container',
+    esri_interactive: 'esri-interactive',
     esri_icon: 'esri-icon',
     esri_icon_font_fallback_text: 'esri-icon-font-fallback-text'
 };
@@ -63,22 +64,23 @@ let AdvancedSearchButton = class AdvancedSearchButton extends Widget {
         }
     }
     render() {
-        return (tsx("div", { id: this.id, class: this.classes(css_esri.esri_expand__container, css_esri.esri_component, css_esri.esri_widget_button, css_esri.esri_widget), role: "button", "aria-label": buttonLabel, title: buttonLabel, tabindex: "0", onclick: this._button_click.bind(this), onkeypress: this._button_keypress.bind(this) },
-            tsx("span", { id: `${this.id}_iconID`, class: this.classes(css_esri.esri_icon, buttonIconClass), "aria-hidden": "true" }),
-            tsx("span", { class: css_esri.esri_icon_font_fallback_text }, buttonLabel)));
+        return (tsx("div", { class: css_esri.esri_widget },
+            tsx("div", { id: this.id, class: this.classes(css_esri.esri_widget_button, css_esri.esri_widget), role: "button", "aria-label": buttonLabel, title: buttonLabel, tabindex: "0", onclick: this._button_click.bind(this), onkeypress: this._button_keypress.bind(this) },
+                tsx("span", { id: `${this.id}_iconID`, class: this.classes(css_esri.esri_icon, buttonIconClass), "aria-hidden": "true" }),
+                tsx("span", { class: css_esri.esri_icon_font_fallback_text }, buttonLabel))));
     }
     //--------------------------------------------------------------------------
     //  Private Methods
     //--------------------------------------------------------------------------
     _button_click(e) {
-        e.preventDefault();
+        // e.preventDefault();
         this.buttonClickAction();
     }
     _button_keypress(e) {
         let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
         let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
         if (isEnterPressed || isSpacePressed) {
-            e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
+            // e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
             this.buttonClickAction();
         }
     }

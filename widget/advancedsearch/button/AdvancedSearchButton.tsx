@@ -16,6 +16,7 @@ const css_esri = {
   esri_widget_button: 'esri-widget--button',
   esri_component: 'esri-component',
   esri_expand__container: 'esri-expand__container',
+  esri_interactive: 'esri-interactive',
   esri_icon: 'esri-icon',
   esri_icon_font_fallback_text: 'esri-icon-font-fallback-text'
 };
@@ -98,9 +99,11 @@ class AdvancedSearchButton extends Widget {
 
   render() {
     return (
-      <div id={this.id} class={this.classes(css_esri.esri_expand__container, css_esri.esri_component, css_esri.esri_widget_button, css_esri.esri_widget)} role="button" aria-label={buttonLabel} title={buttonLabel} tabindex="0" onclick={this._button_click.bind(this)} onkeypress={this._button_keypress.bind(this)}>
-        <span id={`${this.id}_iconID`} class={this.classes(css_esri.esri_icon, buttonIconClass)} aria-hidden="true"></span>
-        <span class={css_esri.esri_icon_font_fallback_text}>{buttonLabel}</span>
+      <div class={css_esri.esri_widget}>
+        <div id={this.id} class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget)} role="button" aria-label={buttonLabel} title={buttonLabel} tabindex="0" onclick={this._button_click.bind(this)} onkeypress={this._button_keypress.bind(this)}>
+          <span id={`${this.id}_iconID`} class={this.classes(css_esri.esri_icon, buttonIconClass)} aria-hidden="true"></span>
+          <span class={css_esri.esri_icon_font_fallback_text}>{buttonLabel}</span>
+        </div>
       </div>
     );
   }
@@ -109,7 +112,7 @@ class AdvancedSearchButton extends Widget {
   //  Private Methods
   //--------------------------------------------------------------------------
   _button_click(e: MouseEvent) {
-    e.preventDefault();
+    // e.preventDefault();
     this.buttonClickAction();
   }
 
@@ -118,7 +121,7 @@ class AdvancedSearchButton extends Widget {
     let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
-      e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
+      // e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
       this.buttonClickAction();
     }
   }

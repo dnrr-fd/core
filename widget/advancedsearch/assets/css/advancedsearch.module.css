@@ -80,7 +80,7 @@
   z-index: 95;
   position: absolute;
   padding: 2px;
-  border-top: 1px solid rgba(145, 145, 145, 0.3);
+  border-top: 1px solid rgba(110, 110, 110, 0.3);
 }
 .widget_advancedsearch_loading_modal {
   width: 100%;
@@ -127,7 +127,7 @@
   float: left;
   width: calc(33.33% - 2px)!important;
   margin: 1px!important;
-  border: 1px solid rgba(145, 145, 145, 0.3);
+  border: 1px solid rgba(110, 110, 110, 0.3);
   /* border: none; */
 }
 .widget_advancedsearch_tabcontent_main__div {
@@ -157,6 +157,11 @@
 .widget_advancedsearch_commonbar_selection_clear__button {
   padding: 6px 6px 5px 6px;
   margin-left: 5px;
+  border: 1px solid rgba(110, 110, 110, 0.3);
+}
+.widget_advancedsearch_commonbar_selection_swap__button:focus,
+.widget_advancedsearch_commonbar_selection_clear__button:focus {
+  outline: none;
 }
 .widget_advancedsearch_commonbar_selection_checkbox__div {
   display: flex;
@@ -170,8 +175,12 @@
 }
 .widget_advancedsearch_byshape__button {
   margin-right: 4px;
+  border: 1px solid rgba(110, 110, 110, 0.3);
 }
 
+.widget_advancedsearch_byshape__button_focus {
+  outline: 2px solid rgb(0 122 194);
+}
 
 /* BY VALUE TAB ELEMENTS*/
 .widget_advancedsearch_byvalue_searchfields__div {

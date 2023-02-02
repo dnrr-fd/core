@@ -8,6 +8,7 @@ interface CssExports {
   'widget_advancedsearch__restored': string;
   'widget_advancedsearch__select': string;
   'widget_advancedsearch_byshape__button': string;
+  'widget_advancedsearch_byshape__button_focus': string;
   'widget_advancedsearch_byshape_main__div': string;
   'widget_advancedsearch_byvalue_fieldinput_asterix__div': string;
   'widget_advancedsearch_byvalue_search__div': string;

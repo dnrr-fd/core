@@ -88,11 +88,11 @@ export const elementIDs = {
   advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID: "advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID",
   advancedsearch_MainTabcontentID: "advancedsearch_MainTabcontentID",
   advancedsearch_ByShapeTabID: "advancedsearch_ByShapeTabID",
-  advancedSearch_ByShapeRectangleButtonID: "advancedSearch_ByShapeRectangleButtonID",
-  advancedSearch_ByShapePolygonButtonID: "advancedSearch_ByShapePolygonButtonID",
-  advancedSearch_ByShapeCircleButtonID: "advancedSearch_ByShapeCircleButtonID",
-  advancedSearch_ByShapePolylineButtonID: "advancedSearch_ByShapePolylineButtonID",
-  advancedSearch_ByShapePointButtonID: "advancedSearch_ByShapePointButtonID",
+  advancedSearch_ByShapeButton_rectangleID: "advancedSearch_ByShapeButton_rectangleID",
+  advancedSearch_ByShapeButton_polygonID: "advancedSearch_ByShapeButton_polygonID",
+  advancedSearch_ByShapeButton_circleID: "advancedSearch_ByShapeButton_circleID",
+  advancedSearch_ByShapeButton_polylineID: "advancedSearch_ByShapeButton_polylineID",
+  advancedSearch_ByShapeButton_pointID: "advancedSearch_ByShapeButton_pointID",
   advancedsearch_ByValueTabID: "advancedsearch_ByValueTabID",
   advancedsearch_ResultsTabID: "advancedsearch_ResultsTabID",
   advancedsearch_ByShapeTabDivID: "advancedsearch_ByShapeTabDivID",
@@ -203,7 +203,14 @@ class AdvancedSearch extends Widget {
 
     byShapeSketchViewModel.on("create", async (event) => {
       if (event.state === "complete") {
-        // Empty the graphics layer and remove it from the map
+        // Remove the focus from all the tools
+        let toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
+        let tool_node: HTMLElement;
+        toolsArray.forEach(t => {
+          tool_node = document.getElementById(`advancedSearch_ByShapeButton_${t}ID`)!;
+          tool_node.classList.remove(css.default.widget_advancedsearch_byshape__button_focus);
+        })
+            // Empty the graphics layer and remove it from the map
         byShapeGraphicsLayer.removeAll();
         this.view.map.remove(byShapeGraphicsLayer);
         console.log(`Select by ${event.tool} is ${event.state}.`);
@@ -343,10 +350,24 @@ class AdvancedSearch extends Widget {
                       </select>
                     </div>
                     <div class={css.default.widget_advancedsearch_commonbar_selection_buttons__div}>
-                      <button id={elementIDs.advancedSearch_CommonBarSelectionClearButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_commonbar_selection_clear__button)} ariaLabel={t9n.commonSelectClearText} title={t9n.commonSelectClearText} onclick={this._selectionClearButton_click.bind(this)} onkeypress={this._selectionClearButton_keypress.bind(this)} tabindex="0">
+                      {/* <div class={css_esri.esri_widget}>
+                        <div
+                            id={elementIDs.advancedSearch_CommonBarSelectionClearButtonID}
+                            class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_advancedsearch_commonbar_selection_clear__button)}
+                            role="button"
+                            aria-label={t9n.commonSelectClearText}
+                            title={t9n.commonSelectClearText}
+                            onclick={this._selectionClearButton_click.bind(this)}
+                            onkeypress={this._selectionClearButton_keypress.bind(this)}
+                            tabindex="0">
+                          <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_erase)} aria-hidden="true"></span>
+                          <span class={css_esri.esri_icon_font_fallback_text}>{t9n.commonSelectClearText}</span>
+                        </div>
+                      </div> */}
+                      <button id={elementIDs.advancedSearch_CommonBarSelectionClearButtonID} type="button" class={this.classes(css_esri.esri_widget_button, css.default.widget_advancedsearch_commonbar_selection_clear__button)} ariaLabel={t9n.commonSelectClearText} title={t9n.commonSelectClearText} onclick={this._selectionClearButton_click.bind(this)} onkeypress={this._selectionClearButton_keypress.bind(this)} tabindex="0">
                         <span aria-hidden='true' class={css_esri.esri_icon_erase} />
                       </button>
-                      {/* <button id={elementIDs.advancedSearch_CommonBarSelectionSwapButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_commonbar_selection_swap__button)} ariaLabel={t9n.commonSelectSwapText} title={t9n.commonSelectSwapText} onclick={this._selectionSwapButton_click.bind(this)} onkeypress={this._selectionSwapButton_keypress.bind(this)} tabindex="0">
+                      {/* <button id={elementIDs.advancedSearch_CommonBarSelectionSwapButtonID} type="button" class={this.classes(css_esri.esri_widget_button, css.default.widget_advancedsearch_commonbar_selection_swap__button)} ariaLabel={t9n.commonSelectSwapText} title={t9n.commonSelectSwapText} onclick={this._selectionSwapButton_click.bind(this)} onkeypress={this._selectionSwapButton_keypress.bind(this)} tabindex="0">
                         <span aria-hidden='true' class={css_esri.esri_icon_swap} />
                       </button> */}
                       <div class={css.default.widget_advancedsearch_commonbar_selection_checkbox__div}>
@@ -366,21 +387,95 @@ class AdvancedSearch extends Widget {
                     {/* <h3>{t9n.byShapeHeaderLabel}</h3> */}
 
                     <div class={css.default.widget_advancedsearch_byshape_main__div}>
-                      <button id={elementIDs.advancedSearch_ByShapeRectangleButtonID} type="button" class={this.classes(css_esri.esri_widget, css_esri.esri_widget_button, css_esri.esri_interactive, css.default.widget_advancedsearch_byshape__button)} title={t9n.byShapeRectangle} onclick={(e: MouseEvent) => {this._selectByTool_click(e, "rectangle")}} onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}} tabindex="0">
-                        <span aria-hidden='true' class={css_esri.esri_icon_draw_rectangle}></span>
-                      </button>
-                      <button id={elementIDs.advancedSearch_ByShapePolygonButtonID} type="button" class={this.classes(css_esri.esri_widget, css_esri.esri_widget_button, css_esri.esri_interactive, css.default.widget_advancedsearch_byshape__button)} title={t9n.byShapePolygon} onclick={(e: MouseEvent) => {this._selectByTool_click(e, "polygon")}} onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polygon")}} tabindex="0">
-                        <span aria-hidden='true' class={css_esri.esri_icon_draw_polygon}></span>
-                      </button>
-                      <button id={elementIDs.advancedSearch_ByShapeCircleButtonID} type="button" class={this.classes(css_esri.esri_widget, css_esri.esri_widget_button, css_esri.esri_interactive, css.default.widget_advancedsearch_byshape__button)} title={t9n.byShapeCircle} onclick={(e: MouseEvent) => {this._selectByTool_click(e, "circle")}} onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "circle")}} tabindex="0">
-                        <span aria-hidden='true' class={css_esri.esri_icon_draw_circle}></span>
-                      </button>
-                      <button id={elementIDs.advancedSearch_ByShapePolylineButtonID} type="button" class={this.classes(css_esri.esri_widget, css_esri.esri_widget_button, css_esri.esri_interactive, css.default.widget_advancedsearch_byshape__button)} title={t9n.byShapePolyline} onclick={(e: MouseEvent) => {this._selectByTool_click(e, "polyline")}} onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polyline")}} tabindex="0">
-                        <span aria-hidden='true' class={css_esri.esri_icon_draw_polyline}></span>
-                      </button>
-                      <button id={elementIDs.advancedSearch_ByShapePointButtonID} type="button" class={this.classes(css_esri.esri_widget, css_esri.esri_widget_button, css_esri.esri_interactive, css.default.widget_advancedsearch_byshape__button)} title={t9n.byShapePoint} onclick={(e: MouseEvent) => {this._selectByTool_click(e, "point")}} onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "point")}} tabindex="0">
-                        <span aria-hidden='true' class={css_esri.esri_icon_draw_point}></span>
-                      </button>
+
+                      <div class={css_esri.esri_widget}>
+                        <div
+                            id={elementIDs.advancedSearch_ByShapeButton_rectangleID}
+                            class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_advancedsearch_byshape__button)}
+                            role="button"
+                            aria-label={t9n.byShapeRectangle}
+                            title={t9n.byShapeRectangle}
+                            onclick={(e: MouseEvent) => {this._selectByTool_click(e, "rectangle")}}
+                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}}
+                            tabindex="0">
+                          <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_rectangle)} aria-hidden="true"></span>
+                          <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapeRectangle}</span>
+                        </div>
+                      </div>
+
+                      {/* <button
+                          id={elementIDs.advancedSearch_ByShapeRectangleButtonID}
+                          class={css.default.widget_advancedsearch_byshape__button}
+                          type="button"
+                          ariaLabel={t9n.byShapeRectangle}
+                          title={t9n.byShapeRectangle}
+                          onclick={(e: MouseEvent) => {this._selectByTool_click(e, "rectangle")}}
+                          onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}}
+                          tabindex="0">
+                        <span aria-hidden='true' class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_rectangle)} />
+                        <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapeRectangle}</span>
+                      </button> */}
+
+                      <div class={css_esri.esri_widget}>
+                        <div
+                            id={elementIDs.advancedSearch_ByShapeButton_polygonID}
+                            class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_advancedsearch_byshape__button)}
+                            role="button"
+                            aria-label={t9n.byShapePolygon}
+                            title={t9n.byShapePolygon}
+                            onclick={(e: MouseEvent) => {this._selectByTool_click(e, "polygon")}}
+                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polygon")}}
+                            tabindex="0">
+                          <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_polygon)} aria-hidden="true"></span>
+                          <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapePolygon}</span>
+                        </div>
+                      </div>
+
+                      <div class={css_esri.esri_widget}>
+                        <div
+                            id={elementIDs.advancedSearch_ByShapeButton_circleID}
+                            class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_advancedsearch_byshape__button)}
+                            role="button"
+                            aria-label={t9n.byShapeCircle}
+                            title={t9n.byShapeCircle}
+                            onclick={(e: MouseEvent) => {this._selectByTool_click(e, "circle")}}
+                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "circle")}}
+                            tabindex="0">
+                          <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_circle)} aria-hidden="true"></span>
+                          <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapeCircle}</span>
+                        </div>
+                      </div>
+
+                      <div class={css_esri.esri_widget}>
+                        <div
+                            id={elementIDs.advancedSearch_ByShapeButton_polylineID}
+                            class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_advancedsearch_byshape__button)}
+                            role="button"
+                            aria-label={t9n.byShapePolyline}
+                            title={t9n.byShapePolyline}
+                            onclick={(e: MouseEvent) => {this._selectByTool_click(e, "polyline")}}
+                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polyline")}}
+                            tabindex="0">
+                          <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_polyline)} aria-hidden="true"></span>
+                          <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapePolyline}</span>
+                        </div>
+                      </div>
+
+                      <div class={css_esri.esri_widget}>
+                        <div
+                            id={elementIDs.advancedSearch_ByShapeButton_pointID}
+                            class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_advancedsearch_byshape__button)}
+                            role="button"
+                            aria-label={t9n.byShapePoint}
+                            title={t9n.byShapePoint}
+                            onclick={(e: MouseEvent) => {this._selectByTool_click(e, "point")}}
+                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "point")}}
+                            tabindex="0">
+                          <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_point)} aria-hidden="true"></span>
+                          <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapePoint}</span>
+                        </div>
+                      </div>
+
                     </div>
 
                   </div>
@@ -435,6 +530,19 @@ class AdvancedSearch extends Widget {
     if (!this.view.map.layers.includes(byShapeGraphicsLayer)) {
       this.view.map.add(byShapeGraphicsLayer);
     }
+
+    // Keep focus on the tool while graphic is being drawn.
+    let toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
+    let tool_node: HTMLElement;
+    toolsArray.forEach(t => {
+      tool_node = document.getElementById(`advancedSearch_ByShapeButton_${t}ID`)!;
+      if (t === tool) {
+        tool_node.classList.add(css.default.widget_advancedsearch_byshape__button_focus);
+      } else {
+        tool_node.classList.remove(css.default.widget_advancedsearch_byshape__button_focus);
+      }
+    })
+    
     byShapeSketchViewModel.create(tool);
   }
   
@@ -448,6 +556,19 @@ class AdvancedSearch extends Widget {
       if (!this.view.map.layers.includes(byShapeGraphicsLayer)) {
         this.view.map.add(byShapeGraphicsLayer);
       }
+
+      // Keep focus on the tool while graphic is being drawn.
+      let toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
+      let tool_node: HTMLElement;
+      toolsArray.forEach(t => {
+        tool_node = document.getElementById(`advancedSearch_ByShapeButton_${t}ID`)!;
+        if (t === tool) {
+          tool_node.classList.add(css.default.widget_advancedsearch_byshape__button_focus);
+        } else {
+          tool_node.classList.remove(css.default.widget_advancedsearch_byshape__button_focus);
+        }
+      })
+    
       byShapeSketchViewModel.create(tool);
     }
   }
