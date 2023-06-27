@@ -118,7 +118,7 @@ class MeasurementDNRR extends Widget {
         <div class={css.default.widget_measurement_button__div}>
           <button id={elementIDs.measurement_ClearButtonID}
             type="button"
-            class={this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash)}
+            class={this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash, css.default.widget_measurement_clear__button)}
             title={t9n.clearButtonLabel}
             ariaLabel={t9n.clearButtonLabel}
             onclick={this._clearMeasurements_click.bind(this)}
@@ -138,7 +138,9 @@ class MeasurementDNRR extends Widget {
     let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID)!;
 
     distanceButton_node.classList.add("active");
+    distanceButton_node.classList.add(css.default.widget_measurement__button_focus);
     areaButton_node.classList.remove("active");
+    areaButton_node.classList.remove(css.default.widget_measurement__button_focus);
   }
 
   private _measureArea_click() {
@@ -147,7 +149,9 @@ class MeasurementDNRR extends Widget {
     let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID)!;
     
     distanceButton_node.classList.remove("active");
+    distanceButton_node.classList.remove(css.default.widget_measurement__button_focus);
     areaButton_node.classList.add("active");
+    areaButton_node.classList.add(css.default.widget_measurement__button_focus);
   }
 
   private _clearMeasurements_click() {
@@ -163,7 +167,9 @@ class MeasurementDNRR extends Widget {
     let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID)!;
     
     distanceButton_node.classList.remove("active");
+    distanceButton_node.classList.remove(css.default.widget_measurement__button_focus);
     areaButton_node.classList.remove("active");
+    areaButton_node.classList.remove(css.default.widget_measurement__button_focus);
     measurement.clear();
   }
 

@@ -2,8 +2,10 @@
 // Please do not change this file!
 interface CssExports {
   'widget_measurement': string;
+  'widget_measurement__button_focus': string;
   'widget_measurement_button': string;
   'widget_measurement_button__div': string;
+  'widget_measurement_clear__button': string;
   'widget_measurement_visible__none': string;
 }
 export const cssExports: CssExports;
