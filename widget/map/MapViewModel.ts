@@ -751,7 +751,7 @@ function getWidgetConfigKeyValue(widget: MapWidget, configKey: string, defaultVa
     if (widget) {
         var keys = Object.keys(widget);
         if (keys.includes(configKey)) {
-            result = widget[configKey];
+            result = widget[configKey as keyof typeof widget];
         }
     }
     return result;
@@ -762,7 +762,7 @@ function getWidgetLocaleConfigKeyValue(widgetLocale: MapWidgetLocale, configKey:
     if (widgetLocale) {
         var keys = Object.keys(widgetLocale);
         if (keys.includes(configKey)) {
-            result = widgetLocale[configKey];
+            result = widgetLocale[configKey as keyof typeof widgetLocale];
         }
     }
     return result;

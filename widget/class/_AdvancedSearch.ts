@@ -111,14 +111,14 @@ export class SearchFieldSelectObjects extends Accessor {
 
 }
 
-interface SearchFieldSelectObjectsParams extends __esri.WidgetProperties {
+interface T9nObjectParams extends __esri.WidgetProperties {
   en?: string;
   fr?: string;
 }
 
 @subclass('AdvancedSearchClasses.T9nObject')
 export class T9nObject extends Accessor {
-  constructor(params?: SearchFieldSelectObjectsParams) {
+  constructor(params?: T9nObjectParams) {
     super(params);
   }
 
@@ -247,7 +247,7 @@ export class AdvancedSearchField extends Accessor {
   field!: string;
 
   @property()
-  fieldlabel!: OrderedLayerOrderBy;
+  fieldlabel!: T9nObject;
 
   @property()
   fieldtype!: "number"|"string";
@@ -278,8 +278,8 @@ export class AdvancedSearchField extends Accessor {
 interface AdvancedSearchLayerParams extends __esri.WidgetProperties {
   id?: string;
   url?: string;
-  searchlayerlabel?: OrderedLayerOrderBy;
-  searchlayertitletext?: OrderedLayerOrderBy;
+  searchlayerlabel?: T9nObject;
+  searchlayertitletext?: T9nObject;
   searchfields?: Array<AdvancedSearchField>;
   displayfields?: Array<DisplayField>;
   orderbyfields?: Array<OrderedLayerOrderBy>;
@@ -304,10 +304,10 @@ export class AdvancedSearchLayer extends Accessor {
   zoomscale!: number;
 
   @property()
-  searchlayerlabel!: OrderedLayerOrderBy;
+  searchlayerlabel!: T9nObject;
 
   @property()
-  searchlayertitletext!: OrderedLayerOrderBy;
+  searchlayertitletext!: T9nObject;
 
   @property()
   searchfields!: Array<AdvancedSearchField>;

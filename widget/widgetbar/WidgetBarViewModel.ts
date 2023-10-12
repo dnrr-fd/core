@@ -359,7 +359,9 @@ async function addBookmarks(widget: WidgetBarWidget, _mapView: MapView, _cookies
 
 async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _localeList: Array<string>): Promise<Expand|null> {
     return new Promise(resolve => {
+        var _lang: 'en'|'fr';
         var lang = getNormalizedLocale();
+        _lang = lang === 'fr' ? 'fr' : 'en'
 
         // Get the default asset from language.
         basemapGallery_defaultT9n = (lang === 'fr' ? basemapGalleryT9n_fr : basemapGalleryT9n_en);
@@ -372,7 +374,7 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
         }
         
         returnConfig(configFile, null).then(config => {
-            var basemapGalleryT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
+            var basemapGalleryT9nPath = widget.t9nPath? `${widget.t9nPath}/${_lang}.json`: null as string|null;
             var _basemapGallery_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as BasemapGalleryWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
@@ -387,7 +389,7 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
                     console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     t9nResults = basemapGallery_defaultT9n;
                 }
-                _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Basemap Gallery": "Bibliothèque de fonds de carte") as string;
+                _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", _lang==="en"? "Basemap Gallery": "Bibliothèque de fonds de carte") as string;
             }).then(async function (){
 
                 if (_apiKey) {
@@ -407,14 +409,14 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
                     var _basemapIds = new Array<string>();
                     var useCurrentBasemap = true;
 
-                    if (_bmGalleryGroups && _bmGalleryGroups[lang]) {
+                    if (_bmGalleryGroups && _bmGalleryGroups[_lang]) {
                         if (_bmGalleryGroups.basemapSourcePortal && _bmGalleryGroups.basemapSourcePortal.length > 0) {
                             esriConfig.portalUrl = _bmGalleryGroups.basemapSourcePortal;
                         }
                         thePortal = new Portal();
                         thePortal.load().then(async () => {
                             var getBMArray = new Promise<void>((resolve) => {
-                                _bmGalleryGroups![lang]!.forEach((_bmGallery: _BMGGroup, index: number, array: string | any[]) => {
+                                _bmGalleryGroups![_lang]!.forEach((_bmGallery: _BMGGroup, index: number, array: string | any[]) => {
                                     thePortal.queryGroups({
                                         query: `id: ${_bmGallery.id}`
                                     }).then(portalGroups => {
@@ -446,8 +448,8 @@ async function addBasemapGallery(widget: WidgetBarWidget, _mapView: MapView, _lo
                                 _portal = basemaps.basemapSourcePortal;
                                 esriConfig.portalUrl = _portal;
                             }
-                            if (basemaps[lang] && basemaps[lang].length > 0) {
-                                let basemapArray = basemaps[lang] as Array<_Basemap>;
+                            if (basemaps[_lang] && basemaps[_lang].length > 0) {
+                                let basemapArray = basemaps[_lang] as Array<_Basemap>;
                                 if (_portal) {
                                     var _portalbasemaps = createBasemapArray(basemapArray, _default_thumbnail);
                                     // add basemap to the array
@@ -843,7 +845,7 @@ function getWidgetConfigKeyValue(widget: WidgetBarWidget, configKey: string, def
     if (widget) {
         var keys = Object.keys(widget);
         if (keys.includes(configKey)) {
-            return widget[configKey];
+            return widget[configKey as keyof typeof widget];
         }
     }
     return defaultValue;
@@ -853,7 +855,7 @@ function getBookmarkConfigKeyValue(bookmark: _Bookmark, configKey: string, defau
     if (bookmark) {
         var keys = Object.keys(bookmark);
         if (keys.includes(configKey)) {
-            return bookmark[configKey];
+            return bookmark[configKey as keyof typeof bookmark];
         }
     }
     return defaultValue;
@@ -863,7 +865,7 @@ function getWidgetLocaleConfigKeyValue(widgetLocale: WidgetBarWidgetLocale, conf
     if (widgetLocale) {
         var keys = Object.keys(widgetLocale);
         if (keys.includes(configKey)) {
-            return widgetLocale[configKey];
+            return widgetLocale[configKey as keyof typeof widgetLocale];
         }
     }
     return defaultValue;
@@ -1006,23 +1008,26 @@ function getLayer(_layer: _Layer): MapImageLayer {
 }
 
 export function convertJSONBookmarksToEsriBookmarks(_bookmarks_list: Array<_Bookmark>, _default_thumbnail: string) {
+    var _lang: 'en'|'fr';
     var lang = getNormalizedLocale();
+    _lang = lang === 'fr' ? 'fr' : 'en'
+
     let final_bookmarks = new Collection();
 
     _bookmarks_list.forEach(_bookmark => {
-        let _centroid = getBookmarkConfigKeyValue(_bookmark, "centroid");
-        let _spatialReference = getBookmarkConfigKeyValue(_bookmark, "spatialreference");
-        let _thumbnailurl = getBookmarkConfigKeyValue(_bookmark, "thumbnailurl", _default_thumbnail);
-        let _scale = getBookmarkConfigKeyValue(_bookmark, "scale", 2500);
+        let _centroid = getBookmarkConfigKeyValue(_bookmark, "centroid") as Centroid;
+        let _spatialReference = getBookmarkConfigKeyValue(_bookmark, "spatialreference") as SpatialReference;
+        let _thumbnailurl = getBookmarkConfigKeyValue(_bookmark, "thumbnailurl", _default_thumbnail) as string;
+        let _scale = getBookmarkConfigKeyValue(_bookmark, "scale", 2500)as number;
 
-        // Determine the label from lang
+        // Determine the label from _lang
         let _name = null as string|null;
         if (_bookmark.label) {
             let lang_keys = Object.keys(_bookmark.label);
-            if (_bookmark.label[lang]) {
-                _name = _bookmark.label[lang];
+            if (_bookmark.label[_lang]) {
+                _name = _bookmark.label[_lang];
             } else if (lang_keys.length > 0) {
-                _name = _bookmark.label[lang_keys[0]];
+                _name = _bookmark.label[lang_keys[0] === 'fr' ? 'fr' : 'en'];
             } else {
                 let date = new Date();
                 _name = lang === "en"? `Bookmark_${date.getTime()}`: `Signet_${date.getTime()}`;
@@ -1048,7 +1053,9 @@ export function convertJSONBookmarksToEsriBookmarks(_bookmarks_list: Array<_Book
 
             let bookmark = new Bookmark({
                 name: _name,
-                thumbnail: _thumbnailurl,
+                thumbnail: {
+                    url: _thumbnailurl
+                },
                 viewpoint: new Viewpoint({
                     targetGeometry: point,
                     scale: _scale
@@ -1131,7 +1138,7 @@ function convertEsriBookmarksToJSONBookmarks(bookmarkCollection: Collection<Book
         _localeList.forEach(locale => {
             /* Can't get label language from an esri bookmark.
             All languages are assigned the same value.*/
-            jsonBookmark["label"][locale] = bookmark.name;
+            Object.assign(jsonBookmark["label"], {[locale]: bookmark.name});
         });
 
         bookmarkArray.push(jsonBookmark);

@@ -191,7 +191,7 @@ class AdvancedSearch extends Widget {
 
     // Dynamically create search layers.
     searchLayers = this.layers.map(layer =>
-        <option value={layer.id} title={layer.searchlayertitletext[_locale]}>{layer.searchlayerlabel[_locale]}</option>
+        <option value={layer.id} title={layer.searchlayertitletext[_locale as keyof typeof layer.searchlayertitletext]}>{layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}</option>
     );
 
     // Set up the sketch view models for the select by shape section
@@ -257,7 +257,7 @@ class AdvancedSearch extends Widget {
               <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields__div}>
                 <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_items__div}>
                   <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_label__div}>
-                    <label for={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`}>{searchfield.fieldlabel[_locale]}</label>
+                    <label for={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`}>{searchfield.fieldlabel[_locale as keyof typeof searchfield.fieldlabel]}</label>
                   </div>
                   <div class={css.default.widget_advancedsearch_byvalue_fieldinput_asterix__div}>
                     <input id={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select, `${searchfield.required? css.default.widget_advancedsearch_required__input: ""}`)} list={`${layer.id}_${searchfield.field}${postFixes.layerFieldDataListID}`} placeholder={searchfield.searchhint? searchfield.searchhint: ""} required={searchfield.required? searchfield.required===true? `"${searchfield.required}"`: "false": "false"}></input>
@@ -840,7 +840,7 @@ class AdvancedSearch extends Widget {
       await setupFeatureLayer(this.view, layer, asID).then(featureLayer => {
         console.log(`featureLayerReferences - afterRenderActions(): ${featureLayerReferences}`);
         if (featureLayer != null) {
-          featureLayer.title = `${layer.searchlayerlabel[_locale]}`;
+          featureLayer.title = `${layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}`;
           featureLayerArray.push(featureLayer);
           layer.searchfields.forEach(searchfield => {
             let input_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`)! as HTMLInputElement;

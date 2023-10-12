@@ -3,6 +3,7 @@ import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import FeatureSet from "@arcgis/core/rest/support/FeatureSet";
 import Collection from "@arcgis/core/core/Collection";
 import Query from "@arcgis/core/rest/support/Query";
+import Geometry from "@arcgis/core/geometry/Geometry";
 import * as geometryEngineAsync from "@arcgis/core/geometry/geometryEngineAsync";
 import * as projection from "@arcgis/core/geometry/projection";
 import { FeatureLayerReferences, SearchFieldSelectObjects, SelectObject } from "../class/_AdvancedSearch";
@@ -192,8 +193,15 @@ async function returnFeatureSetWithinExtent(featureSet, extent = null) {
                 testFeature = feature;
                 if (testFeature.geometry.extent.spatialReference != extent.spatialReference) {
                     var geometry = projection.project(testFeature.geometry, extent.spatialReference);
-                    if ((geometry instanceof (Array)) === true) {
-                        testFeature.geometry = await geometryEngineAsync.union(geometry);
+                    if (Array.isArray(geometry) === true) {
+                        var geom = new Array;
+                        geom = geometry;
+                        if (geom.find(g => g instanceof Geometry)) {
+                            testFeature.geometry = await geometryEngineAsync.union(geometry);
+                        }
+                        else {
+                            throw (`Geometry array object is in an invalid format! ${geometry}`);
+                        }
                     }
                     else {
                         testFeature.geometry = geometry;
@@ -220,8 +228,15 @@ async function returnFeatureOIDs(featureSet, extent = null) {
             if (extent) {
                 if (testFeature.geometry.extent.spatialReference != extent.spatialReference) {
                     var geometry = projection.project(testFeature.geometry, extent.spatialReference);
-                    if ((geometry instanceof (Array)) === true) {
-                        testFeature.geometry = await geometryEngineAsync.union(geometry);
+                    if (Array.isArray(geometry) === true) {
+                        var geom = new Array;
+                        geom = geometry;
+                        if (geom.find(g => g instanceof Geometry)) {
+                            testFeature.geometry = await geometryEngineAsync.union(geometry);
+                        }
+                        else {
+                            throw (`Geometry array object is in an invalid format! ${geometry}`);
+                        }
                     }
                     else {
                         testFeature.geometry = geometry;
@@ -643,24 +658,58 @@ function buildSQLTextFromSearchFields(sfso, layer, replacementKeyword = "[VALUE]
 }
 export function buildSQLText(field, collectionOrArray) {
     var sqlOIDs;
-    if ((collectionOrArray instanceof (Collection)) === true || (collectionOrArray instanceof (Array)) === true || (collectionOrArray instanceof (Array)) === true) {
-        sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.join(",")})`;
+    if (collectionOrArray instanceof Collection === true) {
+        var coll = new Collection;
+        coll = collectionOrArray;
+        if (coll.find(c => (typeof c === "string"))) {
+            sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.map(item => { return `'${item}'`; }).join(",")})`;
+        }
+        else {
+            sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.join(",")})`;
+        }
+    }
+    else if (Array.isArray(collectionOrArray) === true) {
+        var arr = new Array;
+        arr = collectionOrArray;
+        if (arr.find(a => (typeof a === "string"))) {
+            sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.map(item => { return `'${item}'`; }).join(",")})`;
+        }
+        else {
+            sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.join(",")})`;
+        }
     }
     else {
-        sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.map(item => { return `'${item}'`; }).join(",")})`;
+        throw (`Object is invalid (collectionOrArray): ${collectionOrArray}`);
     }
+    // if ((collectionOrArray instanceof Collection<number>) === true || (collectionOrArray instanceof Array<Number>) === true || (collectionOrArray instanceof Array<number>) === true) {
+    //   sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.join(",")})`;
+    // } else {
+    //   sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.map(item => {return `'${item}'`}).join(",")})`;
+    // }
     return sqlOIDs;
 }
 export async function sqlFromFeatureSet(field, _featureSet) {
     return new Promise(async (resolve) => {
         var sqlWhere = "";
         returnFeatureOIDs(_featureSet).then(collection => {
-            if ((collection instanceof (Collection)) === true) {
-                sqlWhere = `${field.toLowerCase()} IN (${collection.join(",")})`;
+            if (collection instanceof Collection === true) {
+                var coll = new Collection;
+                coll = collection;
+                if (coll.find(c => (typeof c === "string"))) {
+                    sqlWhere = `${field.toLowerCase()} IN (${collection.map(item => { return `'${item}'`; }).join(",")})`;
+                }
+                else {
+                    sqlWhere = `${field.toLowerCase()} IN (${collection.join(",")})`;
+                }
             }
             else {
-                sqlWhere = `${field.toLowerCase()} IN (${collection.map(item => { return `'${item}'`; }).join(",")})`;
+                throw (`Object is invalid (collection): ${collection}`);
             }
+            // if ((collection instanceof Collection<number>) === true) {
+            //   sqlWhere = `${field.toLowerCase()} IN (${collection.join(",")})`;
+            // } else {
+            //   sqlWhere = `${field.toLowerCase()} IN (${collection.map(item => {return `'${item}'`}).join(",")})`;
+            // }
             resolve(sqlWhere);
         });
     });

@@ -126,7 +126,7 @@ class WidgetBar extends Widget {
 
     // Create widgetBarWidget scaffold
     _widgetBarWidgets = this.widgets.map(widget =>
-      <div id={widget.id} class={self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id], css_theme.default.widget_widgetbar_visible__none)}></div>
+      <div id={widget.id} class={self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id as keyof typeof css_theme.default], css_theme.default.widget_widgetbar_visible__none)}></div>
     );
 
     // Watch for changes
@@ -190,7 +190,7 @@ class WidgetBar extends Widget {
           var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
           if (wbwcc_node) {
             var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
-            wbwcc_node.classList.add(css_theme.default[wbwccClass]);
+            wbwcc_node.classList.add(css_theme.default[wbwccClass as keyof typeof css_theme.default]);
           }
           wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
         }
