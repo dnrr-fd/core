@@ -1,10 +1,13 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import MapView from "@arcgis/core/views/MapView";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import Graphic from "@arcgis/core/Graphic";
+import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 
 import SimpleFillSymbol from "@arcgis/core/symbols/SimpleFillSymbol";
 import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol";
@@ -26,6 +29,7 @@ import esriConfig from "@arcgis/core/config"
 import * as intl from "@arcgis/core/intl";
 import { getWidgetTheme, getFocusableElements, ariaDisable } from "@dnrr_fd/util/web";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
+import { GenerateFeatureCollection, PublishParams } from '../class/_Common';
 
 // Import Color Picker: https://github.com/Simonwep/pickr#readme
 import Pickr from '@simonwep/pickr';
@@ -39,16 +43,16 @@ import * as css from './assets/css/addlayer.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var t9n = t9n_en;
+let t9n = t9n_en;
 
-var sendFile = false;
-var fileName_full = "";
-var layerName: string;
-var layerID: string;
-var addedLayers = new Array<{layerName: string, layerID: string, fileName: string}>();
-var currentEditLayer: FeatureLayer;
-var pickr_outline: Pickr;
-var pickr_main: Pickr;
+let sendFile = false;
+let fileName_full = "";
+let layerName: string;
+let layerID: string;
+const addedLayers = new Array<{layerName: string, layerID: string, fileName: string}>();
+let currentEditLayer: FeatureLayer;
+let pickr_outline: Pickr;
+let pickr_main: Pickr;
 
 // esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
 
@@ -150,7 +154,7 @@ class AddLayer extends Widget {
   postInitialize(): void {
     // esriConfig.apiKey = this.apiKey;
 
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
 
     t9n = (_locale === 'en' ? t9n_en : t9n_fr);
@@ -158,8 +162,6 @@ class AddLayer extends Widget {
     this.label = t9n.label;
     this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme) as 'light'|'dark';
 
-    var self = this;
-  
     intl.onLocaleChange(function(locale) {
       t9n = (locale === 'en' ? t9n_en : t9n_fr);
     });
@@ -167,153 +169,153 @@ class AddLayer extends Widget {
 
   render() {
     return (
-      <div class={css_esri.esri_widget}>
-        <div id={elementIDs.addlayer_ModalID} class={this.classes(css.default.widget_addlayer_modal, css.default.widget_addlayer_visible__none)}></div>
-        <div id={elementIDs.addlayer_MainID} class={css.default.widget_addlayer} afterCreate={this.afterRenderActions} bind={this}>
-          <div class={css.default.widget_addlayer_tab__div}>
+      <div className={css_esri.esri_widget}>
+        <div id={elementIDs.addlayer_ModalID} className={this.classes(css.default.widget_addlayer_modal, css.default.widget_addlayer_visible__none)}></div>
+        <div id={elementIDs.addlayer_MainID} className={css.default.widget_addlayer} afterCreate={this.afterRenderActions} bind={this}>
+          <div className={css.default.widget_addlayer_tab__div}>
             <button id={elementIDs.addlayer_FileTabID}
               type="button"
-              class={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
+              className={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
               title={t9n.addFileTabLabel}
-              ariaLabel={t9n.addFileTabLabel}
-              onclick={this._addFileTab_click.bind(this)}
-              tabindex="0"
+              aria-label={t9n.addFileTabLabel}
+              onClick={this._addFileTab_click.bind(this)}
+              tabIndex="0"
             >{t9n.addFileTabLabel}</button>
             <button id={elementIDs.addlayer_ServiceTabID}
               type="button"
-              class={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
+              className={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
               title={t9n.addServiceTabLabel}
-              ariaLabel={t9n.addServiceTabLabel}
-              onclick={this._addServiceTab_click.bind(this)}
-              tabindex="0"
+              aria-label={t9n.addServiceTabLabel}
+              onClick={this._addServiceTab_click.bind(this)}
+              tabIndex="0"
             >{t9n.addServiceTabLabel}</button>
           </div>
-          <div id={elementIDs.addlayer_FileTabDivID} class={this.classes(css.default.widget_addlayer_tabcontent__div)}>
+          <div id={elementIDs.addlayer_FileTabDivID} className={this.classes(css.default.widget_addlayer_tabcontent__div)}>
             <h3>{t9n.addFileHeaderLabel}</h3>
-            <p class={css.default.widget_addlayer_p}>{t9n.addFileSelectionText}</p>
-            <p class={css.default.widget_addlayer_p}>{`${t9n.addFileTypeHelpText} `}<a target="_blank" rel="noopener" href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" class={css_esri.esri_widget_anchor}>{t9n.addFileTypeHelpLinkTitle}</a></p>
+            <p className={css.default.widget_addlayer_p}>{t9n.addFileSelectionText}</p>
+            <p className={css.default.widget_addlayer_p}>{`${t9n.addFileTypeHelpText} `}<a target="_blank" rel="noopener noreferrer" href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" className={css_esri.esri_widget_anchor}>{t9n.addFileTypeHelpLinkTitle}</a></p>
             <form id={elementIDs.addlayer_FileFormID}
-              enctype="multipart/form-data"
+              encType="multipart/form-data"
               method="post">
-              <div class={css.default.widget_addlayer_file_button__div}>
-                <label for={elementIDs.addlayer_FileFileID} class={css.default.widget_addlayer_buttontitle__label}>{t9n.addFileButtonSectionLabel}</label>
-                <input id={elementIDs.addlayer_FileFileID} class={css.default.widget_addlayer_visible__none} type="file" name="addlayer_file"/>
+              <div className={css.default.widget_addlayer_file_button__div}>
+                <label htmlFor={elementIDs.addlayer_FileFileID} className={css.default.widget_addlayer_buttontitle__label}>{t9n.addFileButtonSectionLabel}</label>
+                <input id={elementIDs.addlayer_FileFileID} className={css.default.widget_addlayer_visible__none} type="file" name="addlayer_file"/>
                 <span>
                   <button id={elementIDs.addlayer_FileButtonID}
                     type="button"
-                    class={this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button)}
+                    className={this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button)}
                     title={t9n.addFileButtonLabel}
-                    ariaLabel={t9n.addFileButtonLabel}
-                    onclick={this._addFileButton_click.bind(this)}
-                    tabindex="0"
+                    aria-label={t9n.addFileButtonLabel}
+                    onClick={this._addFileButton_click.bind(this)}
+                    tabIndex="0"
                   >{t9n.addFileButtonLabel}</button>
                 </span>
               </div>
             </form>
             <span>
-              <div id={elementIDs.addlayer_FileUpdateStatusDivID} class={this.classes(css.default.widget_addlayer_file_uploadstatus__div, css.default.widget_addlayer_visible__none)}>
+              <div id={elementIDs.addlayer_FileUpdateStatusDivID} className={this.classes(css.default.widget_addlayer_file_uploadstatus__div, css.default.widget_addlayer_visible__none)}>
                 <div>
-                  <p id={elementIDs.addlayer_FileUpdateStatusID} class={css.default.widget_addlayer_file_uploadstatus__p}></p>
+                  <p id={elementIDs.addlayer_FileUpdateStatusID} className={css.default.widget_addlayer_file_uploadstatus__p}></p>
                 </div>
-                <div class={css.default.widget_addlayer_file_uploadstatus_clear_button__div}>
+                <div className={css.default.widget_addlayer_file_uploadstatus_clear_button__div}>
                   <button id={elementIDs.addlayer_FileUpdateStatusClearID}
                     type="button"
-                    class={this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase)}
+                    className={this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase)}
                     title={t9n.addFileUpdateStatusClearLabel}
-                    ariaLabel={t9n.addFileUpdateStatusClearLabel}
-                    onclick={this._addFileUpdateStatusClearButton_click.bind(this)}
-                    tabindex="0">
+                    aria-label={t9n.addFileUpdateStatusClearLabel}
+                    onClick={this._addFileUpdateStatusClearButton_click.bind(this)}
+                    tabIndex="0">
                   </button>
                 </div>
               </div>
             </span>
-            <div class={css.default.widget_addlayer_file_fileinfo__div}>
-              <p id={elementIDs.addlayer_FileInfoID} class={css.default.widget_addlayer_p}></p>
+            <div className={css.default.widget_addlayer_file_fileinfo__div}>
+              <p id={elementIDs.addlayer_FileInfoID} className={css.default.widget_addlayer_p}></p>
             </div>
           </div>
 
 
 
-          <div id={elementIDs.addlayer_ServiceTabDivID} class={this.classes(css.default.widget_addlayer_tabcontent__div, css.default.widget_addlayer_visible__none)}>
+          <div id={elementIDs.addlayer_ServiceTabDivID} className={this.classes(css.default.widget_addlayer_tabcontent__div, css.default.widget_addlayer_visible__none)}>
             <h3>{t9n.addServiceHeaderLabel}</h3>
-            <p class={css.default.widget_addlayer_p}>{t9n.addServiceSelectionText}</p>
-            <div class={css.default.widget_addlayer_service__div}>
-              <div class={css.default.widget_addlayer_service_input__div}>
-                <label for={elementIDs.addlayer_ServiceInputID}>
+            <p className={css.default.widget_addlayer_p}>{t9n.addServiceSelectionText}</p>
+            <div className={css.default.widget_addlayer_service__div}>
+              <div className={css.default.widget_addlayer_service_input__div}>
+                <label htmlFor={elementIDs.addlayer_ServiceInputID}>
                   {t9n.addServiceInputLabel}
                 </label>
                 <input id={elementIDs.addlayer_ServiceInputID}
-                  class={this.classes(css_esri.esri_input, css.default.widget_addlayer_service__input)}
+                  className={this.classes(css_esri.esri_input, css.default.widget_addlayer_service__input)}
                   type="text"
                   title={t9n.addServiceInputLabel}
-                  ariaLabel={t9n.addServiceInputLabel}
-                  tabindex="0"/>
+                  aria-label={t9n.addServiceInputLabel}
+                  tabIndex="0"/>
               </div>
-              <div class={css.default.widget_addlayer_service_button__div}>
+              <div className={css.default.widget_addlayer_service_button__div}>
                 <button id={elementIDs.addlayer_ServiceGoButtonID}
                   type="button"
-                  class={this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled)}
+                  className={this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled)}
                   title={t9n.addFileServiceGoLabel}
-                  ariaLabel={t9n.addFileServiceGoLabel}
+                  aria-label={t9n.addFileServiceGoLabel}
                   aria-disabled='true'
-                  onclick={this._addFileServiceGoButton_click.bind(this)}
-                  tabindex="0">{t9n.addFileServiceGoLabel}
+                  onClick={this._addFileServiceGoButton_click.bind(this)}
+                  tabIndex="0">{t9n.addFileServiceGoLabel}
                 </button>
               </div>
             </div>
-            <div id={elementIDs.addlayer_ServiceInfoDivID} class={this.classes(css.default.widget_addlayer_service_serviceInfo__div, css.default.widget_addlayer_visible__none)}>
-              <p id={elementIDs.addlayer_ServiceInfoID} class={css.default.widget_addlayer_p}></p>
+            <div id={elementIDs.addlayer_ServiceInfoDivID} className={this.classes(css.default.widget_addlayer_service_serviceInfo__div, css.default.widget_addlayer_visible__none)}>
+              <p id={elementIDs.addlayer_ServiceInfoID} className={css.default.widget_addlayer_p}></p>
             </div>
           </div>
           
           
           
           <div>
-            <div id={elementIDs.addlayer_ResultsDivID} class={this.classes(css.default.widget_addlayer_results__div, css.default.widget_addlayer_visible__none)}>
-              <div id={elementIDs.addlayer_ResultsEditDivID} class={this.classes(css_esri.esri_widget, css.default.widget_addlayer_results_edit__div, css.default.widget_addlayer__overmodal, css.default.widget_addlayer_visible__none)}>
-                <div class={css.default.widget_addlayer_results_edit_pickr__div}>
-                  <p id={elementIDs.addlayer_ResultsEditErrorID} class={this.classes(css.default.widget_addlayer__error, css.default.widget_addlayer_visible__none)}></p>
+            <div id={elementIDs.addlayer_ResultsDivID} className={this.classes(css.default.widget_addlayer_results__div, css.default.widget_addlayer_visible__none)}>
+              <div id={elementIDs.addlayer_ResultsEditDivID} className={this.classes(css_esri.esri_widget, css.default.widget_addlayer_results_edit__div, css.default.widget_addlayer__overmodal, css.default.widget_addlayer_visible__none)}>
+                <div className={css.default.widget_addlayer_results_edit_pickr__div}>
+                  <p id={elementIDs.addlayer_ResultsEditErrorID} className={this.classes(css.default.widget_addlayer__error, css.default.widget_addlayer_visible__none)}></p>
                 </div>
-                <div class={css.default.widget_addlayer_results_edit_pickr__div}>
+                <div className={css.default.widget_addlayer_results_edit_pickr__div}>
                   <input id={elementIDs.addlayer_ResultsEditLayerNameTextboxID}
-                    class={this.classes(css_esri.esri_input)}
+                    className={this.classes(css_esri.esri_input)}
                     type="text"
                     title={t9n.resultsEditLayerName}
-                    ariaLabel={t9n.resultsEditLayerName}
+                    aria-label={t9n.resultsEditLayerName}
                     tabIndex="0" />
                 </div>
-                <div class={css.default.widget_addlayer_results_edit_pickr__div}>
-                  <div class={css.default.widget_addlayer_results_edit_content__div}>
+                <div className={css.default.widget_addlayer_results_edit_pickr__div}>
+                  <div className={css.default.widget_addlayer_results_edit_content__div}>
                     <label id={elementIDs.addlayer_ResultsEditMainColourLabelID}
-                      class={css.default.widget_addlayer__disabled}
-                      ariaLabel={t9n.resultsEditMainColourLabel}
+                      className={css.default.widget_addlayer__disabled}
+                      aria-label={t9n.resultsEditMainColourLabel}
                     >{t9n.resultsEditMainColourLabel}</label>
-                    <div class={css_pickr.pickr_main}></div>
+                    <div className={css_pickr.pickr_main}></div>
                   </div>
-                  <div class={css.default.widget_addlayer_results_edit_content__div}>
+                  <div className={css.default.widget_addlayer_results_edit_content__div}>
                     <label id={elementIDs.addlayer_ResultsEditOutlineColourLabelID}
-                      class={css.default.widget_addlayer__disabled}
-                      ariaLabel={t9n.resultsEditOutlineColourLabel}
+                      className={css.default.widget_addlayer__disabled}
+                      aria-label={t9n.resultsEditOutlineColourLabel}
                       >{t9n.resultsEditOutlineColourLabel}</label>
-                    <div class={css_pickr.pickr_outline}></div>
+                    <div className={css_pickr.pickr_outline}></div>
                   </div>
                 </div>
-                <div class={css.default.widget_addlayer_results_edit_content__div}>
+                <div className={css.default.widget_addlayer_results_edit_content__div}>
                   <button id={elementIDs.addlayer_ResultsEdit_SaveButtonID}
                       type="button"
-                      class={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
+                      className={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
                       title={t9n.resultsEditSaveButton}
-                      ariaLabel={t9n.resultsEditSaveButton}
-                      onclick={this._resultsEditSaveButton_click.bind(this)}
-                      tabindex="0"
+                      aria-label={t9n.resultsEditSaveButton}
+                      onClick={this._resultsEditSaveButton_click.bind(this)}
+                      tabIndex="0"
                   >{t9n.resultsEditSaveButton}</button>
                   <button id={elementIDs.addlayer_ResultsEdit_CancelButtonID}
                       type="button"
-                      class={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
+                      className={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
                       title={t9n.resultsEditCancelButton}
-                      ariaLabel={t9n.resultsEditCancelButton}
-                      onclick={this._resultsEditCancelButton_click.bind(this)}
-                      tabindex="0"
+                      aria-label={t9n.resultsEditCancelButton}
+                      onClick={this._resultsEditCancelButton_click.bind(this)}
+                      tabIndex="0"
                     >{t9n.resultsEditCancelButton}</button>
                 </div>
               </div>
@@ -328,12 +330,12 @@ class AddLayer extends Widget {
   //  Event Methods
   //--------------------------------------------------------------------------
   private _addFileTab_click() {
-    let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
-    let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
+    const fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
+    const fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
     fileTab_node.setAttribute("style", "border-bottom: none;");
 
-    let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
-    let serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID)!;
+    const serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
+    const serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID)!;
     serviceButton_node.removeAttribute("style");
 
     fileDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
@@ -345,12 +347,12 @@ class AddLayer extends Widget {
 }
 
   private _addServiceTab_click() {
-    let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
-    let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
+    const fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID)!;
+    const fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
     fileTab_node.removeAttribute("style");
 
-    let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
-    let serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID)!;
+    const serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID)!;
+    const serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID)!;
     serviceButton_node.setAttribute("style", "border-bottom: none;");
 
     fileDiv_node.classList.add(css.default.widget_addlayer_visible__none);
@@ -362,7 +364,7 @@ class AddLayer extends Widget {
   }
 
   private _addFileButton_click(e: MouseEvent) {
-    let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
+    const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
     // Keep the button from posting as default action.
     e.preventDefault();
 
@@ -382,9 +384,9 @@ class AddLayer extends Widget {
   }
 
   private _addFileServiceGoButton_click(e: MouseEvent) {
-    let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
-    let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
-    let urlValue = serviceInputText_node.value;
+    const serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
+    const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
+    const urlValue = serviceInputText_node.value;
 
     if (serviceGoButton_node.ariaDisabled === "true") {
       e.preventDefault();
@@ -394,9 +396,9 @@ class AddLayer extends Widget {
   }
 
   private _resultsEditCancelButton_click() {
-    let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
-    let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
-    let resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID)!;
+    const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
+    const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
+    const resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID)!;
     resultsEditDiv_node.classList.add(css.default.widget_addlayer_visible__none);
     modalDiv_node.classList.add(css.default.widget_addlayer_visible__none);
 
@@ -411,19 +413,19 @@ class AddLayer extends Widget {
 
   private _resultsEditSaveButton_click() {
     // Collect the title, main and outline colors to change the active layer.
-    let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
-    let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
-    let resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID)!;
-    let editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID) as HTMLDivElement;
-    let editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID) as HTMLDivElement;
-    let editLayerName_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID) as HTMLInputElement;
-    let layerName_old = currentEditLayer.title;
-    let layerName_new = editLayerName_node.value
+    const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
+    const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
+    const resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID)!;
+    const editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID) as HTMLDivElement;
+    const editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID) as HTMLDivElement;
+    const editLayerName_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID) as HTMLInputElement;
+    const layerName_old = currentEditLayer.title;
+    const layerName_new = editLayerName_node.value
 
     // Reset the errors
     resultsEditError_node.innerHTML = "";
     resultsEditError_node.classList.add(css.default.widget_addlayer_visible__none);
-    var error = false;
+    let error = false;
 
     if (layerName_new === "") {
       // Warn the user to enter a valid Layer Name
@@ -456,19 +458,19 @@ class AddLayer extends Widget {
     if (editMain_node.classList.contains(css.default.widget_addlayer__disabled) === false) {
       mainRGBA = pickr_main.getColor().toRGBA();
       mainColor = new Color(mainRGBA.toString());
-      let ren = currentEditLayer.renderer as SimpleRenderer;
+      const ren = currentEditLayer.renderer as SimpleRenderer;
       ren.symbol.color = mainColor;
     }
 
     if (editOutline_node.classList.contains(css.default.widget_addlayer__disabled) === false) {
       outlineRGBA = pickr_outline.getColor().toRGBA();
       outlineColor = new Color(outlineRGBA.toString());
-      let ren = currentEditLayer.renderer as SimpleRenderer;
+      const ren = currentEditLayer.renderer as SimpleRenderer;
       if (currentEditLayer.geometryType === "polygon") {
-        let sym = ren.symbol as SimpleFillSymbol;
+        const sym = ren.symbol as SimpleFillSymbol;
         sym.outline.color = outlineColor;
       } else {
-        let sym = ren.symbol as SimpleMarkerSymbol;
+        const sym = ren.symbol as SimpleMarkerSymbol;
         sym.outline.color = outlineColor;
       }
     }
@@ -479,8 +481,8 @@ class AddLayer extends Widget {
     if (addedLayers.length > 0) {
       for (let index = 0; index < addedLayers.length; index++) {
         if (addedLayers[index].layerName === layerName_old) {
-          let layerLabel_id = `${addedLayers[index].layerID}_labelID`;
-          let layerLabel_node = document.getElementById(layerLabel_id) as HTMLLabelElement;
+          const layerLabel_id = `${addedLayers[index].layerID}_labelID`;
+          const layerLabel_node = document.getElementById(layerLabel_id) as HTMLLabelElement;
           layerLabel_node.innerHTML = layerName_new;
           layerLabel_node.title = layerName_new;
           layerLabel_node.ariaLabel = layerName_new;
@@ -508,23 +510,23 @@ class AddLayer extends Widget {
   //  Private Methods
   //--------------------------------------------------------------------------
   private afterRenderActions() {
-    let fileForm_node = document.getElementById(elementIDs.addlayer_FileFormID)!;
-    let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
-    let fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID)!;
-    let fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID)!;
-    let fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
-    let fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID)!;
+    const fileForm_node = document.getElementById(elementIDs.addlayer_FileFormID)!;
+    const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
+    const fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID)!;
+    const fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID)!;
+    const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
+    const fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID)!;
 
-    let serviceInput_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
-    let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
+    const serviceInput_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
+    const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
 
-    let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
+    const fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID)!;
     fileTab_node.setAttribute("style", "border-bottom: none;");
 
     // Re-build the results layers if they exist.
-    let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
-    let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
-    let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
+    const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
+    const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
 
     if (addedLayers && addedLayers.length > 0) {
       addedLayers.map(lyr => {
@@ -575,7 +577,7 @@ class AddLayer extends Widget {
     fileForm_node.addEventListener("change", (event) => {
       if (event) {
         fileName_full = fileInputFile_node.value.replace("C:\\fakepath\\", "");
-        var fileName_Test = fileName_full.toLowerCase();
+        const fileName_Test = fileName_full.toLowerCase();
 
         // Check to see if the file is already uploaded
         if (addedLayers.length > 0) {
@@ -615,9 +617,9 @@ class AddLayer extends Widget {
     });
 
     serviceInput_node.addEventListener("keyup", (e: KeyboardEvent) => {
-      let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-      let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
-      let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+      const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+      const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+      const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
   
       if (!isEnterPressed || !isSpacePressed || isTabPressed) {
         if (serviceInput_node.value.length > 0) {
@@ -691,10 +693,10 @@ class AddLayer extends Widget {
   }
 
   private removeFile() {
-    let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
-    let fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID)!;
-    let fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID)!;
-    let fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID)!;
+    const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
+    const fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID)!;
+    const fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID)!;
+    const fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID)!;
 
     fileName_full = "";
     fileInputFile_node.value = "";
@@ -710,10 +712,10 @@ class AddLayer extends Widget {
   }
 
   private removeURL() {
-    let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
-    let serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID)!;
-    let serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID)!;
-    let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
+    const serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
+    const serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID)!;
+    const serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID)!;
+    const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
     
     serviceInfo_node.classList.remove(css.default.widget_addlayer__error);
     serviceInputText_node.value = "";
@@ -723,7 +725,7 @@ class AddLayer extends Widget {
   }
 
   private loadFile() {
-    let fn = fileName_full.split(".");
+    const fn = fileName_full.split(".");
     let ext = "";
     if (fn.length > 1) {
       ext = fn[fn.length-1].toLowerCase();
@@ -731,10 +733,10 @@ class AddLayer extends Widget {
     }
     layerName = fn.join("_");
 
-    var fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
-    let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
+    const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
+    const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID)! as HTMLInputElement;
 
-    let message = `${t9n.addFileInfoLoading} ${fileName_full}`
+    const message = `${t9n.addFileInfoLoading} ${fileName_full}`
     fileInfo_node.classList.remove(css.default.widget_addlayer__error);
     fileInfo_node.innerHTML = message;
 
@@ -753,7 +755,7 @@ class AddLayer extends Widget {
 
     if (_filetype != "") {
       // Hide the fileUpdateStatusDiv_node while work is in progress.
-      let fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID)!;
+      const fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID)!;
       fileUpdateStatusDiv_node.classList.add(css.default.widget_addlayer_visible__none);
     }
 
@@ -764,7 +766,7 @@ class AddLayer extends Widget {
       maxRecordCount: 1000,
       enforceInputFileSizeLimit: true,
       enforceOutputJsonSizeLimit: true
-    } as any;
+    } as PublishParams;
 
     params.generalize = true;
     params.maxAllowableOffset = 10;
@@ -798,24 +800,24 @@ class AddLayer extends Widget {
   }
 
   private errorHandler(error: { message: string; }) {
-    let fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
+    const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
     fileInfo_node.classList.add(css.default.widget_addlayer__error);
     fileInfo_node.innerHTML = error.message;
   }
 
-  private addFileToMap(featureCollection: any) {
+  private addFileToMap(featureCollection: GenerateFeatureCollection) {
     // add the file to the map and zoom to the feature collection extent
     // if you want to persist the feature collection when you reload browser, you could store the
     // collection in local storage by serializing the layer using featureLayer.toJson()
     // see the 'Feature Collection in Local Storage' sample for an example of how to work with local storage
     let sourceGraphics = new Array<Graphic>();
-    let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
-    let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
-    let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
-    var self = this;
+    const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
+    const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
+    const self = this;
 
-    const layers = featureCollection.layers.map((layer: any) => {
-      const graphics = layer.featureSet.features.map((feature: Graphic) => {
+    const layers = featureCollection.layers.map(layer => {
+      const graphics = layer.featureSet.features.map(feature => {
         return Graphic.fromJSON(feature);
       });
       sourceGraphics = sourceGraphics.concat(graphics);
@@ -823,7 +825,7 @@ class AddLayer extends Widget {
         objectIdField: "FID",
         title: layerName,
         source: graphics,
-        fields: layer.layerDefinition.fields.map((field: Field) => {
+        fields: layer.layerDefinition.fields.map(field => {
           return Field.fromJSON(field);
         })
       });
@@ -848,23 +850,23 @@ class AddLayer extends Widget {
   }
 
   private async addURLServiceToMap(_urlValue: string) {
-    var self = this;
-    let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
-    let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
-    let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
-    let serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID)!;
-    let serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID)!;
-    let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
-    let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
+    const self = this;
+    const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
+    const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
+    const serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID)!;
+    const serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID)!;
+    const serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID)! as HTMLInputElement;
+    const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID)!;
 
     serviceInfo_node.classList.remove(css.default.widget_addlayer__error);
     
     // Check if we have a valid URL from the user, otherwise display an error.
-    var expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+    const expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
     // Example URL: https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Parks_and_Open_Space/FeatureServer/0
-    var regex = new RegExp(expression);
+    const regex = new RegExp(expression);
     if (_urlValue.match(regex)) {
-      serviceInfo_node.innerHTML = `<b>${t9n.addServiceValidUrlLabel}</b> ${_urlValue}`;;
+      serviceInfo_node.innerHTML = `<b>${t9n.addServiceValidUrlLabel}</b> ${_urlValue}`;
       await this.urlToFeatureLayer(_urlValue).then((response: URLServiceResult) => {
         if (response.featureLayer) {
           // Add the resulting FeatureLayer to the map.
@@ -899,9 +901,9 @@ class AddLayer extends Widget {
   }
 
   private async urlToFeatureLayer(url: string): Promise<URLServiceResult> {
-    var featureLayer = null as FeatureLayer|null;
-    var message = "";
-    var featureLayer_test = new FeatureLayer({url: url});
+    let featureLayer = null as FeatureLayer|null;
+    let message = "";
+    const featureLayer_test = new FeatureLayer({url: url});
 
     // Check if the FeatureLayer is both valid and supported, i.e. not a table.
     await featureLayer_test.load().then((response: FeatureLayer) => {
@@ -920,17 +922,17 @@ class AddLayer extends Widget {
   }
 
   private createLayerResultsItem(self: this, _layerID: string, _layerName: string, resultsDiv_node: HTMLElement, resultsEditDiv_node: HTMLElement, modalDiv_node: HTMLElement) {
-    var self = this;
-    let layerDiv = document.createElement("div");
-    let buttonWrapperDiv = document.createElement("div");
-    let buttonDiv = document.createElement("div");
-    let layerLabel = document.createElement("label");
-    let layerEditButton = document.createElement("button");
-    let layerZoomButton = document.createElement("button");
-    let layerRemoveButton = document.createElement("button");
-    let layerTitleTextbox_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID!) as HTMLInputElement;
-    let editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID) as HTMLDivElement;
-    let editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID) as HTMLDivElement;
+    // const self = this;
+    const layerDiv = document.createElement("div");
+    const buttonWrapperDiv = document.createElement("div");
+    const buttonDiv = document.createElement("div");
+    const layerLabel = document.createElement("label");
+    const layerEditButton = document.createElement("button");
+    const layerZoomButton = document.createElement("button");
+    const layerRemoveButton = document.createElement("button");
+    const layerTitleTextbox_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID!) as HTMLInputElement;
+    const editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID) as HTMLDivElement;
+    const editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID) as HTMLDivElement;
 
     resultsDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
 
@@ -954,8 +956,8 @@ class AddLayer extends Widget {
     layerEditButton.ariaLabel = t9n.resultsEditButtonLabel;
 
     layerEditButton.addEventListener('click', function () {
-      var layerID = "";
-      let _id = this.id;
+      let layerID = "";
+      const _id = this.id;
       addedLayers.map(lyr => {
         if (`${lyr.layerID}_editID` === _id) {
           layerID = lyr.layerID;
@@ -995,17 +997,17 @@ class AddLayer extends Widget {
 
       // Only change colours for simple renderer symbols. Other rendererd will have specific symbology defined.
       if (currentEditLayer.renderer.type === "simple") {
-        let ren = currentEditLayer.renderer as SimpleRenderer;
+        const ren = currentEditLayer.renderer as SimpleRenderer;
         if (currentEditLayer.geometryType === "polygon") {
-          let fillSymbol = ren.symbol as SimpleFillSymbol;
+          const fillSymbol = ren.symbol as SimpleFillSymbol;
           self.loadPickrColors(fillSymbol, editMain_node, editOutline_node);
 
         } else if (currentEditLayer.geometryType === "polyline") {
-          let lineSymbol = ren.symbol as SimpleLineSymbol;
+          const lineSymbol = ren.symbol as SimpleLineSymbol;
           self.loadPickrColors(lineSymbol, editMain_node, editOutline_node);
 
         } else if (currentEditLayer.geometryType === "point" || currentEditLayer.geometryType === "multipoint") {
-          let markerSymbol = ren.symbol as SimpleMarkerSymbol;
+          const markerSymbol = ren.symbol as SimpleMarkerSymbol;
           self.loadPickrColors(markerSymbol, editMain_node, editOutline_node);
 
         } else {
@@ -1031,8 +1033,8 @@ class AddLayer extends Widget {
     layerZoomButton.ariaLabel = t9n.resultsZoomButtonLabel;
 
     layerZoomButton.addEventListener('click', function () {
-      var layerID = "";
-      let _id = this.id;
+      let layerID = "";
+      const _id = this.id;
       addedLayers.map(lyr => {
         if (`${lyr.layerID}_zoomID` === _id) {
           layerID = lyr.layerID;
@@ -1040,7 +1042,7 @@ class AddLayer extends Widget {
         }
       });
 
-      var _layer = self.view.map.findLayerById(layerID);
+      const _layer = self.view.map.findLayerById(layerID);
       self.view.goTo(_layer.fullExtent);
     });
 
@@ -1052,12 +1054,12 @@ class AddLayer extends Widget {
     layerRemoveButton.ariaLabel = t9n.resultsRemoveButtonLabel;
 
     layerRemoveButton.addEventListener('click', function () {
-      let fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
+      const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID)!;
       fileInfo_node.classList.remove(css.default.widget_addlayer__error);
 
-      var layerID = "";
-      var lyrName = "";
-      let _id = this.id;
+      let layerID = "";
+      let lyrName = "";
+      const _id = this.id;
       let idx = -1;
       addedLayers.map((lyr, index) => {
         if (`${lyr.layerID}_removeID` === _id) {
@@ -1068,16 +1070,16 @@ class AddLayer extends Widget {
         }
       });
 
-      var _layer = self.view.map.findLayerById(layerID);
+      const _layer = self.view.map.findLayerById(layerID);
       // self.view.goTo(_layer.fullExtent.center);
-      var _layers = new Array<Layer>();
+      const _layers = new Array<Layer>();
 
       _layers.push(_layer);
       self.view.map.removeMany(_layers);
 
       // Remove the deleted layer from the array and DIV.
-      let _layerDivID = `${layerID}_divID`;
-      let _layerDiv = document.getElementById(_layerDivID)!;
+      const _layerDivID = `${layerID}_divID`;
+      const _layerDiv = document.getElementById(_layerDivID)!;
       resultsDiv_node.removeChild(_layerDiv);
       addedLayers.splice(idx, 1);
 
@@ -1102,16 +1104,16 @@ class AddLayer extends Widget {
 
 
   private loadPickrColors(symbol: SimpleFillSymbol|SimpleLineSymbol|SimpleMarkerSymbol, editMain_node: HTMLDivElement, editOutline_node: HTMLDivElement) {
-    let rgbaMain = symbol.color.toRgba();
-    let rgbaMainStr = `rgba(${rgbaMain[0]}, ${rgbaMain[1]}, ${rgbaMain[2]}, ${rgbaMain[3]})`;
+    const rgbaMain = symbol.color.toRgba();
+    const rgbaMainStr = `rgba(${rgbaMain[0]}, ${rgbaMain[1]}, ${rgbaMain[2]}, ${rgbaMain[3]})`;
     editMain_node.classList.remove(css.default.widget_addlayer__disabled);
     pickr_main.enable();
     pickr_main.setColor(rgbaMainStr);
     // console.log(`Color for ${currentEditLayer.title}: ${rgbaMainStr}`);
 
     if (symbol instanceof SimpleFillSymbol || symbol instanceof SimpleMarkerSymbol) {
-      let rgbaOutline = symbol.outline.color.toRgba();
-      let rgbaOutlineStr = `rgba(${rgbaOutline[0]}, ${rgbaOutline[1]}, ${rgbaOutline[2]}, ${rgbaOutline[3]})`;
+      const rgbaOutline = symbol.outline.color.toRgba();
+      const rgbaOutlineStr = `rgba(${rgbaOutline[0]}, ${rgbaOutline[1]}, ${rgbaOutline[2]}, ${rgbaOutline[3]})`;
       editOutline_node.classList.remove(css.default.widget_addlayer__disabled);
       pickr_outline.enable();
       pickr_outline.setColor(rgbaOutlineStr);

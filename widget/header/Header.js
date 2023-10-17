@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -12,10 +11,10 @@ import * as css_dark from './assets/css/dark/header.module.css';
 import * as css_light from './assets/css/light/header.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-var t9n = t9n_en;
-var css_theme = css_dark;
-var _locale;
-var _isSiteMenuExpanded = false;
+let t9n = t9n_en;
+let css_theme = css_dark;
+let _locale;
+let _isSiteMenuExpanded = false;
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_widget_button: 'esri-widget--button',
@@ -50,20 +49,30 @@ const elementIDs = {
     sitemenu_themePostfixID: "_themeID",
     submenu_localePostfixID: "_localeID"
 };
-var _logo;
-var _links;
-var _menuLinks;
-var _menuThemes;
-var _menuLanguages;
+let _logo;
+let _links;
+let _menuLinks;
+let _menuThemes;
+let _menuLanguages;
 let Header = class Header extends Widget {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    afterMenuCloseFocusElement;
+    title;
+    subtitle;
+    logo;
+    links;
+    menu;
+    theme;
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
@@ -71,7 +80,7 @@ let Header = class Header extends Widget {
         else {
             t9n = t9n_fr;
         }
-        var self = this;
+        const self = this;
         this.label = this.title;
         intl.onLocaleChange(function (locale) {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);
@@ -118,43 +127,43 @@ let Header = class Header extends Widget {
         });
     }
     render() {
-        return (tsx("div", { id: elementIDs.headerID, afterCreate: this.setSiteMenu, bind: this, class: this.classes(css_theme.default.widget_header, css_theme.default.widget_header_transition, css_esri.esri_widget) },
-            tsx("div", { id: elementIDs.header_foregroundID, class: css_theme.default.widget_header_fg },
-                tsx("div", { id: elementIDs.header_logoTitleID, class: css_theme.default.widget_header_logo_title },
-                    tsx("div", { id: elementIDs.header_logoID, class: css_theme.default.widget_header_logo }, _logo),
-                    tsx("div", { id: elementIDs.header_titleID, class: css_theme.default.widget_header_title },
+        return (tsx("div", { id: elementIDs.headerID, afterCreate: this.setSiteMenu, bind: this, className: this.classes(css_theme.default.widget_header, css_theme.default.widget_header_transition, css_esri.esri_widget) },
+            tsx("div", { id: elementIDs.header_foregroundID, className: css_theme.default.widget_header_fg },
+                tsx("div", { id: elementIDs.header_logoTitleID, className: css_theme.default.widget_header_logo_title },
+                    tsx("div", { id: elementIDs.header_logoID, className: css_theme.default.widget_header_logo }, _logo),
+                    tsx("div", { id: elementIDs.header_titleID, className: css_theme.default.widget_header_title },
                         tsx("div", null,
-                            tsx("h1", { class: css_theme.default.widget_header_title_title }, this.title),
-                            tsx("h3", { class: css_theme.default.widget_header_title_subtitle }, this.subtitle)))),
-                tsx("div", { class: css_theme.default.widget_header_links_menu },
+                            tsx("h1", { className: css_theme.default.widget_header_title_title }, this.title),
+                            tsx("h3", { className: css_theme.default.widget_header_title_subtitle }, this.subtitle)))),
+                tsx("div", { className: css_theme.default.widget_header_links_menu },
                     tsx("div", null,
-                        tsx("div", { id: elementIDs.header_linksID, class: css_theme.default.widget_header_links }, _links),
-                        tsx("div", { class: css_theme.default.widget_header_menu },
-                            tsx("div", { id: elementIDs.header_sitemenuID, class: this.classes(css_esri.esri_widget, css_theme.default.widget_header_links_menu__button) },
-                                tsx("div", { id: elementIDs.header_sitemenu_buttonID, class: css_esri.esri_widget_button, role: "button", "aria-label": t9n.sitemenu.collapse, title: t9n.sitemenu.collapse, tabindex: "0", onclick: this._siteMenuButton_click.bind(this), onkeypress: this._siteMenuButton_keypress.bind(this) },
-                                    tsx("span", { id: elementIDs.header_sitemenu_iconID, class: this.classes(css_esri.esri_icon_drag_horizontal, css_esri.esri_expand_icon_expanded), "aria-hidden": "true" }),
-                                    tsx("span", { class: css_esri.esri_icon_font_fallback_text }, t9n.sitemenu.collapse))))))),
-            tsx("div", { class: css_theme.default.widget_header_bg_bg1 }),
-            tsx("div", { class: css_theme.default.widget_header_bg_bg2 }),
-            tsx("div", { class: css_theme.default.widget_header_bg_bg3 }),
-            tsx("div", { id: elementIDs.sitemenuModalID, class: this.classes(css_theme.default.widget_header_modal) },
-                tsx("div", { id: elementIDs.sitemenuID, class: this.classes(css_esri.esri_widget_panel, css_theme.default.widget_header_sitemenu__content, css_theme.default.widget_header_sitemenu, css_esri.esri_widget, css_theme.default.widget_header_transition, css_theme.default.widget_header_sitemenu__ignore), tabindex: "0" },
-                    tsx("div", { class: elementIDs.sitemenu_titleID },
+                        tsx("div", { id: elementIDs.header_linksID, className: css_theme.default.widget_header_links }, _links),
+                        tsx("div", { className: css_theme.default.widget_header_menu },
+                            tsx("div", { id: elementIDs.header_sitemenuID, className: this.classes(css_esri.esri_widget, css_theme.default.widget_header_links_menu__button) },
+                                tsx("div", { id: elementIDs.header_sitemenu_buttonID, className: css_esri.esri_widget_button, role: "button", "aria-label": t9n.sitemenu.collapse, title: t9n.sitemenu.collapse, tabIndex: "0", onClick: this._siteMenuButton_click.bind(this), onKeyPress: this._siteMenuButton_keypress.bind(this) },
+                                    tsx("span", { id: elementIDs.header_sitemenu_iconID, className: this.classes(css_esri.esri_icon_drag_horizontal, css_esri.esri_expand_icon_expanded), "aria-hidden": "true" }),
+                                    tsx("span", { className: css_esri.esri_icon_font_fallback_text }, t9n.sitemenu.collapse))))))),
+            tsx("div", { className: css_theme.default.widget_header_bg_bg1 }),
+            tsx("div", { className: css_theme.default.widget_header_bg_bg2 }),
+            tsx("div", { className: css_theme.default.widget_header_bg_bg3 }),
+            tsx("div", { id: elementIDs.sitemenuModalID, className: this.classes(css_theme.default.widget_header_modal) },
+                tsx("div", { id: elementIDs.sitemenuID, className: this.classes(css_esri.esri_widget_panel, css_theme.default.widget_header_sitemenu__content, css_theme.default.widget_header_sitemenu, css_esri.esri_widget, css_theme.default.widget_header_transition, css_theme.default.widget_header_sitemenu__ignore), tabIndex: "0" },
+                    tsx("div", { className: elementIDs.sitemenu_titleID },
                         tsx("h3", { "aria-label": t9n.sitemenu.menu.title }, t9n.sitemenu.menu.title)),
-                    tsx("div", { id: elementIDs.sitemenu_linksID, class: css_theme.default.widget_header_submenu_links }, _menuLinks),
-                    tsx("div", { id: elementIDs.sitemenu_languagesID, class: css_theme.default.widget_header_submenu_languages }, _menuLanguages),
-                    tsx("div", { id: elementIDs.sitemenu_themesID, class: css_theme.default.widget_header_submenu_themes }, _menuThemes),
+                    tsx("div", { id: elementIDs.sitemenu_linksID, className: css_theme.default.widget_header_submenu_links }, _menuLinks),
+                    tsx("div", { id: elementIDs.sitemenu_languagesID, className: css_theme.default.widget_header_submenu_languages }, _menuLanguages),
+                    tsx("div", { id: elementIDs.sitemenu_themesID, className: css_theme.default.widget_header_submenu_themes }, _menuThemes),
                     tsx("div", { id: elementIDs.sitemenu_signinID },
-                        tsx("a", { href: "#", id: elementIDs.sitemenu_signoutLinkID, class: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_link__enabled, css_theme.default.widget_header_sitemenu__ignore), title: t9n.sitemenu.menu.signout, tabindex: "0" }, t9n.sitemenu.menu.signout))))));
+                        tsx("a", { href: "#", id: elementIDs.sitemenu_signoutLinkID, className: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_link__enabled, css_theme.default.widget_header_sitemenu__ignore), title: t9n.sitemenu.menu.signout, tabIndex: "0" }, t9n.sitemenu.menu.signout))))));
     }
     //--------------------------------------------------------------------------
     //  Private Methods
     //--------------------------------------------------------------------------
     setSiteMenu(expandSiteMenu) {
-        var siteMenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
-        var siteMenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
-        var esm = (typeof expandSiteMenu === "boolean" ? expandSiteMenu : this.menu.startExpanded ? this.menu.startExpanded : false);
-        var self = this;
+        const siteMenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
+        const siteMenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
+        const esm = (typeof expandSiteMenu === "boolean" ? expandSiteMenu : this.menu.startExpanded ? this.menu.startExpanded : false);
+        const self = this;
         if (siteMenuButton_node && siteMenuModal_node) {
             if (typeof expandSiteMenu === "object") {
                 // This is the initial rendering setup.
@@ -163,7 +172,7 @@ let Header = class Header extends Widget {
                 }
                 // Set event listeners
                 siteMenuModal_node.addEventListener('keydown', function (e) {
-                    let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+                    const isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
                     if (!isEscapePressed) {
                         return;
                     }
@@ -172,7 +181,7 @@ let Header = class Header extends Widget {
                     }
                 });
                 siteMenuButton_node.addEventListener('keydown', function (e) {
-                    let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+                    const isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
                     if (!isEscapePressed) {
                         return;
                     }
@@ -196,7 +205,7 @@ let Header = class Header extends Widget {
         this.theme = themeID;
     }
     _getLocale() {
-        let loc = intl.getLocale();
+        const loc = intl.getLocale();
         if (loc.toLowerCase() === 'en-us' || loc.toLowerCase() === 'en') {
             _locale = 'en';
         }
@@ -214,13 +223,13 @@ let Header = class Header extends Widget {
         _locale = this._getLocale();
     }
     _createReactLogo(logo, logoDivClass = null) {
-        return (tsx("a", { class: css_theme.default.widget_header_logo_a, href: logo.url, title: logo.title, tabindex: '0', target: logo.target },
-            tsx("img", { class: css_theme.default.widget_header_logo_img, src: logo.src, alt: logo.alt })));
+        return (tsx("a", { className: css_theme.default.widget_header_logo_a, href: logo.url, title: logo.title, tabIndex: '0', target: logo.target },
+            tsx("img", { className: css_theme.default.widget_header_logo_img, src: logo.src, alt: logo.alt })));
     }
     _modifyDOMLogo(logo, targetID, logoDivClass = null) {
-        let div_node = document.getElementById(targetID);
-        let _a = div_node?.getElementsByTagName('a')[0];
-        let _img = _a?.getElementsByTagName('img')[0];
+        const div_node = document.getElementById(targetID);
+        const _a = div_node?.getElementsByTagName('a')[0];
+        const _img = _a?.getElementsByTagName('img')[0];
         if (_a && _img) {
             _a.href = logo.url;
             _a.title = logo.title;
@@ -232,25 +241,25 @@ let Header = class Header extends Widget {
         let postFix = "";
         if (menuLinkTag === true) {
             postFix = "_menu";
-            var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
-                tsx("a", { id: `${link.id}${postFix}`, class: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_sitemenu__ignore), href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
+            const _links = linksArray.map(link => tsx("div", { key: `${link.id}_key`, className: linkDivClass },
+                tsx("a", { id: `${link.id}${postFix}`, className: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_sitemenu__ignore), href: link.url, target: link.target, title: link.title, tabIndex: '0' }, link.title)));
         }
         else {
-            var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
-                tsx("a", { id: `${link.id}${postFix}`, class: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
+            const _links = linksArray.map(link => tsx("div", { key: `${link.id}_key`, className: linkDivClass },
+                tsx("a", { id: `${link.id}${postFix}`, className: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabIndex: '0' }, link.title)));
         }
         return _links;
     }
     _modifyDOMLinks(linksArray, targetID, linkDivClass = null, menuLinkTag = false) {
-        let div_node = document.getElementById(targetID);
-        let _anchors = div_node?.getElementsByTagName('a');
+        const div_node = document.getElementById(targetID);
+        const _anchors = div_node?.getElementsByTagName('a');
         let postFix = "";
         if (menuLinkTag === true) {
             postFix = "_menu";
         }
         // Re-build the existing link list using the DOM
         linksArray.map(link => {
-            let linkID = `${link.id}${postFix}`;
+            const linkID = `${link.id}${postFix}`;
             let _a = null;
             for (let i = 0; i < _anchors.length; i++) {
                 if (_anchors[i].id.toLowerCase() === linkID.toLowerCase()) {
@@ -265,28 +274,28 @@ let Header = class Header extends Widget {
         });
     }
     _createReactThemeRBs(themesArray, defaultThemeID, themeDivClass = null) {
-        var _themes = themesArray.map(theme => tsx("div", { class: themeDivClass },
-            tsx("input", { type: "radio", id: theme.id, class: css_theme.default.widget_header_sitemenu__ignore, checked: theme.id === defaultThemeID ? true : false, name: "set_theme", value: theme.id, title: theme.label, tabindex: "0", onchange: this._theme_change.bind(this, theme.id) }),
-            tsx("label", { id: `${theme.id}_label`, for: theme.id }, theme.label),
+        const _themes = themesArray.map(theme => tsx("div", { key: `${theme.id}_key`, className: themeDivClass },
+            tsx("input", { type: "radio", id: theme.id, className: css_theme.default.widget_header_sitemenu__ignore, checked: theme.id === defaultThemeID ? true : false, name: "set_theme", value: theme.id, title: theme.label, tabIndex: "0", onChange: this._theme_change.bind(this, theme.id) }),
+            tsx("label", { id: `${theme.id}_label`, htmlFor: theme.id }, theme.label),
             tsx("br", null)));
-        return (tsx("fieldset", { class: css_theme.default.widget_header_sitemenu_fieldset },
-            tsx("legend", { class: css_theme.default.widget_header_sitemenu_fieldset_legend, "aria-label": t9n.sitemenu.menu.theme.grouplabel }, t9n.sitemenu.menu.theme.grouplabel),
+        return (tsx("fieldset", { className: css_theme.default.widget_header_sitemenu_fieldset },
+            tsx("legend", { className: css_theme.default.widget_header_sitemenu_fieldset_legend, "aria-label": t9n.sitemenu.menu.theme.grouplabel }, t9n.sitemenu.menu.theme.grouplabel),
             _themes));
     }
     _modifyDOMThemeRBs(themesArray, targetID, defaultThemeID, themeDivClass = null) {
-        let div_node = document.getElementById(targetID);
-        let _fieldset = div_node?.getElementsByTagName('fieldset')[0];
-        let _legend = _fieldset?.getElementsByTagName('legend')[0];
+        const div_node = document.getElementById(targetID);
+        const _fieldset = div_node?.getElementsByTagName('fieldset')[0];
+        const _legend = _fieldset?.getElementsByTagName('legend')[0];
         if (_legend) {
             _legend.ariaLabel = t9n.sitemenu.menu.theme.grouplabel;
             _legend.innerHTML = t9n.sitemenu.menu.theme.grouplabel;
         }
-        let _themeRBs = _fieldset?.getElementsByTagName('input');
-        let _themeLabels = _fieldset?.getElementsByTagName('label');
+        const _themeRBs = _fieldset?.getElementsByTagName('input');
+        const _themeLabels = _fieldset?.getElementsByTagName('label');
         // Modify the existing theme list using the DOM
         themesArray.map(function (theme) {
-            var _themeRB = null;
-            var _themeLabel = null;
+            let _themeRB = null;
+            let _themeLabel = null;
             for (let i = 0; i < _themeRBs.length; i++) {
                 if (_themeRBs[i].id.toLowerCase() === theme.id.toLowerCase()) {
                     _themeRB = _themeRBs[i];
@@ -305,28 +314,28 @@ let Header = class Header extends Widget {
         });
     }
     _createReactLanguageRBs(languagesArray, defaultLocaleID, localeDivClass = null) {
-        var _languages = languagesArray.map(lang => tsx("div", { class: localeDivClass },
-            tsx("input", { type: "radio", id: lang.id, class: css_theme.default.widget_header_sitemenu__ignore, checked: lang.id === defaultLocaleID ? true : false, name: "set_language", value: lang.id, title: lang.label, tabindex: "0", onchange: this._setLocale.bind(this, lang.id) }),
-            tsx("label", { id: `${lang.id}_label`, for: lang.id }, lang.label),
+        const _languages = languagesArray.map(lang => tsx("div", { key: `${lang.id}_key`, className: localeDivClass },
+            tsx("input", { type: "radio", id: lang.id, className: css_theme.default.widget_header_sitemenu__ignore, checked: lang.id === defaultLocaleID ? true : false, name: "set_language", value: lang.id, title: lang.label, tabIndex: "0", onChange: this._setLocale.bind(this, lang.id) }),
+            tsx("label", { id: `${lang.id}_label`, htmlFor: lang.id }, lang.label),
             tsx("br", null)));
-        return (tsx("fieldset", { class: css_theme.default.widget_header_sitemenu_fieldset },
-            tsx("legend", { class: css_theme.default.widget_header_sitemenu_fieldset_legend, "aria-label": t9n.sitemenu.menu.languages.label }, t9n.sitemenu.menu.languages.label),
+        return (tsx("fieldset", { className: css_theme.default.widget_header_sitemenu_fieldset },
+            tsx("legend", { className: css_theme.default.widget_header_sitemenu_fieldset_legend, "aria-label": t9n.sitemenu.menu.languages.label }, t9n.sitemenu.menu.languages.label),
             _languages));
     }
     _modifyDOMLanguageRBs(languagesArray, targetID, defaultLocaleID, localeDivClass = null) {
-        let div_node = document.getElementById(targetID);
-        let _fieldset = div_node?.getElementsByTagName('fieldset')[0];
-        let _legend = _fieldset?.getElementsByTagName('legend')[0];
+        const div_node = document.getElementById(targetID);
+        const _fieldset = div_node?.getElementsByTagName('fieldset')[0];
+        const _legend = _fieldset?.getElementsByTagName('legend')[0];
         if (_legend) {
             _legend.ariaLabel = t9n.sitemenu.menu.languages.label;
             _legend.innerHTML = t9n.sitemenu.menu.languages.label;
         }
-        let _langRBs = _fieldset?.getElementsByTagName('input');
-        let _langLabels = _fieldset?.getElementsByTagName('label');
+        const _langRBs = _fieldset?.getElementsByTagName('input');
+        const _langLabels = _fieldset?.getElementsByTagName('label');
         // Modify the existing language list using the DOM
         languagesArray.map(function (lang) {
-            var _langRB = null;
-            var _langLabel = null;
+            let _langRB = null;
+            let _langLabel = null;
             for (let i = 0; i < _langRBs.length; i++) {
                 if (_langRBs[i].id.toLowerCase() === lang.id.toLowerCase()) {
                     _langRB = _langRBs[i];
@@ -346,7 +355,7 @@ let Header = class Header extends Widget {
     }
     _removeDivChildNodes(targetID) {
         // Clear the child nodes from the parent first
-        let div_node = document.getElementById(targetID);
+        const div_node = document.getElementById(targetID);
         if (div_node) {
             while (div_node.firstChild) {
                 div_node.removeChild(div_node.lastChild);
@@ -359,16 +368,16 @@ let Header = class Header extends Widget {
     //--------------------------------------------------------------------------
     _siteMenuButton_click(e) {
         e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
-        let esm = (_isSiteMenuExpanded === true ? false : true);
+        const esm = (_isSiteMenuExpanded === true ? false : true);
         _isSiteMenuExpanded = this.toggleSiteMenu(esm);
         console.log(`Site Menu is ${_isSiteMenuExpanded}`);
     }
     _siteMenuButton_keypress(e) {
-        let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-        let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+        const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+        const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
         if (isEnterPressed || isSpacePressed) {
             e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
-            let esm = (_isSiteMenuExpanded === true ? false : true);
+            const esm = (_isSiteMenuExpanded === true ? false : true);
             _isSiteMenuExpanded = this.toggleSiteMenu(esm);
             console.log(`Site Menu is ${_isSiteMenuExpanded}`);
         }
@@ -377,13 +386,13 @@ let Header = class Header extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     toggleSiteMenu(_expandSiteMenu) {
-        var isExpanded = false;
-        var sitemenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
-        var sitemenu_node = document.getElementById(elementIDs.sitemenuID);
-        var sitemenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
+        let isExpanded = false;
+        const sitemenuModal_node = document.getElementById(elementIDs.sitemenuModalID);
+        const sitemenu_node = document.getElementById(elementIDs.sitemenuID);
+        const sitemenuButton_node = document.getElementById(elementIDs.header_sitemenu_buttonID);
         if (sitemenuButton_node) {
-            var sitemenuIcon_node = document.getElementById(elementIDs.header_sitemenu_iconID);
-            var siteMenuWidth = sitemenu_node.clientWidth;
+            const sitemenuIcon_node = document.getElementById(elementIDs.header_sitemenu_iconID);
+            const siteMenuWidth = sitemenu_node.clientWidth;
             if (_expandSiteMenu === true) {
                 sitemenuButton_node.title = t9n.sitemenu.collapse;
                 sitemenuButton_node.setAttribute('aria-label', t9n.sitemenu.collapse);

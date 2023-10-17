@@ -3,6 +3,12 @@ import { __decorate } from "tslib";
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from '@arcgis/core/core/Accessor';
 let Theme = class Theme extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    label;
+    src;
 };
 __decorate([
     property()
@@ -18,6 +24,11 @@ Theme = __decorate([
 ], Theme);
 export { Theme };
 let Locale = class Locale extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    label;
 };
 __decorate([
     property()
@@ -30,6 +41,14 @@ Locale = __decorate([
 ], Locale);
 export { Locale };
 let Logo = class Logo extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    title;
+    alt;
+    src;
+    target;
+    url;
 };
 __decorate([
     property()
@@ -51,6 +70,15 @@ Logo = __decorate([
 ], Logo);
 export { Logo };
 let Menu = class Menu extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    menulinks;
+    themes;
+    showlocales;
+    languages;
+    startExpanded;
+    signoutlinkid;
 };
 __decorate([
     property()

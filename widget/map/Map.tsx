@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -18,8 +20,8 @@ import { getWidgetTheme } from '@dnrr_fd/util/web'
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
 import { loadWidgetsIntoMap, removeWidgetsFromMap } from "./MapViewModel"
 
-export var mapRootURL: string;
-export var mapParentElement: HTMLElement|null;
+export let mapRootURL: string;
+export let mapParentElement: HTMLElement|null;
 
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
@@ -31,10 +33,9 @@ import * as t9n_fr from './assets/t9n/fr.json'
 import CookiesButton from "../cookies/button/CookiesButton";
 import Cookies from "../cookies/Cookies";
 
-var t9n = t9n_en;
-var css_theme = css_dark;
-var _mapView = new MapView();
-var initialExtent: Extent;
+let t9n = t9n_en;
+let css_theme = css_dark;
+const _mapView = new MapView();
 
 
 const elementIDs = {
@@ -120,7 +121,7 @@ class Map extends Widget {
     esriConfig.apiKey = this.apiKey;
     // console.log(`API Key: ${esriConfig.apiKey}`);
 
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -129,9 +130,9 @@ class Map extends Widget {
     }
 
     mapRootURL = this.mapRootURL;
-    var self = this;
+    const self = this;
     this.mapView = _mapView;
-    var containerElement: HTMLElement|null;
+    let containerElement: HTMLElement|null;
     if (typeof self.container === 'string') {
       containerElement = document.getElementById(self.container as string);
     } else {
@@ -155,7 +156,7 @@ class Map extends Widget {
     esriConfig.portalUrl = this.portalUrl;
     // console.log(`Assets Path: ${esriConfig.assetsPath}`);
 
-    var info = new OAuthInfo({
+    const info = new OAuthInfo({
         appId: this.appid,
         portalUrl: this.map.portalUrl,
         locale: _locale,
@@ -205,7 +206,7 @@ class Map extends Widget {
     // Check for cookies
     this.mapWidgets?.forEach(mapWidget => {
       if (mapWidget.mWidget instanceof CookiesButton) {
-        let _cookies_button = mapWidget.mWidget as CookiesButton;
+        const _cookies_button = mapWidget.mWidget as CookiesButton;
         if (_cookies_button.content instanceof Cookies) {
           this.cookies = _cookies_button.content.cookiesVM;
           return;
@@ -228,8 +229,8 @@ class Map extends Widget {
 
   render() {
     return (
-      <div id={elementIDs.mapID} class={this.classes(css_theme.default.widget_map, css_theme.default.widget_map_transition)}>
-        <div id={elementIDs.mapContentID} class={css_theme.default.widget_map_content}></div>
+      <div id={elementIDs.mapID} className={this.classes(css_theme.default.widget_map, css_theme.default.widget_map_transition)}>
+        <div id={elementIDs.mapContentID} className={css_theme.default.widget_map_content}></div>
       </div>
     );
   }
@@ -240,15 +241,15 @@ class Map extends Widget {
 
   private async _handleSignIn() {
     return new Promise(resolve => {
-      var portal = new Portal();
-      var self = this;
+      const portal = new Portal();
+      const self = this;
       portal.authMode = "immediate";
       portal.load().then(() => {
         if (portal.user) {
-          let results = { name: portal.user.fullName, username: portal.user.username };
+          const results = { name: portal.user.fullName, username: portal.user.username };
           // console.log(results);
           // Set up the sign-out link if the user wishes.
-          var _signoutElement: HTMLAnchorElement;
+          let _signoutElement: HTMLAnchorElement;
           if (this.signoutElement != null && typeof this.signoutElement != "undefined") {
             if (typeof this.signoutElement === "string") {
               _signoutElement = document.getElementById(this.signoutElement) as HTMLAnchorElement;
@@ -274,9 +275,9 @@ class Map extends Widget {
 
   private async _loadContent() {
     return new Promise(resolve => {
-      var self = this;
+      const self = this;
       //var upper_height = document.body.clientHeight;
-      var upper_height = 125;
+      const upper_height = 125;
   
       // Add the map node content.
       const map = new WebMap({
@@ -325,7 +326,7 @@ class Map extends Widget {
     window.location.reload();    
   }
 
-  private async cookieVMAsyncForEach(array: Array<CookiesVM>|undefined, callback: { (cookie: CookiesVM): Promise<void>; (arg0: CookiesVM, arg1: number, arg2: CookiesVM[]): any; }) {
+  private async cookieVMAsyncForEach(array: Array<CookiesVM>|undefined, callback: { (cookie: CookiesVM): Promise<void>; (arg0: CookiesVM, arg1: number, arg2: CookiesVM[]): Promise<void>; }) {
     if (typeof array === "object") {
       for (let index = 0; index < array.length; index++) {
         // console.log("Promise: callback()");

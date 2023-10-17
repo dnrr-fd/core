@@ -7,6 +7,8 @@ export class wbwObject {
         this.wbWidget = wbWidget;
         this.fireEvent = fireEvent;
     }
+    wbWidget;
+    fireEvent;
 }
 __decorate([
     property()
@@ -15,6 +17,15 @@ __decorate([
     property()
 ], wbwObject.prototype, "fireEvent", void 0);
 let WidgetBarWidget = class WidgetBarWidget extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    visible;
+    config;
+    t9nPath;
+    expanded;
+    group;
 };
 __decorate([
     property()
@@ -39,6 +50,11 @@ WidgetBarWidget = __decorate([
 ], WidgetBarWidget);
 export { WidgetBarWidget };
 let AddLayerWidget = class AddLayerWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    generateURL;
+    apiKey;
 };
 __decorate([
     property()
@@ -51,6 +67,12 @@ AddLayerWidget = __decorate([
 ], AddLayerWidget);
 export { AddLayerWidget };
 let BookmarksWidget = class BookmarksWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    editingEnabled;
+    defaultCreateOptions;
+    bookmarks;
 };
 __decorate([
     property()
@@ -66,6 +88,14 @@ BookmarksWidget = __decorate([
 ], BookmarksWidget);
 export { BookmarksWidget };
 let BasemapGalleryWidget = class BasemapGalleryWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    defaultThumbnail;
+    basemapSourcePortal;
+    basemapGalleryGroups;
+    apiKey;
+    basemaps;
 };
 __decorate([
     property()
@@ -87,6 +117,11 @@ BasemapGalleryWidget = __decorate([
 ], BasemapGalleryWidget);
 export { BasemapGalleryWidget };
 let MeasurementWidget = class MeasurementWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    measurement_map_location;
+    measurement_index_position;
 };
 __decorate([
     property()
@@ -99,6 +134,10 @@ MeasurementWidget = __decorate([
 ], MeasurementWidget);
 export { MeasurementWidget };
 let SketchWidget = class SketchWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    mode;
 };
 __decorate([
     property()
@@ -108,6 +147,10 @@ SketchWidget = __decorate([
 ], SketchWidget);
 export { SketchWidget };
 let PrintWidget = class PrintWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    printServiceURL;
 };
 __decorate([
     property()
@@ -117,6 +160,11 @@ PrintWidget = __decorate([
 ], PrintWidget);
 export { PrintWidget };
 let SupportWidget = class SupportWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    serviceURL;
+    privateKey;
 };
 __decorate([
     property()
@@ -129,6 +177,12 @@ SupportWidget = __decorate([
 ], SupportWidget);
 export { SupportWidget };
 let ButtonWidget = class ButtonWidget extends WidgetBarWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    content;
+    iconClass;
+    toolTip;
 };
 __decorate([
     property()
@@ -144,6 +198,12 @@ ButtonWidget = __decorate([
 ], ButtonWidget);
 export { ButtonWidget };
 let _Bookmark = class _Bookmark extends Accessor {
+    id;
+    label;
+    thumbnailURL;
+    centroid;
+    scale;
+    spatialreference;
 };
 __decorate([
     property()
@@ -168,6 +228,9 @@ _Bookmark = __decorate([
 ], _Bookmark);
 export { _Bookmark };
 let _Basemaps = class _Basemaps extends Accessor {
+    basemapSourcePortal;
+    en;
+    fr;
 };
 __decorate([
     property()
@@ -183,6 +246,12 @@ _Basemaps = __decorate([
 ], _Basemaps);
 export { _Basemaps };
 let _Basemap = class _Basemap extends Accessor {
+    id;
+    title;
+    thumbnailURL;
+    layers;
+    portalItem;
+    spatialReference;
 };
 __decorate([
     property()
@@ -207,6 +276,8 @@ _Basemap = __decorate([
 ], _Basemap);
 export { _Basemap };
 let _Title = class _Title {
+    en;
+    fr;
 };
 __decorate([
     property()
@@ -219,6 +290,9 @@ _Title = __decorate([
 ], _Title);
 export { _Title };
 let _BasemapGalleryGroups = class _BasemapGalleryGroups {
+    basemapSourcePortal;
+    en;
+    fr;
 };
 __decorate([
     property()
@@ -234,6 +308,12 @@ _BasemapGalleryGroups = __decorate([
 ], _BasemapGalleryGroups);
 export { _BasemapGalleryGroups };
 let _BMGGroup = class _BMGGroup {
+    id;
+    query;
+    filter;
+    maxResults;
+    sortField;
+    sortOrder;
 };
 __decorate([
     property()
@@ -258,6 +338,12 @@ _BMGGroup = __decorate([
 ], _BMGGroup);
 export { _BMGGroup };
 let _Layer = class _Layer {
+    id;
+    title;
+    isReference;
+    opacity;
+    visibility;
+    url;
 };
 __decorate([
     property()
@@ -282,6 +368,8 @@ _Layer = __decorate([
 ], _Layer);
 export { _Layer };
 let Centroid = class Centroid {
+    x;
+    y;
 };
 __decorate([
     property()
@@ -294,6 +382,9 @@ Centroid = __decorate([
 ], Centroid);
 export { Centroid };
 let DefaultCreateOptions = class DefaultCreateOptions {
+    takeScreenshot;
+    captureViewpoint;
+    screenshotSettings;
 };
 __decorate([
     property()
@@ -309,6 +400,8 @@ DefaultCreateOptions = __decorate([
 ], DefaultCreateOptions);
 export { DefaultCreateOptions };
 let ScreenshotSettings = class ScreenshotSettings {
+    width;
+    height;
 };
 __decorate([
     property()
@@ -321,6 +414,11 @@ ScreenshotSettings = __decorate([
 ], ScreenshotSettings);
 export { ScreenshotSettings };
 let WidgetBarWidgetLocale = class WidgetBarWidgetLocale {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    label;
 };
 __decorate([
     property()

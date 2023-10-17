@@ -3,6 +3,11 @@ import { __decorate } from "tslib";
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from '@arcgis/core/core/Accessor';
 let Image = class Image extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    src;
+    height;
 };
 __decorate([
     property()

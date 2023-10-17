@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -8,7 +7,7 @@ import { getWidgetTheme } from '@dnrr_fd/util/web';
 import * as t9n_en from '../button/assets/t9n/en.json';
 import * as t9n_fr from '../button/assets/t9n/fr.json';
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
-var t9n = t9n_en;
+let t9n = t9n_en;
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_widget_button: 'esri-widget--button',
@@ -26,11 +25,18 @@ let CookiesButton = class CookiesButton extends Widget {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    content;
+    iconClass;
+    toolTip;
+    theme;
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
@@ -63,9 +69,9 @@ let CookiesButton = class CookiesButton extends Widget {
         }
     }
     render() {
-        return (tsx("div", { id: this.id, class: this.classes(css_esri.esri_expand__container, css_esri.esri_component, css_esri.esri_widget_button, css_esri.esri_widget), role: "button", "aria-label": buttonLabel, title: buttonLabel, tabindex: "0", onclick: this._button_click.bind(this), onkeypress: this._button_keypress.bind(this) },
-            tsx("span", { id: `${this.id}_iconID`, class: this.classes(css_esri.esri_icon, buttonIconClass), "aria-hidden": "true" }),
-            tsx("span", { class: css_esri.esri_icon_font_fallback_text }, buttonLabel)));
+        return (tsx("div", { id: this.id, className: this.classes(css_esri.esri_expand__container, css_esri.esri_component, css_esri.esri_widget_button, css_esri.esri_widget), role: "button", "aria-label": buttonLabel, title: buttonLabel, tabIndex: "0", onClick: this._button_click.bind(this), onKeyPress: this._button_keypress.bind(this) },
+            tsx("span", { id: `${this.id}_iconID`, className: this.classes(css_esri.esri_icon, buttonIconClass), "aria-hidden": "true" }),
+            tsx("span", { className: css_esri.esri_icon_font_fallback_text }, buttonLabel)));
     }
     //--------------------------------------------------------------------------
     //  Private Methods
@@ -75,8 +81,8 @@ let CookiesButton = class CookiesButton extends Widget {
         this.buttonClickAction();
     }
     _button_keypress(e) {
-        let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-        let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+        const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+        const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
         if (isEnterPressed || isSpacePressed) {
             e.preventDefault(); // Prevent the default keypress action, i.e. space = scroll
             this.buttonClickAction();
@@ -86,8 +92,8 @@ let CookiesButton = class CookiesButton extends Widget {
         if (this.content) {
             if (typeof (this.content) === "string") {
                 // Assume the string is a URL
-                var expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
-                var regex = new RegExp(expression);
+                const expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+                const regex = new RegExp(expression);
                 if (this.content.match(regex)) {
                     window.open(this.content, "_blank", "noreferrer");
                 }
@@ -100,7 +106,7 @@ let CookiesButton = class CookiesButton extends Widget {
                     // Activate the widget content.
                     this.content.visible = true;
                     // Backup in case esri content.visible doesn't work
-                    let content_node = this.content.container;
+                    const content_node = this.content.container;
                     if (content_node.style) {
                         content_node.removeAttribute("style");
                     }
@@ -112,9 +118,6 @@ let CookiesButton = class CookiesButton extends Widget {
         }
     }
 };
-__decorate([
-    property()
-], CookiesButton.prototype, "id", void 0);
 __decorate([
     property()
 ], CookiesButton.prototype, "content", void 0);

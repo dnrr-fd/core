@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -17,19 +19,19 @@ import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 import * as css_dark from './assets/css/dark/widgetbar.module.css';
 import * as css_light from './assets/css/light/widgetbar.module.css';
 
-export var widgetBarRootURL: string;
-export var widgetBarWidgetCloseFocusElement: string|HTMLElement;
+export let widgetBarRootURL: string;
+export let widgetBarWidgetCloseFocusElement: string|HTMLElement;
 
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 import Expand from "@arcgis/core/widgets/Expand";
 
-var t9n = t9n_en;
-var css_theme = css_dark;
+let t9n = t9n_en;
+let css_theme = css_dark;
 
-var _widgetBarWidgets: tsx.JSX.Element;
+let _widgetBarWidgets: tsx.JSX.Element;
 
-var afterWidgetCloseFocusElement: string|HTMLElement;
+let afterWidgetCloseFocusElement: string|HTMLElement;
 
 const elementIDs = {
   esriThemeID: "esriThemeID",
@@ -100,7 +102,7 @@ class WidgetBar extends Widget {
   //--------------------------------------------------------------------------
 
   async postInitialize(): Promise<void> {
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -109,8 +111,8 @@ class WidgetBar extends Widget {
     }
 
     widgetBarRootURL = this.widgetBarRootURL;
-    var self = this;
-    var widgetBar = this as unknown as WidgetBar;
+    const self = this;
+    const widgetBar = this as unknown as WidgetBar;
     this.rendered = false;
     afterWidgetCloseFocusElement = this.afterWidgetCloseFocusElement;
 
@@ -126,7 +128,7 @@ class WidgetBar extends Widget {
 
     // Create widgetBarWidget scaffold
     _widgetBarWidgets = this.widgets.map(widget =>
-      <div id={widget.id} class={self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id as keyof typeof css_theme.default], css_theme.default.widget_widgetbar_visible__none)}></div>
+      <div key={`${widget.id}_key`} id={widget.id} className={self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id as keyof typeof css_theme.default], css_theme.default.widget_widgetbar_visible__none)}></div>
     );
 
     // Watch for changes
@@ -158,14 +160,14 @@ class WidgetBar extends Widget {
 
   render() {
     return (
-      <div id={elementIDs.widgetBarID} afterCreate={this._setRendered} bind={this} class={this.classes(css_theme.default.widget_widgetbar, css_theme.default.widget_widgetbar_box_shadow, css_theme.default.widget_widgetbar_transition)}>
-        <div class={css_theme.default.widget_widgetbar_bg}>
-          <div class={css_theme.default.widget_widgetbar_bg__header}>
-            <div class={css_theme.default.widget_widgetbar_bg__bg1}></div>
-            <div class={css_theme.default.widget_widgetbar_bg__bg2}></div>
+      <div id={elementIDs.widgetBarID} afterCreate={this._setRendered} bind={this} className={this.classes(css_theme.default.widget_widgetbar, css_theme.default.widget_widgetbar_box_shadow, css_theme.default.widget_widgetbar_transition)}>
+        <div className={css_theme.default.widget_widgetbar_bg}>
+          <div className={css_theme.default.widget_widgetbar_bg__header}>
+            <div className={css_theme.default.widget_widgetbar_bg__bg1}></div>
+            <div className={css_theme.default.widget_widgetbar_bg__bg2}></div>
           </div>
         </div>
-        <div id={elementIDs.widgetBarContainerID} class={this.classes(css_theme.default.widget_widgetbar_fg, css_theme.default.widget_widgetbar_fg__container)}>
+        <div id={elementIDs.widgetBarContainerID} className={this.classes(css_theme.default.widget_widgetbar_fg, css_theme.default.widget_widgetbar_fg__container)}>
           {_widgetBarWidgets}
         </div>
       </div>
@@ -184,12 +186,12 @@ class WidgetBar extends Widget {
     if (_widgetBarWidgets) {
       _widgetBarWidgets.forEach(wbObj => {
         // Make valid widget bar widget styling changes.
-        var wbw_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
+        const wbw_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
         if (wbw_node) {
-          var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
-          var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
+          const wbwccID = `${wbObj.wbWidget.id}_controls_content`;
+          const wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
           if (wbwcc_node) {
-            var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
+            const wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
             wbwcc_node.classList.add(css_theme.default[wbwccClass as keyof typeof css_theme.default]);
           }
           wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
@@ -197,14 +199,14 @@ class WidgetBar extends Widget {
       });
       _widgetBarWidgets.forEach(wbObj => {
         // Adjust the expand menus after final render from above class changes.
-        var button_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
+        const button_node = document.getElementById(wbObj.wbWidget.id) as HTMLDivElement;
         if (button_node) {
-          var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
-          var wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
+          const wbwccID = `${wbObj.wbWidget.id}_controls_content`;
+          const wbwcc_node = document.getElementById(wbwccID) as HTMLDivElement;
           if (wbwcc_node) {
-            var windowWidth = window.innerWidth;
-            var pos = getElementPosition(button_node);
-            var right_offset = windowWidth - pos.xMax;
+            const windowWidth = window.innerWidth;
+            const pos = getElementPosition(button_node);
+            const right_offset = windowWidth - pos.xMax;
             wbwcc_node.setAttribute("style", "right: -" + right_offset + "px!important;");
             // console.log(`${wbObj.wbWidget.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
           }

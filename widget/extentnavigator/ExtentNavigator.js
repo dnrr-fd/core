@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -12,12 +11,12 @@ import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
 import { MapExtentObject } from "../class/_Map";
 import { ariaDisable } from "@dnrr_fd/util";
-var t9n = t9n_en;
-var alignmentClass;
-var navButtonClicked = false;
-var mapExtentArray = new Array();
-var mapExtentArrayPosition = 0;
-var self;
+let t9n = t9n_en;
+let alignmentClass;
+let navButtonClicked = false;
+const mapExtentArray = new Array();
+let mapExtentArrayPosition = 0;
+let self;
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_disabled: 'esri-disabled',
@@ -40,12 +39,17 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    horizontalAlignButtons;
+    view;
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
         self = this;
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         if (_locale === "en") {
             t9n = t9n_en;
         }
@@ -64,7 +68,7 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
         // Watch for any changes in extent
         reactiveUtils.watch(() => !this.view.stationary, (stationary, wasStationary) => {
             if (wasStationary) {
-                let mapExtentObject = new MapExtentObject();
+                const mapExtentObject = new MapExtentObject();
                 mapExtentObject.scale = this.view.scale;
                 mapExtentObject.extent = this.view.extent;
                 // console.log(`New Extent Object:`);
@@ -75,7 +79,7 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
                 if (navButtonClicked === false) {
                     // Pop the array based on mapExtentArrayPosition
                     // console.log(`Before: mapExtentArray.length: ${mapExtentArray.length}, mapExtentArrayPosition: ${mapExtentArrayPosition}`);
-                    var ltp = mapExtentArray.length - mapExtentArrayPosition;
+                    const ltp = mapExtentArray.length - mapExtentArrayPosition;
                     if (ltp > 0) {
                         for (let i = 0; i < ltp; i++) {
                             mapExtentArray.pop();
@@ -85,7 +89,7 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
                     mapExtentArrayPosition = mapExtentArray.length;
                     // console.log(`After: mapExtentArray.length: ${mapExtentArray.length}, mapExtentArrayPosition: ${mapExtentArrayPosition}`);
                     // Enable the previous extent button
-                    let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
+                    const previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
                     if (mapExtentArrayPosition > 1) {
                         ariaDisable(previousExtentButton_node, [css_esri.esri_disabled], false);
                     }
@@ -93,7 +97,7 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
                         ariaDisable(previousExtentButton_node, [css_esri.esri_disabled], true);
                     }
                     // Disable the next extent button
-                    let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
+                    const nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
                     if (nextExtentButton_node.ariaDisabled === "false") {
                         ariaDisable(nextExtentButton_node, [css_esri.esri_disabled], true);
                     }
@@ -106,39 +110,39 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
         });
     }
     render() {
-        return (tsx("div", { id: elementIDs.extentnavigatorID, class: this.classes(css_esri.esri_component, css_esri.esri_widget, alignmentClass), afterCreate: this.setInitialRender, bind: this },
-            tsx("div", { id: elementIDs.extentnavigatorPreviousExtentButtonID, role: "button", class: this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_extentnavigator_previous_extent__button), ariaLabel: t9n.previousExtentButtonText, title: t9n.previousExtentButtonText, onclick: this._previousExtent_click.bind(this), onkeypress: this._previousExtent_keypress.bind(this), tabindex: "0" },
-                tsx("span", { id: elementIDs.extentnavigatorPreviousExtentSpanID, "aria-hidden": 'true', class: this.classes(css_esri.esri_icon, css_esri.esri_icon_previous_extent) }),
-                tsx("span", { class: css_esri.esri_icon_font_fallback_text }, t9n.previousExtentButtonText)),
-            tsx("div", { id: elementIDs.extentnavigatorNextExtentButtonID, role: "button", class: this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_extentnavigator_next_extent__button), ariaLabel: t9n.nextExtentButtonText, title: t9n.nextExtentButtonText, onclick: this._nextExtent_click.bind(this), onkeypress: this._nextExtent_keypress.bind(this), tabindex: "0" },
-                tsx("span", { id: elementIDs.extentnavigatorNextExtentSpanID, "aria-hidden": 'true', class: this.classes(css_esri.esri_icon, css_esri.esri_icon_next_extent) }),
-                tsx("span", { class: css_esri.esri_icon_font_fallback_text }, t9n.nextExtentButtonText))));
+        return (tsx("div", { id: elementIDs.extentnavigatorID, className: this.classes(css_esri.esri_component, css_esri.esri_widget, alignmentClass), afterCreate: this.setInitialRender, bind: this },
+            tsx("div", { id: elementIDs.extentnavigatorPreviousExtentButtonID, role: "button", className: this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_extentnavigator_previous_extent__button), "aria-label": t9n.previousExtentButtonText, title: t9n.previousExtentButtonText, onClick: this._previousExtent_click.bind(this), onKeyPress: this._previousExtent_keypress.bind(this), tabIndex: "0" },
+                tsx("span", { id: elementIDs.extentnavigatorPreviousExtentSpanID, "aria-hidden": 'true', className: this.classes(css_esri.esri_icon, css_esri.esri_icon_previous_extent) }),
+                tsx("span", { className: css_esri.esri_icon_font_fallback_text }, t9n.previousExtentButtonText)),
+            tsx("div", { id: elementIDs.extentnavigatorNextExtentButtonID, role: "button", className: this.classes(css_esri.esri_widget_button, css_esri.esri_widget, css.default.widget_extentnavigator_next_extent__button), "aria-label": t9n.nextExtentButtonText, title: t9n.nextExtentButtonText, onClick: this._nextExtent_click.bind(this), onKeyPress: this._nextExtent_keypress.bind(this), tabIndex: "0" },
+                tsx("span", { id: elementIDs.extentnavigatorNextExtentSpanID, "aria-hidden": 'true', className: this.classes(css_esri.esri_icon, css_esri.esri_icon_next_extent) }),
+                tsx("span", { className: css_esri.esri_icon_font_fallback_text }, t9n.nextExtentButtonText))));
     }
     //--------------------------------------------------------------------------
     //  Private Methods
     //--------------------------------------------------------------------------
     _previousExtent_click(e) {
-        let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
+        const previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
         if (previousExtentButton_node.ariaDisabled === "true") {
             e.preventDefault();
         }
         else {
-            let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
+            const nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
             mapExtentArrayPosition -= 1;
             navButtonClicked = true;
             this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition - 1].extent);
         }
     }
     _previousExtent_keypress(e) {
-        let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-        let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+        const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+        const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
         if (isEnterPressed || isSpacePressed) {
-            let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
+            const previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
             if (previousExtentButton_node.ariaDisabled === "true") {
                 e.preventDefault();
             }
             else {
-                let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
+                const nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
                 mapExtentArrayPosition -= 1;
                 navButtonClicked = true;
                 this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition - 1].extent);
@@ -146,27 +150,27 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
         }
     }
     _nextExtent_click(e) {
-        let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
+        const nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
         if (nextExtentButton_node.ariaDisabled === "true") {
             e.preventDefault();
         }
         else {
-            let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
+            const previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
             mapExtentArrayPosition += 1;
             navButtonClicked = true;
             this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition - 1].extent);
         }
     }
     _nextExtent_keypress(e) {
-        let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-        let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+        const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+        const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
         if (isEnterPressed || isSpacePressed) {
-            let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
+            const nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
             if (nextExtentButton_node.ariaDisabled === "true") {
                 e.preventDefault();
             }
             else {
-                let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
+                const previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
                 mapExtentArrayPosition += 1;
                 navButtonClicked = true;
                 this.gotoExtent(nextExtentButton_node, previousExtentButton_node, mapExtentArray[mapExtentArrayPosition - 1].extent);
@@ -174,8 +178,8 @@ let ExtentNavigator = class ExtentNavigator extends Widget {
         }
     }
     setInitialRender() {
-        let previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
-        let nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
+        const previousExtentButton_node = document.getElementById(elementIDs.extentnavigatorPreviousExtentButtonID);
+        const nextExtentButton_node = document.getElementById(elementIDs.extentnavigatorNextExtentButtonID);
         ariaDisable(previousExtentButton_node, [css_esri.esri_disabled], true);
         ariaDisable(nextExtentButton_node, [css_esri.esri_disabled], true);
     }

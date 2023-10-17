@@ -9,6 +9,12 @@ let OrderedLayerOrderBy = class OrderedLayerOrderBy extends Accessor {
         this.valueExpression = valueExpression;
         this.order = order;
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    field;
+    valueExpression;
+    order;
 };
 __decorate([
     property()
@@ -27,6 +33,15 @@ let SelectObject = class SelectObject extends Accessor {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    fieldID;
+    fieldType;
+    sqlText;
+    operator;
+    options;
+    required;
 };
 __decorate([
     property()
@@ -57,6 +72,11 @@ let FeatureLayerReferences = class FeatureLayerReferences extends Accessor {
     toString() {
         return `${this.layerID}: [${this.relatedLayerIDs}]`;
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    layerID;
+    relatedLayerIDs;
 };
 __decorate([
     property()
@@ -72,6 +92,11 @@ let SearchFieldSelectObjects = class SearchFieldSelectObjects extends Accessor {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    layerID;
+    selectObjects;
 };
 __decorate([
     property()
@@ -87,6 +112,11 @@ let T9nObject = class T9nObject extends Accessor {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    en;
+    fr;
 };
 __decorate([
     property()
@@ -102,6 +132,11 @@ let DisplayField = class DisplayField extends Accessor {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    name;
+    alias;
 };
 __decorate([
     property()
@@ -124,6 +159,16 @@ let GraphicalSearchOptions = class GraphicalSearchOptions extends Accessor {
         this.enablepolyselect = enablepolyselect;
         this.selectiontolerance = selectiontolerance;
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    enablepointselect;
+    enablelineselect;
+    enablepolylineselect;
+    enableextentselect;
+    enablecircleselect;
+    enablepolyselect;
+    selectiontolerance;
 };
 __decorate([
     property()
@@ -158,6 +203,13 @@ let AdvancedSearchObject = class AdvancedSearchObject extends Accessor {
         this.zoomtosearchresults = zoomtosearchresults;
         this.graphicalsearchoptions = graphicalsearchoptions;
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    layers;
+    addMissingSearchLayers;
+    zoomtosearchresults;
+    graphicalsearchoptions;
 };
 __decorate([
     property()
@@ -179,6 +231,19 @@ let AdvancedSearchField = class AdvancedSearchField extends Accessor {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    field;
+    fieldlabel;
+    fieldtype;
+    defaultvalue;
+    searchhint;
+    sqltext;
+    operator;
+    userlist;
+    usedistinctvalues;
+    required;
 };
 __decorate([
     property()
@@ -218,6 +283,17 @@ let AdvancedSearchLayer = class AdvancedSearchLayer extends Accessor {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    url;
+    zoomscale;
+    searchlayerlabel;
+    searchlayertitletext;
+    searchfields;
+    displayfields;
+    orderbyfields;
 };
 __decorate([
     property()

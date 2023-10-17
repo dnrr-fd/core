@@ -1,58 +1,76 @@
 {
     "title": "Disclaimer",
     "messages": [
-        [
-            {
-                "element": "p",
-                "value": "This site, including all applications, maps, data and information (hereinafter referred to as the “CONTENT”), is provided on an “as is” basis for informational purposes only, and access is subject to the following terms and conditions:"
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "NO REPRESENTATIONS. "
-            },
-            {
-                "element": "p",
-                "value": "The CONTENT is provided without any representation or warranty of any kind, and in particular without representation or warranty about the CONTENT quality, accuracy, completeness or timeliness."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "USE OF CONTENT. "
-            },
-            {
-                "element": "p",
-                "value": "A user of the CONTENT shall not otherwise reproduce, publish or disseminate the CONTENT without the written consent of Department of Lands and Forestry and/or the originating jurisdiction responsible for the CONTENT. Department of Lands and Forestry does not assume any responsibility for any inaccuracies, errors or omissions in the CONTENT. Access to some data and/or related information may require the user to enter into a licensing agreement, and licensing fees may apply."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "LIMITATION OF LIABILITY. "
-            },
-            {
-                "element": "p",
-                "value": "In no event shall Department of Lands and Forestry be liable for any damages of any kind arising from the use (in any way) of the CONTENT. Without limiting the foregoing, Department of Lands and Forestry shall not be liable for direct, indirect, special, consequential, exemplary, or punitive damages. This limitation shall apply regardless of whether Department of Lands and Forestry is advised of the possibility of such damages resulting from use of the CONTENT. Use of the CONTENT is at the user`s sole risk."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "LINKS TO THIRD PARTY (EXTERNAL) SITES. "
-            },
-            {
-                "element": "p",
-                "value": "This application may contain links to external sites, such links are provided solely as a convenience. The inclusion of any link to another site does not imply endorsement by Department of Lands and Forestry, and Department of Lands and Forestry assumes no responsibility for content, accuracy, or reliability of the information contained therein."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "By entering this site / application, you acknowledge that you have read this Disclaimer and agree to its terms and conditions. Crown copyright © Province of Nova Scotia, All Rights Reserved."
-            }
-        ]
+        {
+            "id": "disclaimerMsg_p01",
+            "message": [
+                {
+                    "element": "p",
+                    "value": "This site, including all applications, maps, data and information (hereinafter referred to as the “CONTENT”), is provided on an “as is” basis for informational purposes only, and access is subject to the following terms and conditions:"
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p02",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "NO REPRESENTATIONS. "
+                },
+                {
+                    "element": "p",
+                    "value": "The CONTENT is provided without any representation or warranty of any kind, and in particular without representation or warranty about the CONTENT quality, accuracy, completeness or timeliness."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p03",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "USE OF CONTENT. "
+                },
+                {
+                    "element": "p",
+                    "value": "A user of the CONTENT shall not otherwise reproduce, publish or disseminate the CONTENT without the written consent of Department of Lands and Forestry and/or the originating jurisdiction responsible for the CONTENT. Department of Lands and Forestry does not assume any responsibility for any inaccuracies, errors or omissions in the CONTENT. Access to some data and/or related information may require the user to enter into a licensing agreement, and licensing fees may apply."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p04",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "LIMITATION OF LIABILITY. "
+                },
+                {
+                    "element": "p",
+                    "value": "In no event shall Department of Lands and Forestry be liable for any damages of any kind arising from the use (in any way) of the CONTENT. Without limiting the foregoing, Department of Lands and Forestry shall not be liable for direct, indirect, special, consequential, exemplary, or punitive damages. This limitation shall apply regardless of whether Department of Lands and Forestry is advised of the possibility of such damages resulting from use of the CONTENT. Use of the CONTENT is at the user`s sole risk."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p05",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "LINKS TO THIRD PARTY (EXTERNAL) SITES. "
+                },
+                {
+                    "element": "p",
+                    "value": "This application may contain links to external sites, such links are provided solely as a convenience. The inclusion of any link to another site does not imply endorsement by Department of Lands and Forestry, and Department of Lands and Forestry assumes no responsibility for content, accuracy, or reliability of the information contained therein."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p06",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "By entering this site / application, you acknowledge that you have read this Disclaimer and agree to its terms and conditions. Crown copyright © Province of Nova Scotia, All Rights Reserved."
+                }
+            ]
+        }
     ],
     "agreeText": "I agree to the terms and conditions.",
     "confirmButtonText": "OK"

@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -15,8 +14,8 @@ import Popup from "@arcgis/core/widgets/Popup";
 import { getWidgetTheme } from '@dnrr_fd/util/web';
 import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 import { loadWidgetsIntoMap, removeWidgetsFromMap } from "./MapViewModel";
-export var mapRootURL;
-export var mapParentElement;
+export let mapRootURL;
+export let mapParentElement;
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
 import * as css_dark from './assets/css/dark/map.module.css';
@@ -25,10 +24,9 @@ import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
 import CookiesButton from "../cookies/button/CookiesButton";
 import Cookies from "../cookies/Cookies";
-var t9n = t9n_en;
-var css_theme = css_dark;
-var _mapView = new MapView();
-var initialExtent;
+let t9n = t9n_en;
+let css_theme = css_dark;
+const _mapView = new MapView();
 const elementIDs = {
     esriThemeID: "esriThemeID",
     mapID: "_mapID",
@@ -39,13 +37,31 @@ let Map = class Map extends Widget {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    theme;
+    locale;
+    title;
+    portalUrl;
+    apiKey;
+    appid;
+    mapView;
+    signoutElement;
+    cookies;
+    map;
+    mapRootURL;
+    headerHeight;
+    mapHeight;
+    mapWidgets;
+    rendered;
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
         esriConfig.apiKey = this.apiKey;
         // console.log(`API Key: ${esriConfig.apiKey}`);
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
@@ -54,9 +70,9 @@ let Map = class Map extends Widget {
             t9n = t9n_fr;
         }
         mapRootURL = this.mapRootURL;
-        var self = this;
+        const self = this;
         this.mapView = _mapView;
-        var containerElement;
+        let containerElement;
         if (typeof self.container === 'string') {
             containerElement = document.getElementById(self.container);
         }
@@ -76,7 +92,7 @@ let Map = class Map extends Widget {
         this.rendered = false;
         esriConfig.portalUrl = this.portalUrl;
         // console.log(`Assets Path: ${esriConfig.assetsPath}`);
-        var info = new OAuthInfo({
+        const info = new OAuthInfo({
             appId: this.appid,
             portalUrl: this.map.portalUrl,
             locale: _locale,
@@ -118,7 +134,7 @@ let Map = class Map extends Widget {
         // Check for cookies
         this.mapWidgets?.forEach(mapWidget => {
             if (mapWidget.mWidget instanceof CookiesButton) {
-                let _cookies_button = mapWidget.mWidget;
+                const _cookies_button = mapWidget.mWidget;
                 if (_cookies_button.content instanceof Cookies) {
                     this.cookies = _cookies_button.content.cookiesVM;
                     return;
@@ -138,23 +154,23 @@ let Map = class Map extends Widget {
         });
     }
     render() {
-        return (tsx("div", { id: elementIDs.mapID, class: this.classes(css_theme.default.widget_map, css_theme.default.widget_map_transition) },
-            tsx("div", { id: elementIDs.mapContentID, class: css_theme.default.widget_map_content })));
+        return (tsx("div", { id: elementIDs.mapID, className: this.classes(css_theme.default.widget_map, css_theme.default.widget_map_transition) },
+            tsx("div", { id: elementIDs.mapContentID, className: css_theme.default.widget_map_content })));
     }
     //--------------------------------------------------------------------------
     //  Private Methods
     //--------------------------------------------------------------------------
     async _handleSignIn() {
         return new Promise(resolve => {
-            var portal = new Portal();
-            var self = this;
+            const portal = new Portal();
+            const self = this;
             portal.authMode = "immediate";
             portal.load().then(() => {
                 if (portal.user) {
-                    let results = { name: portal.user.fullName, username: portal.user.username };
+                    const results = { name: portal.user.fullName, username: portal.user.username };
                     // console.log(results);
                     // Set up the sign-out link if the user wishes.
-                    var _signoutElement;
+                    let _signoutElement;
                     if (this.signoutElement != null && typeof this.signoutElement != "undefined") {
                         if (typeof this.signoutElement === "string") {
                             _signoutElement = document.getElementById(this.signoutElement);
@@ -178,9 +194,9 @@ let Map = class Map extends Widget {
     }
     async _loadContent() {
         return new Promise(resolve => {
-            var self = this;
+            const self = this;
             //var upper_height = document.body.clientHeight;
-            var upper_height = 125;
+            const upper_height = 125;
             // Add the map node content.
             const map = new WebMap({
                 portalItem: {

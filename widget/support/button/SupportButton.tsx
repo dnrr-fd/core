@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -9,7 +11,7 @@ import * as t9n_en from '../button/assets/t9n/en.json'
 import * as t9n_fr from '../button/assets/t9n/fr.json'
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
-var t9n = t9n_en;
+let t9n = t9n_en;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -45,9 +47,6 @@ class SupportButton extends Widget {
   //  Properties
   //----------------------------------
   @property()
-  id!: string;
-
-  @property()
   content!: string|Widget|Node;
 
   @property()
@@ -64,7 +63,7 @@ class SupportButton extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
   postInitialize(): void {
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -98,9 +97,9 @@ class SupportButton extends Widget {
 
   render() {
     return (
-      <div id={this.id} class={this.classes(css_esri.esri_expand__container, css_esri.esri_component, css_esri.esri_widget_button, css_esri.esri_widget)} role="button" aria-label={buttonLabel} title={buttonLabel} tabindex="0" onclick={this._button_click.bind(this)} onkeypress={this._button_keypress.bind(this)}>
-        <span id={`${this.id}_iconID`} class={this.classes(css_esri.esri_icon, buttonIconClass)} aria-hidden="true"></span>
-        <span class={css_esri.esri_icon_font_fallback_text}>{buttonLabel}</span>
+      <div id={this.id} className={this.classes(css_esri.esri_expand__container, css_esri.esri_component, css_esri.esri_widget_button, css_esri.esri_widget)} role="button" aria-label={buttonLabel} title={buttonLabel} tabIndex="0" onClick={this._button_click.bind(this)} onKeyPress={this._button_keypress.bind(this)}>
+        <span id={`${this.id}_iconID`} className={this.classes(css_esri.esri_icon, buttonIconClass)} aria-hidden="true"></span>
+        <span className={css_esri.esri_icon_font_fallback_text}>{buttonLabel}</span>
       </div>
     );
   }
@@ -114,8 +113,8 @@ class SupportButton extends Widget {
   }
 
   _button_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
@@ -127,8 +126,8 @@ class SupportButton extends Widget {
     if (this.content) {
       if (typeof (this.content) === "string") {
         // Assume the string is a URL
-        var expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
-        var regex = new RegExp(expression);
+        const expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+        const regex = new RegExp(expression);
         if (this.content.match(regex)) {
           window.open(this.content, "_blank", "noreferrer");
         } else {

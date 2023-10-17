@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -27,15 +26,15 @@ import '@simonwep/pickr/dist/themes/nano.min.css'; // 'nano' theme
 import * as css from './assets/css/addlayer.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-var t9n = t9n_en;
-var sendFile = false;
-var fileName_full = "";
-var layerName;
-var layerID;
-var addedLayers = new Array();
-var currentEditLayer;
-var pickr_outline;
-var pickr_main;
+let t9n = t9n_en;
+let sendFile = false;
+let fileName_full = "";
+let layerName;
+let layerID;
+const addedLayers = new Array();
+let currentEditLayer;
+let pickr_outline;
+let pickr_main;
 // esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
 const css_esri = {
     esri_widget: 'esri-widget',
@@ -85,6 +84,8 @@ const elementIDs = {
     addlayer_ServiceInfoID: "addlayer_ServiceInfoID"
 };
 class URLServiceResult {
+    featureLayer;
+    message;
     constructor(featureLayer, message) {
         this.featureLayer = featureLayer;
         this.message = message;
@@ -94,86 +95,93 @@ let AddLayer = class AddLayer extends Widget {
     constructor(params) {
         super(params);
     }
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    view;
+    generateURL;
+    apiKey;
+    rootFocusElement;
+    theme;
     //--------------------------------------------------------------------------
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
         // esriConfig.apiKey = this.apiKey;
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         t9n = (_locale === 'en' ? t9n_en : t9n_fr);
         this.label = t9n.label;
         this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme);
-        var self = this;
         intl.onLocaleChange(function (locale) {
             t9n = (locale === 'en' ? t9n_en : t9n_fr);
         });
     }
     render() {
-        return (tsx("div", { class: css_esri.esri_widget },
-            tsx("div", { id: elementIDs.addlayer_ModalID, class: this.classes(css.default.widget_addlayer_modal, css.default.widget_addlayer_visible__none) }),
-            tsx("div", { id: elementIDs.addlayer_MainID, class: css.default.widget_addlayer, afterCreate: this.afterRenderActions, bind: this },
-                tsx("div", { class: css.default.widget_addlayer_tab__div },
-                    tsx("button", { id: elementIDs.addlayer_FileTabID, type: "button", class: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addFileTabLabel, ariaLabel: t9n.addFileTabLabel, onclick: this._addFileTab_click.bind(this), tabindex: "0" }, t9n.addFileTabLabel),
-                    tsx("button", { id: elementIDs.addlayer_ServiceTabID, type: "button", class: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addServiceTabLabel, ariaLabel: t9n.addServiceTabLabel, onclick: this._addServiceTab_click.bind(this), tabindex: "0" }, t9n.addServiceTabLabel)),
-                tsx("div", { id: elementIDs.addlayer_FileTabDivID, class: this.classes(css.default.widget_addlayer_tabcontent__div) },
+        return (tsx("div", { className: css_esri.esri_widget },
+            tsx("div", { id: elementIDs.addlayer_ModalID, className: this.classes(css.default.widget_addlayer_modal, css.default.widget_addlayer_visible__none) }),
+            tsx("div", { id: elementIDs.addlayer_MainID, className: css.default.widget_addlayer, afterCreate: this.afterRenderActions, bind: this },
+                tsx("div", { className: css.default.widget_addlayer_tab__div },
+                    tsx("button", { id: elementIDs.addlayer_FileTabID, type: "button", className: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addFileTabLabel, "aria-label": t9n.addFileTabLabel, onClick: this._addFileTab_click.bind(this), tabIndex: "0" }, t9n.addFileTabLabel),
+                    tsx("button", { id: elementIDs.addlayer_ServiceTabID, type: "button", className: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addServiceTabLabel, "aria-label": t9n.addServiceTabLabel, onClick: this._addServiceTab_click.bind(this), tabIndex: "0" }, t9n.addServiceTabLabel)),
+                tsx("div", { id: elementIDs.addlayer_FileTabDivID, className: this.classes(css.default.widget_addlayer_tabcontent__div) },
                     tsx("h3", null, t9n.addFileHeaderLabel),
-                    tsx("p", { class: css.default.widget_addlayer_p }, t9n.addFileSelectionText),
-                    tsx("p", { class: css.default.widget_addlayer_p },
+                    tsx("p", { className: css.default.widget_addlayer_p }, t9n.addFileSelectionText),
+                    tsx("p", { className: css.default.widget_addlayer_p },
                         `${t9n.addFileTypeHelpText} `,
-                        tsx("a", { target: "_blank", rel: "noopener", href: "https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm", class: css_esri.esri_widget_anchor }, t9n.addFileTypeHelpLinkTitle)),
-                    tsx("form", { id: elementIDs.addlayer_FileFormID, enctype: "multipart/form-data", method: "post" },
-                        tsx("div", { class: css.default.widget_addlayer_file_button__div },
-                            tsx("label", { for: elementIDs.addlayer_FileFileID, class: css.default.widget_addlayer_buttontitle__label }, t9n.addFileButtonSectionLabel),
-                            tsx("input", { id: elementIDs.addlayer_FileFileID, class: css.default.widget_addlayer_visible__none, type: "file", name: "addlayer_file" }),
+                        tsx("a", { target: "_blank", rel: "noopener noreferrer", href: "https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm", className: css_esri.esri_widget_anchor }, t9n.addFileTypeHelpLinkTitle)),
+                    tsx("form", { id: elementIDs.addlayer_FileFormID, encType: "multipart/form-data", method: "post" },
+                        tsx("div", { className: css.default.widget_addlayer_file_button__div },
+                            tsx("label", { htmlFor: elementIDs.addlayer_FileFileID, className: css.default.widget_addlayer_buttontitle__label }, t9n.addFileButtonSectionLabel),
+                            tsx("input", { id: elementIDs.addlayer_FileFileID, className: css.default.widget_addlayer_visible__none, type: "file", name: "addlayer_file" }),
                             tsx("span", null,
-                                tsx("button", { id: elementIDs.addlayer_FileButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button), title: t9n.addFileButtonLabel, ariaLabel: t9n.addFileButtonLabel, onclick: this._addFileButton_click.bind(this), tabindex: "0" }, t9n.addFileButtonLabel)))),
+                                tsx("button", { id: elementIDs.addlayer_FileButtonID, type: "button", className: this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button), title: t9n.addFileButtonLabel, "aria-label": t9n.addFileButtonLabel, onClick: this._addFileButton_click.bind(this), tabIndex: "0" }, t9n.addFileButtonLabel)))),
                     tsx("span", null,
-                        tsx("div", { id: elementIDs.addlayer_FileUpdateStatusDivID, class: this.classes(css.default.widget_addlayer_file_uploadstatus__div, css.default.widget_addlayer_visible__none) },
+                        tsx("div", { id: elementIDs.addlayer_FileUpdateStatusDivID, className: this.classes(css.default.widget_addlayer_file_uploadstatus__div, css.default.widget_addlayer_visible__none) },
                             tsx("div", null,
-                                tsx("p", { id: elementIDs.addlayer_FileUpdateStatusID, class: css.default.widget_addlayer_file_uploadstatus__p })),
-                            tsx("div", { class: css.default.widget_addlayer_file_uploadstatus_clear_button__div },
-                                tsx("button", { id: elementIDs.addlayer_FileUpdateStatusClearID, type: "button", class: this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase), title: t9n.addFileUpdateStatusClearLabel, ariaLabel: t9n.addFileUpdateStatusClearLabel, onclick: this._addFileUpdateStatusClearButton_click.bind(this), tabindex: "0" })))),
-                    tsx("div", { class: css.default.widget_addlayer_file_fileinfo__div },
-                        tsx("p", { id: elementIDs.addlayer_FileInfoID, class: css.default.widget_addlayer_p }))),
-                tsx("div", { id: elementIDs.addlayer_ServiceTabDivID, class: this.classes(css.default.widget_addlayer_tabcontent__div, css.default.widget_addlayer_visible__none) },
+                                tsx("p", { id: elementIDs.addlayer_FileUpdateStatusID, className: css.default.widget_addlayer_file_uploadstatus__p })),
+                            tsx("div", { className: css.default.widget_addlayer_file_uploadstatus_clear_button__div },
+                                tsx("button", { id: elementIDs.addlayer_FileUpdateStatusClearID, type: "button", className: this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase), title: t9n.addFileUpdateStatusClearLabel, "aria-label": t9n.addFileUpdateStatusClearLabel, onClick: this._addFileUpdateStatusClearButton_click.bind(this), tabIndex: "0" })))),
+                    tsx("div", { className: css.default.widget_addlayer_file_fileinfo__div },
+                        tsx("p", { id: elementIDs.addlayer_FileInfoID, className: css.default.widget_addlayer_p }))),
+                tsx("div", { id: elementIDs.addlayer_ServiceTabDivID, className: this.classes(css.default.widget_addlayer_tabcontent__div, css.default.widget_addlayer_visible__none) },
                     tsx("h3", null, t9n.addServiceHeaderLabel),
-                    tsx("p", { class: css.default.widget_addlayer_p }, t9n.addServiceSelectionText),
-                    tsx("div", { class: css.default.widget_addlayer_service__div },
-                        tsx("div", { class: css.default.widget_addlayer_service_input__div },
-                            tsx("label", { for: elementIDs.addlayer_ServiceInputID }, t9n.addServiceInputLabel),
-                            tsx("input", { id: elementIDs.addlayer_ServiceInputID, class: this.classes(css_esri.esri_input, css.default.widget_addlayer_service__input), type: "text", title: t9n.addServiceInputLabel, ariaLabel: t9n.addServiceInputLabel, tabindex: "0" })),
-                        tsx("div", { class: css.default.widget_addlayer_service_button__div },
-                            tsx("button", { id: elementIDs.addlayer_ServiceGoButtonID, type: "button", class: this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled), title: t9n.addFileServiceGoLabel, ariaLabel: t9n.addFileServiceGoLabel, "aria-disabled": 'true', onclick: this._addFileServiceGoButton_click.bind(this), tabindex: "0" }, t9n.addFileServiceGoLabel))),
-                    tsx("div", { id: elementIDs.addlayer_ServiceInfoDivID, class: this.classes(css.default.widget_addlayer_service_serviceInfo__div, css.default.widget_addlayer_visible__none) },
-                        tsx("p", { id: elementIDs.addlayer_ServiceInfoID, class: css.default.widget_addlayer_p }))),
+                    tsx("p", { className: css.default.widget_addlayer_p }, t9n.addServiceSelectionText),
+                    tsx("div", { className: css.default.widget_addlayer_service__div },
+                        tsx("div", { className: css.default.widget_addlayer_service_input__div },
+                            tsx("label", { htmlFor: elementIDs.addlayer_ServiceInputID }, t9n.addServiceInputLabel),
+                            tsx("input", { id: elementIDs.addlayer_ServiceInputID, className: this.classes(css_esri.esri_input, css.default.widget_addlayer_service__input), type: "text", title: t9n.addServiceInputLabel, "aria-label": t9n.addServiceInputLabel, tabIndex: "0" })),
+                        tsx("div", { className: css.default.widget_addlayer_service_button__div },
+                            tsx("button", { id: elementIDs.addlayer_ServiceGoButtonID, type: "button", className: this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled), title: t9n.addFileServiceGoLabel, "aria-label": t9n.addFileServiceGoLabel, "aria-disabled": 'true', onClick: this._addFileServiceGoButton_click.bind(this), tabIndex: "0" }, t9n.addFileServiceGoLabel))),
+                    tsx("div", { id: elementIDs.addlayer_ServiceInfoDivID, className: this.classes(css.default.widget_addlayer_service_serviceInfo__div, css.default.widget_addlayer_visible__none) },
+                        tsx("p", { id: elementIDs.addlayer_ServiceInfoID, className: css.default.widget_addlayer_p }))),
                 tsx("div", null,
-                    tsx("div", { id: elementIDs.addlayer_ResultsDivID, class: this.classes(css.default.widget_addlayer_results__div, css.default.widget_addlayer_visible__none) },
-                        tsx("div", { id: elementIDs.addlayer_ResultsEditDivID, class: this.classes(css_esri.esri_widget, css.default.widget_addlayer_results_edit__div, css.default.widget_addlayer__overmodal, css.default.widget_addlayer_visible__none) },
-                            tsx("div", { class: css.default.widget_addlayer_results_edit_pickr__div },
-                                tsx("p", { id: elementIDs.addlayer_ResultsEditErrorID, class: this.classes(css.default.widget_addlayer__error, css.default.widget_addlayer_visible__none) })),
-                            tsx("div", { class: css.default.widget_addlayer_results_edit_pickr__div },
-                                tsx("input", { id: elementIDs.addlayer_ResultsEditLayerNameTextboxID, class: this.classes(css_esri.esri_input), type: "text", title: t9n.resultsEditLayerName, ariaLabel: t9n.resultsEditLayerName, tabIndex: "0" })),
-                            tsx("div", { class: css.default.widget_addlayer_results_edit_pickr__div },
-                                tsx("div", { class: css.default.widget_addlayer_results_edit_content__div },
-                                    tsx("label", { id: elementIDs.addlayer_ResultsEditMainColourLabelID, class: css.default.widget_addlayer__disabled, ariaLabel: t9n.resultsEditMainColourLabel }, t9n.resultsEditMainColourLabel),
-                                    tsx("div", { class: css_pickr.pickr_main })),
-                                tsx("div", { class: css.default.widget_addlayer_results_edit_content__div },
-                                    tsx("label", { id: elementIDs.addlayer_ResultsEditOutlineColourLabelID, class: css.default.widget_addlayer__disabled, ariaLabel: t9n.resultsEditOutlineColourLabel }, t9n.resultsEditOutlineColourLabel),
-                                    tsx("div", { class: css_pickr.pickr_outline }))),
-                            tsx("div", { class: css.default.widget_addlayer_results_edit_content__div },
-                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_SaveButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditSaveButton, ariaLabel: t9n.resultsEditSaveButton, onclick: this._resultsEditSaveButton_click.bind(this), tabindex: "0" }, t9n.resultsEditSaveButton),
-                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_CancelButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditCancelButton, ariaLabel: t9n.resultsEditCancelButton, onclick: this._resultsEditCancelButton_click.bind(this), tabindex: "0" }, t9n.resultsEditCancelButton))))))));
+                    tsx("div", { id: elementIDs.addlayer_ResultsDivID, className: this.classes(css.default.widget_addlayer_results__div, css.default.widget_addlayer_visible__none) },
+                        tsx("div", { id: elementIDs.addlayer_ResultsEditDivID, className: this.classes(css_esri.esri_widget, css.default.widget_addlayer_results_edit__div, css.default.widget_addlayer__overmodal, css.default.widget_addlayer_visible__none) },
+                            tsx("div", { className: css.default.widget_addlayer_results_edit_pickr__div },
+                                tsx("p", { id: elementIDs.addlayer_ResultsEditErrorID, className: this.classes(css.default.widget_addlayer__error, css.default.widget_addlayer_visible__none) })),
+                            tsx("div", { className: css.default.widget_addlayer_results_edit_pickr__div },
+                                tsx("input", { id: elementIDs.addlayer_ResultsEditLayerNameTextboxID, className: this.classes(css_esri.esri_input), type: "text", title: t9n.resultsEditLayerName, "aria-label": t9n.resultsEditLayerName, tabIndex: "0" })),
+                            tsx("div", { className: css.default.widget_addlayer_results_edit_pickr__div },
+                                tsx("div", { className: css.default.widget_addlayer_results_edit_content__div },
+                                    tsx("label", { id: elementIDs.addlayer_ResultsEditMainColourLabelID, className: css.default.widget_addlayer__disabled, "aria-label": t9n.resultsEditMainColourLabel }, t9n.resultsEditMainColourLabel),
+                                    tsx("div", { className: css_pickr.pickr_main })),
+                                tsx("div", { className: css.default.widget_addlayer_results_edit_content__div },
+                                    tsx("label", { id: elementIDs.addlayer_ResultsEditOutlineColourLabelID, className: css.default.widget_addlayer__disabled, "aria-label": t9n.resultsEditOutlineColourLabel }, t9n.resultsEditOutlineColourLabel),
+                                    tsx("div", { className: css_pickr.pickr_outline }))),
+                            tsx("div", { className: css.default.widget_addlayer_results_edit_content__div },
+                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_SaveButtonID, type: "button", className: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditSaveButton, "aria-label": t9n.resultsEditSaveButton, onClick: this._resultsEditSaveButton_click.bind(this), tabIndex: "0" }, t9n.resultsEditSaveButton),
+                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_CancelButtonID, type: "button", className: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditCancelButton, "aria-label": t9n.resultsEditCancelButton, onClick: this._resultsEditCancelButton_click.bind(this), tabIndex: "0" }, t9n.resultsEditCancelButton))))))));
     }
     //--------------------------------------------------------------------------
     //  Event Methods
     //--------------------------------------------------------------------------
     _addFileTab_click() {
-        let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID);
-        let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID);
+        const fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID);
+        const fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID);
         fileTab_node.setAttribute("style", "border-bottom: none;");
-        let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID);
-        let serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID);
+        const serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID);
+        const serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID);
         serviceButton_node.removeAttribute("style");
         fileDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
         serviceDiv_node.classList.add(css.default.widget_addlayer_visible__none);
@@ -181,11 +189,11 @@ let AddLayer = class AddLayer extends Widget {
         getFocusableElements(document.getElementById(this.rootFocusElement));
     }
     _addServiceTab_click() {
-        let fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID);
-        let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID);
+        const fileDiv_node = document.getElementById(elementIDs.addlayer_FileTabDivID);
+        const fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID);
         fileTab_node.removeAttribute("style");
-        let serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID);
-        let serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID);
+        const serviceDiv_node = document.getElementById(elementIDs.addlayer_ServiceTabDivID);
+        const serviceButton_node = document.getElementById(elementIDs.addlayer_ServiceTabID);
         serviceButton_node.setAttribute("style", "border-bottom: none;");
         fileDiv_node.classList.add(css.default.widget_addlayer_visible__none);
         serviceDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
@@ -193,7 +201,7 @@ let AddLayer = class AddLayer extends Widget {
         getFocusableElements(document.getElementById(this.rootFocusElement));
     }
     _addFileButton_click(e) {
-        let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
+        const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
         // Keep the button from posting as default action.
         e.preventDefault();
         if (sendFile === false) {
@@ -210,9 +218,9 @@ let AddLayer = class AddLayer extends Widget {
         this.removeFile();
     }
     _addFileServiceGoButton_click(e) {
-        let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
-        let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
-        let urlValue = serviceInputText_node.value;
+        const serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
+        const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
+        const urlValue = serviceInputText_node.value;
         if (serviceGoButton_node.ariaDisabled === "true") {
             e.preventDefault();
         }
@@ -221,9 +229,9 @@ let AddLayer = class AddLayer extends Widget {
         }
     }
     _resultsEditCancelButton_click() {
-        let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
-        let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
-        let resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID);
+        const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
+        const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
+        const resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID);
         resultsEditDiv_node.classList.add(css.default.widget_addlayer_visible__none);
         modalDiv_node.classList.add(css.default.widget_addlayer_visible__none);
         // Reset the errors
@@ -234,18 +242,18 @@ let AddLayer = class AddLayer extends Widget {
     }
     _resultsEditSaveButton_click() {
         // Collect the title, main and outline colors to change the active layer.
-        let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
-        let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
-        let resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID);
-        let editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID);
-        let editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID);
-        let editLayerName_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID);
-        let layerName_old = currentEditLayer.title;
-        let layerName_new = editLayerName_node.value;
+        const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
+        const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
+        const resultsEditError_node = document.getElementById(elementIDs.addlayer_ResultsEditErrorID);
+        const editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID);
+        const editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID);
+        const editLayerName_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID);
+        const layerName_old = currentEditLayer.title;
+        const layerName_new = editLayerName_node.value;
         // Reset the errors
         resultsEditError_node.innerHTML = "";
         resultsEditError_node.classList.add(css.default.widget_addlayer_visible__none);
-        var error = false;
+        let error = false;
         if (layerName_new === "") {
             // Warn the user to enter a valid Layer Name
             resultsEditError_node.classList.remove(css.default.widget_addlayer_visible__none);
@@ -274,19 +282,19 @@ let AddLayer = class AddLayer extends Widget {
         if (editMain_node.classList.contains(css.default.widget_addlayer__disabled) === false) {
             mainRGBA = pickr_main.getColor().toRGBA();
             mainColor = new Color(mainRGBA.toString());
-            let ren = currentEditLayer.renderer;
+            const ren = currentEditLayer.renderer;
             ren.symbol.color = mainColor;
         }
         if (editOutline_node.classList.contains(css.default.widget_addlayer__disabled) === false) {
             outlineRGBA = pickr_outline.getColor().toRGBA();
             outlineColor = new Color(outlineRGBA.toString());
-            let ren = currentEditLayer.renderer;
+            const ren = currentEditLayer.renderer;
             if (currentEditLayer.geometryType === "polygon") {
-                let sym = ren.symbol;
+                const sym = ren.symbol;
                 sym.outline.color = outlineColor;
             }
             else {
-                let sym = ren.symbol;
+                const sym = ren.symbol;
                 sym.outline.color = outlineColor;
             }
         }
@@ -295,8 +303,8 @@ let AddLayer = class AddLayer extends Widget {
         if (addedLayers.length > 0) {
             for (let index = 0; index < addedLayers.length; index++) {
                 if (addedLayers[index].layerName === layerName_old) {
-                    let layerLabel_id = `${addedLayers[index].layerID}_labelID`;
-                    let layerLabel_node = document.getElementById(layerLabel_id);
+                    const layerLabel_id = `${addedLayers[index].layerID}_labelID`;
+                    const layerLabel_node = document.getElementById(layerLabel_id);
                     layerLabel_node.innerHTML = layerName_new;
                     layerLabel_node.title = layerName_new;
                     layerLabel_node.ariaLabel = layerName_new;
@@ -318,20 +326,20 @@ let AddLayer = class AddLayer extends Widget {
     //  Private Methods
     //--------------------------------------------------------------------------
     afterRenderActions() {
-        let fileForm_node = document.getElementById(elementIDs.addlayer_FileFormID);
-        let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
-        let fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID);
-        let fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID);
-        let fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
-        let fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID);
-        let serviceInput_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
-        let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
-        let fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID);
+        const fileForm_node = document.getElementById(elementIDs.addlayer_FileFormID);
+        const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
+        const fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID);
+        const fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID);
+        const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
+        const fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID);
+        const serviceInput_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
+        const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
+        const fileTab_node = document.getElementById(elementIDs.addlayer_FileTabID);
         fileTab_node.setAttribute("style", "border-bottom: none;");
         // Re-build the results layers if they exist.
-        let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
-        let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
-        let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
+        const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
+        const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
+        const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
         if (addedLayers && addedLayers.length > 0) {
             addedLayers.map(lyr => {
                 this.createLayerResultsItem(this, lyr.layerID, lyr.layerName, resultsDiv_node, resultsEditDiv_node, modalDiv_node);
@@ -371,7 +379,7 @@ let AddLayer = class AddLayer extends Widget {
         fileForm_node.addEventListener("change", (event) => {
             if (event) {
                 fileName_full = fileInputFile_node.value.replace("C:\\fakepath\\", "");
-                var fileName_Test = fileName_full.toLowerCase();
+                const fileName_Test = fileName_full.toLowerCase();
                 // Check to see if the file is already uploaded
                 if (addedLayers.length > 0) {
                     addedLayers.map((lyr) => {
@@ -408,9 +416,9 @@ let AddLayer = class AddLayer extends Widget {
             }
         });
         serviceInput_node.addEventListener("keyup", (e) => {
-            let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-            let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
-            let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+            const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+            const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+            const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
             if (!isEnterPressed || !isSpacePressed || isTabPressed) {
                 if (serviceInput_node.value.length > 0) {
                     ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], false);
@@ -478,10 +486,10 @@ let AddLayer = class AddLayer extends Widget {
         });
     }
     removeFile() {
-        let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
-        let fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID);
-        let fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID);
-        let fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID);
+        const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
+        const fileUpdateStatus_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusID);
+        const fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID);
+        const fileButton_node = document.getElementById(elementIDs.addlayer_FileButtonID);
         fileName_full = "";
         fileInputFile_node.value = "";
         fileUpdateStatus_node.classList.remove(css.default.widget_addlayer__error);
@@ -494,10 +502,10 @@ let AddLayer = class AddLayer extends Widget {
         sendFile = false;
     }
     removeURL() {
-        let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
-        let serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID);
-        let serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID);
-        let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
+        const serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
+        const serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID);
+        const serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID);
+        const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
         serviceInfo_node.classList.remove(css.default.widget_addlayer__error);
         serviceInputText_node.value = "";
         serviceInfo_node.innerHTML = "";
@@ -505,16 +513,16 @@ let AddLayer = class AddLayer extends Widget {
         ariaDisable(serviceGoButton_node, [css_esri.esri_button_disabled], true);
     }
     loadFile() {
-        let fn = fileName_full.split(".");
+        const fn = fileName_full.split(".");
         let ext = "";
         if (fn.length > 1) {
             ext = fn[fn.length - 1].toLowerCase();
             fn.pop();
         }
         layerName = fn.join("_");
-        var fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
-        let fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
-        let message = `${t9n.addFileInfoLoading} ${fileName_full}`;
+        const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
+        const fileInputFile_node = document.getElementById(elementIDs.addlayer_FileFileID);
+        const message = `${t9n.addFileInfoLoading} ${fileName_full}`;
         fileInfo_node.classList.remove(css.default.widget_addlayer__error);
         fileInfo_node.innerHTML = message;
         let _filetype = "";
@@ -534,7 +542,7 @@ let AddLayer = class AddLayer extends Widget {
         }
         if (_filetype != "") {
             // Hide the fileUpdateStatusDiv_node while work is in progress.
-            let fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID);
+            const fileUpdateStatusDiv_node = document.getElementById(elementIDs.addlayer_FileUpdateStatusDivID);
             fileUpdateStatusDiv_node.classList.add(css.default.widget_addlayer_visible__none);
         }
         //https://developers.arcgis.com/rest/users-groups-and-items/generate.htm
@@ -572,7 +580,7 @@ let AddLayer = class AddLayer extends Widget {
             .catch(this.errorHandler);
     }
     errorHandler(error) {
-        let fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
+        const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
         fileInfo_node.classList.add(css.default.widget_addlayer__error);
         fileInfo_node.innerHTML = error.message;
     }
@@ -582,12 +590,12 @@ let AddLayer = class AddLayer extends Widget {
         // collection in local storage by serializing the layer using featureLayer.toJson()
         // see the 'Feature Collection in Local Storage' sample for an example of how to work with local storage
         let sourceGraphics = new Array();
-        let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
-        let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
-        let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
-        var self = this;
-        const layers = featureCollection.layers.map((layer) => {
-            const graphics = layer.featureSet.features.map((feature) => {
+        const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
+        const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
+        const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
+        const self = this;
+        const layers = featureCollection.layers.map(layer => {
+            const graphics = layer.featureSet.features.map(feature => {
                 return Graphic.fromJSON(feature);
             });
             sourceGraphics = sourceGraphics.concat(graphics);
@@ -595,7 +603,7 @@ let AddLayer = class AddLayer extends Widget {
                 objectIdField: "FID",
                 title: layerName,
                 source: graphics,
-                fields: layer.layerDefinition.fields.map((field) => {
+                fields: layer.layerDefinition.fields.map(field => {
                     return Field.fromJSON(field);
                 })
             });
@@ -616,22 +624,21 @@ let AddLayer = class AddLayer extends Widget {
         this.removeFile();
     }
     async addURLServiceToMap(_urlValue) {
-        var self = this;
-        let modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
-        let resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
-        let resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
-        let serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID);
-        let serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID);
-        let serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
-        let serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
+        const self = this;
+        const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
+        const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
+        const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
+        const serviceInfoDiv_node = document.getElementById(elementIDs.addlayer_ServiceInfoDivID);
+        const serviceInfo_node = document.getElementById(elementIDs.addlayer_ServiceInfoID);
+        const serviceInputText_node = document.getElementById(elementIDs.addlayer_ServiceInputID);
+        const serviceGoButton_node = document.getElementById(elementIDs.addlayer_ServiceGoButtonID);
         serviceInfo_node.classList.remove(css.default.widget_addlayer__error);
         // Check if we have a valid URL from the user, otherwise display an error.
-        var expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+        const expression = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
         // Example URL: https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Parks_and_Open_Space/FeatureServer/0
-        var regex = new RegExp(expression);
+        const regex = new RegExp(expression);
         if (_urlValue.match(regex)) {
             serviceInfo_node.innerHTML = `<b>${t9n.addServiceValidUrlLabel}</b> ${_urlValue}`;
-            ;
             await this.urlToFeatureLayer(_urlValue).then((response) => {
                 if (response.featureLayer) {
                     // Add the resulting FeatureLayer to the map.
@@ -664,9 +671,9 @@ let AddLayer = class AddLayer extends Widget {
         }
     }
     async urlToFeatureLayer(url) {
-        var featureLayer = null;
-        var message = "";
-        var featureLayer_test = new FeatureLayer({ url: url });
+        let featureLayer = null;
+        let message = "";
+        const featureLayer_test = new FeatureLayer({ url: url });
         // Check if the FeatureLayer is both valid and supported, i.e. not a table.
         await featureLayer_test.load().then((response) => {
             if (response.loaded) {
@@ -683,17 +690,17 @@ let AddLayer = class AddLayer extends Widget {
         return new URLServiceResult(featureLayer, message);
     }
     createLayerResultsItem(self, _layerID, _layerName, resultsDiv_node, resultsEditDiv_node, modalDiv_node) {
-        var self = this;
-        let layerDiv = document.createElement("div");
-        let buttonWrapperDiv = document.createElement("div");
-        let buttonDiv = document.createElement("div");
-        let layerLabel = document.createElement("label");
-        let layerEditButton = document.createElement("button");
-        let layerZoomButton = document.createElement("button");
-        let layerRemoveButton = document.createElement("button");
-        let layerTitleTextbox_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID);
-        let editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID);
-        let editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID);
+        // const self = this;
+        const layerDiv = document.createElement("div");
+        const buttonWrapperDiv = document.createElement("div");
+        const buttonDiv = document.createElement("div");
+        const layerLabel = document.createElement("label");
+        const layerEditButton = document.createElement("button");
+        const layerZoomButton = document.createElement("button");
+        const layerRemoveButton = document.createElement("button");
+        const layerTitleTextbox_node = document.getElementById(elementIDs.addlayer_ResultsEditLayerNameTextboxID);
+        const editMain_node = document.getElementById(elementIDs.addlayer_ResultsEditMainColourLabelID);
+        const editOutline_node = document.getElementById(elementIDs.addlayer_ResultsEditOutlineColourLabelID);
         resultsDiv_node.classList.remove(css.default.widget_addlayer_visible__none);
         layerDiv.id = `${_layerID}_divID`;
         layerDiv.classList.add(css.default.widget_addlayer_results_layer__div);
@@ -711,8 +718,8 @@ let AddLayer = class AddLayer extends Widget {
         layerEditButton.title = t9n.resultsEditButtonLabel;
         layerEditButton.ariaLabel = t9n.resultsEditButtonLabel;
         layerEditButton.addEventListener('click', function () {
-            var layerID = "";
-            let _id = this.id;
+            let layerID = "";
+            const _id = this.id;
             addedLayers.map(lyr => {
                 if (`${lyr.layerID}_editID` === _id) {
                     layerID = lyr.layerID;
@@ -747,17 +754,17 @@ let AddLayer = class AddLayer extends Widget {
             // }
             // Only change colours for simple renderer symbols. Other rendererd will have specific symbology defined.
             if (currentEditLayer.renderer.type === "simple") {
-                let ren = currentEditLayer.renderer;
+                const ren = currentEditLayer.renderer;
                 if (currentEditLayer.geometryType === "polygon") {
-                    let fillSymbol = ren.symbol;
+                    const fillSymbol = ren.symbol;
                     self.loadPickrColors(fillSymbol, editMain_node, editOutline_node);
                 }
                 else if (currentEditLayer.geometryType === "polyline") {
-                    let lineSymbol = ren.symbol;
+                    const lineSymbol = ren.symbol;
                     self.loadPickrColors(lineSymbol, editMain_node, editOutline_node);
                 }
                 else if (currentEditLayer.geometryType === "point" || currentEditLayer.geometryType === "multipoint") {
-                    let markerSymbol = ren.symbol;
+                    const markerSymbol = ren.symbol;
                     self.loadPickrColors(markerSymbol, editMain_node, editOutline_node);
                 }
                 else {
@@ -778,15 +785,15 @@ let AddLayer = class AddLayer extends Widget {
         layerZoomButton.title = t9n.resultsZoomButtonLabel;
         layerZoomButton.ariaLabel = t9n.resultsZoomButtonLabel;
         layerZoomButton.addEventListener('click', function () {
-            var layerID = "";
-            let _id = this.id;
+            let layerID = "";
+            const _id = this.id;
             addedLayers.map(lyr => {
                 if (`${lyr.layerID}_zoomID` === _id) {
                     layerID = lyr.layerID;
                     return;
                 }
             });
-            var _layer = self.view.map.findLayerById(layerID);
+            const _layer = self.view.map.findLayerById(layerID);
             self.view.goTo(_layer.fullExtent);
         });
         // Create the Remove button
@@ -796,11 +803,11 @@ let AddLayer = class AddLayer extends Widget {
         layerRemoveButton.title = t9n.resultsRemoveButtonLabel;
         layerRemoveButton.ariaLabel = t9n.resultsRemoveButtonLabel;
         layerRemoveButton.addEventListener('click', function () {
-            let fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
+            const fileInfo_node = document.getElementById(elementIDs.addlayer_FileInfoID);
             fileInfo_node.classList.remove(css.default.widget_addlayer__error);
-            var layerID = "";
-            var lyrName = "";
-            let _id = this.id;
+            let layerID = "";
+            let lyrName = "";
+            const _id = this.id;
             let idx = -1;
             addedLayers.map((lyr, index) => {
                 if (`${lyr.layerID}_removeID` === _id) {
@@ -810,14 +817,14 @@ let AddLayer = class AddLayer extends Widget {
                     return;
                 }
             });
-            var _layer = self.view.map.findLayerById(layerID);
+            const _layer = self.view.map.findLayerById(layerID);
             // self.view.goTo(_layer.fullExtent.center);
-            var _layers = new Array();
+            const _layers = new Array();
             _layers.push(_layer);
             self.view.map.removeMany(_layers);
             // Remove the deleted layer from the array and DIV.
-            let _layerDivID = `${layerID}_divID`;
-            let _layerDiv = document.getElementById(_layerDivID);
+            const _layerDivID = `${layerID}_divID`;
+            const _layerDiv = document.getElementById(_layerDivID);
             resultsDiv_node.removeChild(_layerDiv);
             addedLayers.splice(idx, 1);
             // User confirmation message.
@@ -836,15 +843,15 @@ let AddLayer = class AddLayer extends Widget {
         resultsDiv_node.appendChild(layerDiv);
     }
     loadPickrColors(symbol, editMain_node, editOutline_node) {
-        let rgbaMain = symbol.color.toRgba();
-        let rgbaMainStr = `rgba(${rgbaMain[0]}, ${rgbaMain[1]}, ${rgbaMain[2]}, ${rgbaMain[3]})`;
+        const rgbaMain = symbol.color.toRgba();
+        const rgbaMainStr = `rgba(${rgbaMain[0]}, ${rgbaMain[1]}, ${rgbaMain[2]}, ${rgbaMain[3]})`;
         editMain_node.classList.remove(css.default.widget_addlayer__disabled);
         pickr_main.enable();
         pickr_main.setColor(rgbaMainStr);
         // console.log(`Color for ${currentEditLayer.title}: ${rgbaMainStr}`);
         if (symbol instanceof SimpleFillSymbol || symbol instanceof SimpleMarkerSymbol) {
-            let rgbaOutline = symbol.outline.color.toRgba();
-            let rgbaOutlineStr = `rgba(${rgbaOutline[0]}, ${rgbaOutline[1]}, ${rgbaOutline[2]}, ${rgbaOutline[3]})`;
+            const rgbaOutline = symbol.outline.color.toRgba();
+            const rgbaOutlineStr = `rgba(${rgbaOutline[0]}, ${rgbaOutline[1]}, ${rgbaOutline[2]}, ${rgbaOutline[3]})`;
             editOutline_node.classList.remove(css.default.widget_addlayer__disabled);
             pickr_outline.enable();
             pickr_outline.setColor(rgbaOutlineStr);

@@ -7,6 +7,8 @@ export class WebObject {
         this.type = type;
         this.value = value;
     }
+    type;
+    value;
 }
 __decorate([
     property()
@@ -19,6 +21,8 @@ export class WebUrlObject {
         this.type = type;
         this.value = value;
     }
+    type;
+    value;
 }
 __decorate([
     property()
@@ -31,6 +35,8 @@ export class mwObject {
         this.mWidget = mWidget;
         this.fireEvent = fireEvent;
     }
+    mWidget;
+    fireEvent;
 }
 __decorate([
     property()
@@ -39,6 +45,15 @@ __decorate([
     property()
 ], mwObject.prototype, "fireEvent", void 0);
 let MapWidget = class MapWidget extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    visible;
+    map_location;
+    index_position;
+    config;
+    t9nPath;
 };
 __decorate([
     property()
@@ -63,13 +78,18 @@ MapWidget = __decorate([
 ], MapWidget);
 export { MapWidget };
 let CookiesWidget = class CookiesWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    expanded;
+    privacyPolicy;
+    contactUs;
+    position;
+    cookies;
 };
 __decorate([
     property()
 ], CookiesWidget.prototype, "expanded", void 0);
-__decorate([
-    property()
-], CookiesWidget.prototype, "visible", void 0);
 __decorate([
     property()
 ], CookiesWidget.prototype, "privacyPolicy", void 0);
@@ -87,6 +107,10 @@ CookiesWidget = __decorate([
 ], CookiesWidget);
 export { CookiesWidget };
 let ExtentNavigationWidget = class ExtentNavigationWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    horizontal_align_buttons;
 };
 __decorate([
     property()
@@ -96,6 +120,11 @@ ExtentNavigationWidget = __decorate([
 ], ExtentNavigationWidget);
 export { ExtentNavigationWidget };
 let ScaleBarWidget = class ScaleBarWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    unit;
+    style;
 };
 __decorate([
     property()
@@ -108,6 +137,11 @@ ScaleBarWidget = __decorate([
 ], ScaleBarWidget);
 export { ScaleBarWidget };
 let LayerListWidget = class LayerListWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    expanded;
+    group;
 };
 __decorate([
     property()
@@ -120,6 +154,12 @@ LayerListWidget = __decorate([
 ], LayerListWidget);
 export { LayerListWidget };
 let AdvancedSearchWidget = class AdvancedSearchWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    expanded;
+    advancedSearchContainer;
+    rootFocusElement;
 };
 __decorate([
     property()
@@ -144,6 +184,13 @@ export class SearchWidgetSource {
         this.maxResults = maxResults;
         this.maxSuggestions = maxSuggestions;
     }
+    id;
+    url;
+    searchFields;
+    outFields;
+    exactMatch;
+    maxResults;
+    maxSuggestions;
 }
 __decorate([
     property()
@@ -174,6 +221,11 @@ export class SearchWidgetSourceT9n {
         this.popuptemplatetitle = popuptemplatetitle;
         this.suggestionTemplate = suggestionTemplate;
     }
+    id;
+    label;
+    placeholder;
+    popuptemplatetitle;
+    suggestionTemplate;
 }
 __decorate([
     property()
@@ -195,6 +247,8 @@ export class CookiesWidgetSourceT9n {
         this.id = id;
         this.label = label;
     }
+    id;
+    label;
 }
 __decorate([
     property()
@@ -203,6 +257,10 @@ __decorate([
     property()
 ], CookiesWidgetSourceT9n.prototype, "label", void 0);
 let SearchWidget = class SearchWidget extends MapWidget {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    sources;
 };
 __decorate([
     property()
@@ -212,6 +270,11 @@ SearchWidget = __decorate([
 ], SearchWidget);
 export { SearchWidget };
 let MapWidgetLocale = class MapWidgetLocale {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    label;
 };
 __decorate([
     property()
@@ -224,6 +287,13 @@ MapWidgetLocale = __decorate([
 ], MapWidgetLocale);
 export { MapWidgetLocale };
 let MapWidgetSearch = class MapWidgetSearch {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    label;
+    allPlaceholder;
+    sources;
 };
 __decorate([
     property()
@@ -242,6 +312,13 @@ MapWidgetSearch = __decorate([
 ], MapWidgetSearch);
 export { MapWidgetSearch };
 let MapWidgetCookies = class MapWidgetCookies {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    label;
+    allPlaceholder;
+    cookies;
 };
 __decorate([
     property()
@@ -260,6 +337,13 @@ MapWidgetCookies = __decorate([
 ], MapWidgetCookies);
 export { MapWidgetCookies };
 let SearchConfig = class SearchConfig extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    version;
+    visible;
+    sources;
 };
 __decorate([
     property()
@@ -278,6 +362,17 @@ SearchConfig = __decorate([
 ], SearchConfig);
 export { SearchConfig };
 let MapConfig = class MapConfig extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    id;
+    visible;
+    portalUrl;
+    apiKey;
+    popupLocation;
+    highlightOptions;
+    defaultWidgets;
+    widgets;
 };
 __decorate([
     property()
@@ -308,6 +403,11 @@ MapConfig = __decorate([
 ], MapConfig);
 export { MapConfig };
 let MapExtentObject = class MapExtentObject extends Accessor {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    extent;
+    scale;
     toString() {
         return stringifyMapExtentObject(this);
     }

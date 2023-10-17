@@ -1,58 +1,76 @@
 {
     "title": "Clause de non-responsabilité",
     "messages": [
-        [
-            {
-                "element": "p",
-                "value": "Ce site, y compris toutes les applications, cartes, données et informations (ci-après dénommé le «CONTENU»), est fourni «tel quel» à des fins d'information uniquement, et l'accès est soumis aux termes et conditions suivants:"
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "AUCUNE REPRÉSENTATION. "
-            },
-            {
-                "element": "p",
-                "value": "Le CONTENU est fourni sans aucune représentation ou garantie d'aucune sorte, et en particulier sans représentation ou garantie quant à la qualité, l'exactitude, l'exhaustivité ou l'actualité du CONTENU."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "UTILISATION DU CONTENU. "
-            },
-            {
-                "element": "p",
-                "value": "Un utilisateur du CONTENU ne doit pas autrement reproduire, publier ou diffuser le CONTENU sans le consentement écrit du ministère des Terres et des Forêts et/ou de la juridiction d'origine responsable du CONTENU. Le ministère des Terres et des Forêts n'assume aucune responsabilité pour toute inexactitude, erreur ou omission dans le CONTENU. L'accès à certaines données et/ou informations connexes peut nécessiter que l'utilisateur conclue un accord de licence, et des frais de licence peuvent s'appliquer."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "LIMITATION DE RESPONSABILITÉ. "
-            },
-            {
-                "element": "p",
-                "value": "En aucun cas Le ministère des Terres et des Forêts sera responsable de tout dommage de quelque nature que ce soit résultant de l'utilisation (de quelque manière que ce soit) du CONTENU. Sans limiter ce qui précède, le Département des terres et des forêts ne sera pas responsable des dommages directs, indirects, spéciaux, consécutifs, exemplaires ou punitifs. Cette limitation s'appliquera indépendamment du fait que le ministère des Terres et des Forêts soit informé de la possibilité de tels dommages résultant de l'utilisation du CONTENU. L'utilisation du CONTENU est aux risques et périls de l'utilisateur."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "LIENS VERS DES SITES TIERS (EXTERNES). "
-            },
-            {
-                "element": "p",
-                "value": "Cette application peut contenir des liens vers des sites externes, ces liens sont fournis uniquement à titre de commodité. L'inclusion de tout lien vers un autre site n'implique pas l'approbation du ministère des Terres et des Forêts, et le ministère des Terres et des Forêts n'assume aucune responsabilité quant au contenu, à l'exactitude ou à la fiabilité des informations qu'il contient."
-            }
-        ],
-        [
-            {
-                "element": "b",
-                "value": "En accédant à ce site / application, vous reconnaissez avoir lu cette clause de non-responsabilité et accepter ses termes et conditions. Droit d'auteur de la Couronne © Province de la Nouvelle-Écosse, Tous droits réservés."
-            }
-        ]
+        {
+            "id": "disclaimerMsg_p01",
+            "message": [
+                {
+                    "element": "p",
+                    "value": "Ce site, y compris toutes les applications, cartes, données et informations (ci-après dénommé le «CONTENU»), est fourni «tel quel» à des fins d'information uniquement, et l'accès est soumis aux termes et conditions suivants:"
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p02",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "AUCUNE REPRÉSENTATION. "
+                },
+                {
+                    "element": "p",
+                    "value": "Le CONTENU est fourni sans aucune représentation ou garantie d'aucune sorte, et en particulier sans représentation ou garantie quant à la qualité, l'exactitude, l'exhaustivité ou l'actualité du CONTENU."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p03",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "UTILISATION DU CONTENU. "
+                },
+                {
+                    "element": "p",
+                    "value": "Un utilisateur du CONTENU ne doit pas autrement reproduire, publier ou diffuser le CONTENU sans le consentement écrit du ministère des Terres et des Forêts et/ou de la juridiction d'origine responsable du CONTENU. Le ministère des Terres et des Forêts n'assume aucune responsabilité pour toute inexactitude, erreur ou omission dans le CONTENU. L'accès à certaines données et/ou informations connexes peut nécessiter que l'utilisateur conclue un accord de licence, et des frais de licence peuvent s'appliquer."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p04",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "LIMITATION DE RESPONSABILITÉ. "
+                },
+                {
+                    "element": "p",
+                    "value": "En aucun cas Le ministère des Terres et des Forêts sera responsable de tout dommage de quelque nature que ce soit résultant de l'utilisation (de quelque manière que ce soit) du CONTENU. Sans limiter ce qui précède, le Département des terres et des forêts ne sera pas responsable des dommages directs, indirects, spéciaux, consécutifs, exemplaires ou punitifs. Cette limitation s'appliquera indépendamment du fait que le ministère des Terres et des Forêts soit informé de la possibilité de tels dommages résultant de l'utilisation du CONTENU. L'utilisation du CONTENU est aux risques et périls de l'utilisateur."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p05",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "LIENS VERS DES SITES TIERS (EXTERNES). "
+                },
+                {
+                    "element": "p",
+                    "value": "Cette application peut contenir des liens vers des sites externes, ces liens sont fournis uniquement à titre de commodité. L'inclusion de tout lien vers un autre site n'implique pas l'approbation du ministère des Terres et des Forêts, et le ministère des Terres et des Forêts n'assume aucune responsabilité quant au contenu, à l'exactitude ou à la fiabilité des informations qu'il contient."
+                }
+            ]
+        },
+        {
+            "id": "disclaimerMsg_p06",
+            "message": [
+                {
+                    "element": "b",
+                    "value": "En accédant à ce site / application, vous reconnaissez avoir lu cette clause de non-responsabilité et accepter ses termes et conditions. Droit d'auteur de la Couronne © Province de la Nouvelle-Écosse, Tous droits réservés."
+                }
+            ]
+        }
     ],
     "agreeText": "J'accepte les termes et conditions.",
     "confirmButtonText": "Accepte"

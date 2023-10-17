@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -13,7 +15,7 @@ import * as css from './assets/css/loading.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var t9n = t9n_en;
+let t9n = t9n_en;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -65,10 +67,10 @@ class Loading extends Widget {
 
   render() {
     return (
-      <div id={elementIDs.loadingModalID} class={this.classes(css.default.widget_loading, css_esri.esri_widget)}>
-        <div id={elementIDs.loadingContentID} class={css.default.widget_loading_content}>
-          <div class={css.default.widget_loading_img__div}>
-            <img src={this.image.src} title={t9n.title} alt={t9n.alt} class={css.default.widget_loading_img} height={`${this.image.height.toString()}px`} />
+      <div id={elementIDs.loadingModalID} className={this.classes(css.default.widget_loading, css_esri.esri_widget)}>
+        <div id={elementIDs.loadingContentID} className={css.default.widget_loading_content}>
+          <div className={css.default.widget_loading_img__div}>
+            <img src={this.image.src} title={t9n.title} alt={t9n.alt} className={css.default.widget_loading_img} height={`${this.image.height.toString()}px`} />
           </div>
         </div>
       </div>
