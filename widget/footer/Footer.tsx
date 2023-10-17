@@ -62,7 +62,7 @@ interface FooterParams extends __esri.WidgetProperties {
     contactemail: Email
   };
 
-  links?: Array<Array<Link>>;
+  links?: Array<LinksArray>;
 
   copyright?: {
     text: string,

@@ -69,7 +69,6 @@ let print_defaultT9n = printT9n_en;
 
 import * as supportT9n_en from '../support/assets/t9n/en.json'
 import * as supportT9n_fr from '../support/assets/t9n/fr.json'
-import Layer from "@arcgis/core/layers/Layer";
 let support_defaultT9n = supportT9n_en;
 
 export let bookmarksWidget: Expand|null;

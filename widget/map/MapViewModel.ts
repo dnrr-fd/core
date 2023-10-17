@@ -45,12 +45,10 @@ import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json'
 let layerList_defaultT9n = layerListT9n_en;
 
 let mapWidgets = new Array<mwObject>();
-let widgetsAssetsPath: string;
 let lang: string;
 
 export async function loadWidgetsIntoMap(_mapView: MapView, mapWidgetArray: Array<MapWidget|ScaleBarWidget|LayerListWidget>): Promise<Array<mwObject>|null> {
     return new Promise(resolve => {
-        widgetsAssetsPath = `${mapRootURL}assets/widgets/`;
         lang = getNormalizedLocale();
 
         mwAsyncForEach(mapWidgetArray, async (widget: MapWidget) => {
@@ -682,9 +680,10 @@ async function addAdvancedSearch(widget: AdvancedSearchWidget, view: MapView): P
                         t9nResults = advancedSearch_defaultT9n;
                     }
 
-                    if (Object.hasOwn(t9nResults, 'label')) {
-                        if (t9nResults.label.length > 0) {
-                            _label = t9nResults.label;
+                    const t9nObj = t9nResults as typeof advancedSearch_defaultT9n
+                    if (Object.hasOwn(t9nObj, 'label') === true) {
+                        if (t9nObj.label.length > 0) {
+                            _label = t9nObj.label;
                         } 
                     }
 

@@ -1,4 +1,3 @@
-import { mapRootURL } from "./Map";
 import { mwObject } from "../class/_Map";
 import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 import { returnConfig } from "@dnrr_fd/util";
@@ -34,11 +33,9 @@ import * as layerListT9n_en from '../layerlist/assets/t9n/en.json';
 import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json';
 let layerList_defaultT9n = layerListT9n_en;
 let mapWidgets = new Array();
-let widgetsAssetsPath;
 let lang;
 export async function loadWidgetsIntoMap(_mapView, mapWidgetArray) {
     return new Promise(resolve => {
-        widgetsAssetsPath = `${mapRootURL}assets/widgets/`;
         lang = getNormalizedLocale();
         mwAsyncForEach(mapWidgetArray, async (widget) => {
             if (widget.id && typeof widget.id === "string") {
@@ -615,9 +612,10 @@ async function addAdvancedSearch(widget, view) {
                         console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                         t9nResults = advancedSearch_defaultT9n;
                     }
-                    if (Object.hasOwn(t9nResults, 'label')) {
-                        if (t9nResults.label.length > 0) {
-                            _label = t9nResults.label;
+                    const t9nObj = t9nResults;
+                    if (Object.hasOwn(t9nObj, 'label') === true) {
+                        if (t9nObj.label.length > 0) {
+                            _label = t9nObj.label;
                         }
                     }
                     // Check if the container exists and if it is empty

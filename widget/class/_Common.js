@@ -107,24 +107,33 @@ LinksArray = __decorate([
     subclass('CommonClasses.LinksArray')
 ], LinksArray);
 export { LinksArray };
-let Link = class Link extends Accessor {
+let ConfigLink = class ConfigLink extends Accessor {
     //----------------------------------
     //  Properties
     //----------------------------------
     id;
-    title;
     target;
+};
+__decorate([
+    property()
+], ConfigLink.prototype, "id", void 0);
+__decorate([
+    property()
+], ConfigLink.prototype, "target", void 0);
+ConfigLink = __decorate([
+    subclass('CommonClasses.ConfigLink')
+], ConfigLink);
+export { ConfigLink };
+let Link = class Link extends ConfigLink {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    title;
     url;
 };
 __decorate([
     property()
-], Link.prototype, "id", void 0);
-__decorate([
-    property()
 ], Link.prototype, "title", void 0);
-__decorate([
-    property()
-], Link.prototype, "target", void 0);
 __decorate([
     property()
 ], Link.prototype, "url", void 0);

@@ -80,8 +80,8 @@ export class LinksArray extends Accessor {
     links!: Array<Link>;
 }
 
-@subclass('CommonClasses.Link')
-export class Link extends Accessor {
+@subclass('CommonClasses.ConfigLink')
+export class ConfigLink extends Accessor {
     //----------------------------------
     //  Properties
     //----------------------------------
@@ -89,10 +89,16 @@ export class Link extends Accessor {
     id!: string;
 
     @property()
-    title!: string;
-
-    @property()
     target!: "_blank"|"_self"|"_parent"|"_top";
+}
+
+@subclass('CommonClasses.Link')
+export class Link extends ConfigLink {
+    //----------------------------------
+    //  Properties
+    //----------------------------------
+    @property()
+    title!: string;
 
     @property()
     url!: string;
