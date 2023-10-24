@@ -211,7 +211,6 @@ class AdvancedSearch extends Widget {
   }
 
   async Load() {
-    _locale = getNormalizedLocale();
     t9n = (_locale === 'en' ? t9n_en : t9n_fr);
 
     this.zoomtosearchresults = this.zoomtosearchresults? this.zoomtosearchresults: true;
@@ -824,6 +823,8 @@ class AdvancedSearch extends Widget {
   //  Private Methods
   //--------------------------------------------------------------------------
   private afterRenderActions() {
+    _locale = getNormalizedLocale();
+
     let resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID) as HTMLDivElement;
     let modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
 

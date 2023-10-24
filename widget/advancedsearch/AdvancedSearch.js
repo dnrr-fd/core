@@ -143,7 +143,6 @@ let AdvancedSearch = class AdvancedSearch extends Widget {
         });
     }
     async Load() {
-        _locale = getNormalizedLocale();
         t9n = (_locale === 'en' ? t9n_en : t9n_fr);
         this.zoomtosearchresults = this.zoomtosearchresults ? this.zoomtosearchresults : true;
         this.graphicalsearchoptions = this.graphicalsearchoptions ? this.graphicalsearchoptions : new GraphicalSearchOptions();
@@ -510,6 +509,7 @@ let AdvancedSearch = class AdvancedSearch extends Widget {
     //  Private Methods
     //--------------------------------------------------------------------------
     afterRenderActions() {
+        _locale = getNormalizedLocale();
         let resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID);
         let modal_node = document.getElementById(elementIDs.advancedsearch_ModalID);
         // Change the title

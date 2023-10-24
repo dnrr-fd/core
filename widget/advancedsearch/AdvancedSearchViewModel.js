@@ -9,6 +9,7 @@ import * as projection from "@arcgis/core/geometry/projection";
 import { FeatureLayerReferences, SearchFieldSelectObjects, SelectObject } from "../class/_AdvancedSearch";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import { _locale, t9n, selectTypeOptions, elementIDs, postFixes, featureLayerArray } from "./AdvancedSearch";
+import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 import * as css from './assets/css/advancedsearch.module.css';
 var flIDsArray = new Array();
 export var featureLayerReferences = new Array();
@@ -85,9 +86,11 @@ async function featuresAsyncForEach(array, callback) {
 }
 export async function processFSOArray(layers) {
     return new Promise(async (resolve) => {
+        const _locale = getNormalizedLocale();
         let _searchFieldSOA = new Array();
         aslAsyncForEach(layers, async (layer) => {
             let fl = new FeatureLayer({
+                title: `${layer.searchlayerlabel[_locale]}`,
                 url: layer.url
             });
             await loadFSOArray(fl, layer).then(_searchFieldSelectObjects => {

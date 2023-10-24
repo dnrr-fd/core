@@ -16,6 +16,7 @@ import * as projection from "@arcgis/core/geometry/projection";
 import { AdvancedSearchField, AdvancedSearchLayer, FeatureLayerReferences, SearchFieldSelectObjects, SelectObject } from "../class/_AdvancedSearch";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import { _locale, t9n, selectTypeOptions, elementIDs, postFixes, featureLayerArray } from "./AdvancedSearch";
+import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 
 import * as css from './assets/css/advancedsearch.module.css';
 
@@ -106,10 +107,13 @@ async function featuresAsyncForEach(array: Array<Graphic>, callback: { (feature:
 
 export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promise<Array<SearchFieldSelectObjects>> {
   return new Promise(async resolve => {
+    const _locale = getNormalizedLocale();
+
     let _searchFieldSOA = new Array<SearchFieldSelectObjects>();
 
     aslAsyncForEach(layers, async (layer: AdvancedSearchLayer) => {
       let fl = new FeatureLayer({
+        title: `${layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}`,
         url: layer.url
       });
       await loadFSOArray(fl, layer).then(_searchFieldSelectObjects => {
