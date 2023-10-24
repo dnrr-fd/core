@@ -134,7 +134,7 @@ export async function processFSOArray(layers) {
             _selectObject.required = searchField.required ? searchField.required : false;
             if (_selectObject.fieldID != "") {
                 if (searchField.userlist && searchField.userlist.length > 0) {
-                    _selectOptions = searchField.userlist.map(item => tsx("option", { "data-value": item, text: item, defaultSelected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false, selected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false }, item));
+                    _selectOptions = searchField.userlist.map(item => tsx("option", { key: `${item.replace(' ', '')}_key`, "data-value": item, text: item, defaultSelected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false, selected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false }, item));
                     _selectObject.options = _selectOptions;
                     resolve(_selectObject);
                 }
@@ -142,7 +142,7 @@ export async function processFSOArray(layers) {
                     // See if the field has a coded value domain
                     let _field = fl.getField(searchField.field);
                     if (_field.domain && _field.domain.type === "coded-value") {
-                        _selectOptions = _field.domain.codedValues.map(codedValue => tsx("option", { "data-value": codedValue.code.toString(), text: codedValue.name, defaultSelected: searchField.defaultvalue ? codedValue.code === searchField.defaultvalue ? true : false : false, selected: searchField.defaultvalue ? codedValue.code === searchField.defaultvalue ? true : false : false }, codedValue.name));
+                        _selectOptions = _field.domain.codedValues.map(codedValue => tsx("option", { key: `${codedValue.code}_key`, "data-value": codedValue.code.toString(), text: codedValue.name, defaultSelected: searchField.defaultvalue ? codedValue.code === searchField.defaultvalue ? true : false : false, selected: searchField.defaultvalue ? codedValue.code === searchField.defaultvalue ? true : false : false }, codedValue.name));
                         _selectObject.options = _selectOptions;
                         resolve(_selectObject);
                     }
@@ -155,7 +155,7 @@ export async function processFSOArray(layers) {
                             returnGeometry: false
                         });
                         await queryFeatureLayer(fl, featureQuery).then(function (results) {
-                            _selectOptions = results.map(item => tsx("option", { "data-value": item, text: item, defaultSelected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false, selected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false }, item));
+                            _selectOptions = results.map(item => tsx("option", { key: `${item.replace(' ', '')}_key`, "data-value": item, text: item, defaultSelected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false, selected: searchField.defaultvalue ? item === searchField.defaultvalue ? true : false : false }, item));
                             _selectObject.options = _selectOptions;
                             resolve(_selectObject);
                         });

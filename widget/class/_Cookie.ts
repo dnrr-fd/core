@@ -72,10 +72,10 @@ export class CookiesVM extends Cookie {
         if (this.value === undefined) {
             return false;
         } else {
-            let enc_string = this.value? this.value: "null";
+            const enc_string = this.value? this.value: "null";
             const d = new Date();
             d.setTime(d.getTime() + (this.expiry * 24 * 60 * 60 * 1000));
-            let expires = "expires=" + d.toUTCString();
+            const expires = "expires=" + d.toUTCString();
             document.cookie = this.id + "=" + enc_string + ";" + expires + ";SameSite=None;Secure;path=/";
             // console.log(`setCookie() Value: ${document.cookie}`);
         }
@@ -83,17 +83,17 @@ export class CookiesVM extends Cookie {
     }
       
     async getCookie(): Promise<boolean> {
-        let name = this.id + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
+        const name = this.id + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
         for(let i = 0; i < ca.length; i++) {
             let c = ca[i];
             while (c.charAt(0) == ' ') {
                 c = c.substring(1);
             }
             if (c.indexOf(name) == 0) {
-                let enc_string = c.substring(name.length, c.length);
-                let dec_string = enc_string;
+                const enc_string = c.substring(name.length, c.length);
+                const dec_string = enc_string;
                 this.accepted = true;
                 if (dec_string === "null") {
                     this.value = null;

@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -258,7 +260,7 @@ class Footer extends Widget {
     let _paragraphs = div_node?.getElementsByTagName('p') as HTMLCollectionOf<HTMLParagraphElement>;
 
     if (_paragraphs) {
-      _paragraphs[0].innerHTML = title;;
+      _paragraphs[0].innerHTML = title;
     }
   }
 
@@ -266,7 +268,7 @@ class Footer extends Widget {
     var _links = linksArray.map(links => 
       <div class={linkLineDivClass}>
         {links.map(link => 
-          <div class={linkDivClass}>
+          <div key={`${link.id}_key`} class={linkDivClass}>
             <a id={link.id} class={this.classes(anchorClass, css_theme.default.widget_footer__ignore)} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
           </div>
         )}

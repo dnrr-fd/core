@@ -357,7 +357,7 @@ async function addScaleBar(widget: ScaleBarWidget, view: MapView): Promise<Scale
         returnConfig(configFile, null).then(config => {
             var _visible = getWidgetConfigKeyValue(config as ScaleBarWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _unit = getWidgetConfigKeyValue(config as ScaleBarWidget, "unit", widget.unit? widget.unit: "dual") as "non-metric"|"metric"|"dual";
-            var _style = getWidgetConfigKeyValue(config as ScaleBarWidget, "style", widget.unit? widget.unit: "line") as "ruler"|"line";
+            var _style = getWidgetConfigKeyValue(config as ScaleBarWidget, "style", widget.style? widget.style: "line") as "ruler"|"line";
 
             _scaleBar.label = widget.id;
             _scaleBar.view = view;
@@ -490,14 +490,15 @@ async function addExtentNavigator(widget: ExtentNavigationWidget, view: MapView)
         var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
         var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
         var _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true) as boolean;
-        var _extentNavigator = new ExtentNavigator();
 
         returnConfig(configFile, null).then(config => {
             var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
+            var _extentNavigator = new ExtentNavigator({
+                view: view,
+                horizontalAlignButtons: _horizontalAlignButtons
+            });
             _extentNavigator.label = widget.id;
-            _extentNavigator.horizontalAlignButtons = _horizontalAlignButtons;
-            _extentNavigator.view = view;
             _extentNavigator.visible = _visible;
 
             view.ui.add([
@@ -712,7 +713,7 @@ async function addAdvancedSearch(widget: AdvancedSearchWidget, view: MapView): P
                         rootFocusElement: _rootFocusElement,
                         addMissingSearchLayers: _addMissingSearchLayers
                     });
-    
+
                 }).then(function (){
                     advancedSearchWidget.label = _label;
                     var _advancedSearch_button = new AdvancedSearchButton({

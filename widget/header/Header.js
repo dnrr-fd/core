@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -232,11 +231,11 @@ let Header = class Header extends Widget {
         let postFix = "";
         if (menuLinkTag === true) {
             postFix = "_menu";
-            var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
+            var _links = linksArray.map(link => tsx("div", { key: `${link.id}_key`, class: linkDivClass },
                 tsx("a", { id: `${link.id}${postFix}`, class: this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_sitemenu__ignore), href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
         }
         else {
-            var _links = linksArray.map(link => tsx("div", { class: linkDivClass },
+            var _links = linksArray.map(link => tsx("div", { key: `${link.id}_key`, class: linkDivClass },
                 tsx("a", { id: `${link.id}${postFix}`, class: css_esri.esri_widget_anchor, href: link.url, target: link.target, title: link.title, tabindex: '0' }, link.title)));
         }
         return _links;
@@ -265,7 +264,7 @@ let Header = class Header extends Widget {
         });
     }
     _createReactThemeRBs(themesArray, defaultThemeID, themeDivClass = null) {
-        var _themes = themesArray.map(theme => tsx("div", { class: themeDivClass },
+        var _themes = themesArray.map(theme => tsx("div", { key: `${theme.id}_key`, class: themeDivClass },
             tsx("input", { type: "radio", id: theme.id, class: css_theme.default.widget_header_sitemenu__ignore, checked: theme.id === defaultThemeID ? true : false, name: "set_theme", value: theme.id, title: theme.label, tabindex: "0", onchange: this._theme_change.bind(this, theme.id) }),
             tsx("label", { id: `${theme.id}_label`, for: theme.id }, theme.label),
             tsx("br", null)));
@@ -305,7 +304,7 @@ let Header = class Header extends Widget {
         });
     }
     _createReactLanguageRBs(languagesArray, defaultLocaleID, localeDivClass = null) {
-        var _languages = languagesArray.map(lang => tsx("div", { class: localeDivClass },
+        var _languages = languagesArray.map(lang => tsx("div", { key: `${lang.id}_key`, class: localeDivClass },
             tsx("input", { type: "radio", id: lang.id, class: css_theme.default.widget_header_sitemenu__ignore, checked: lang.id === defaultLocaleID ? true : false, name: "set_language", value: lang.id, title: lang.label, tabindex: "0", onchange: this._setLocale.bind(this, lang.id) }),
             tsx("label", { id: `${lang.id}_label`, for: lang.id }, lang.label),
             tsx("br", null)));

@@ -94,9 +94,6 @@ export class CookiesWidget extends MapWidget {
     expanded!: boolean|null;
 
     @property()
-    visible!: boolean;
-
-    @property()
     privacyPolicy!: WebUrlObject;
 
     @property()

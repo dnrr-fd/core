@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -126,7 +128,7 @@ class WidgetBar extends Widget {
 
     // Create widgetBarWidget scaffold
     _widgetBarWidgets = this.widgets.map(widget =>
-      <div id={widget.id} class={self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id as keyof typeof css_theme.default], css_theme.default.widget_widgetbar_visible__none)}></div>
+      <div key={`${widget.id}_key`} id={widget.id} class={self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id as keyof typeof css_theme.default], css_theme.default.widget_widgetbar_visible__none)}></div>
     );
 
     // Watch for changes

@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import MapView from "@arcgis/core/views/MapView";
 import FeatureTable from "@arcgis/core/widgets/FeatureTable";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
@@ -160,7 +162,7 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
       if (_selectObject.fieldID != "") {
         if (searchField.userlist && searchField.userlist.length > 0) {
           _selectOptions = searchField.userlist.map(item => 
-            <option data-value={item} text={item} defaultSelected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
+            <option key={`${item.replace(' ', '')}_key`} data-value={item} text={item} defaultSelected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
           );
           _selectObject.options = _selectOptions;
           resolve(_selectObject);
@@ -169,7 +171,7 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
           let _field = fl.getField(searchField.field);
           if (_field.domain && _field.domain.type === "coded-value") {
             _selectOptions = _field.domain.codedValues.map(codedValue => 
-              <option data-value={codedValue.code.toString()} text={codedValue.name} defaultSelected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false}>{codedValue.name}</option>
+              <option key={`${codedValue.code}_key`} data-value={codedValue.code.toString()} text={codedValue.name} defaultSelected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false}>{codedValue.name}</option>
             );
             _selectObject.options = _selectOptions;
             resolve(_selectObject);
@@ -183,7 +185,7 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
             });
             await queryFeatureLayer(fl, featureQuery).then(function (results: Array<string>) {
               _selectOptions = results.map(item => 
-                <option data-value={item} text={item} defaultSelected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
+                <option key={`${item.replace(' ', '')}_key`} data-value={item} text={item} defaultSelected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
               );
               _selectObject.options = _selectOptions;
               resolve(_selectObject);
@@ -294,7 +296,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
   return new Promise(async resolve => {
     let extent: Extent;
     let extentCheckbox_node = document.getElementById(elementIDs.advancedsearch_ByValueResultsExtentCheckboxID) as HTMLInputElement
-    let ftOidArray: Array<Number>;
+    let ftOidArray: Array<number>;
     let afSqlWhere = "";
     let afFeatureSet: FeatureSet;
 
@@ -310,7 +312,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
     if (currentSearchLayerIndex > -1 && featureLayerArray[currentSearchLayerIndex].id === lyrID) {
       featureTable.activeFilters.forEach(af => {
         if (af.type === "selection") {
-          let afSelection = af as {type: string, objectIds: Array<Number>};
+          let afSelection = af as {type: string, objectIds: Array<number>};
           console.log(afSelection);
           ftOidArray = afSelection.objectIds;
           console.log(ftOidArray);
@@ -360,7 +362,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
 
 async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: AdvancedSearchLayer, featureTable: FeatureTable): Promise<FeatureSet> {
   return new Promise(async resolve => {
-    let ftOidArray: Array<Number>;
+    let ftOidArray: Array<number>;
     let ftSqlWhere = "";
     let ftFeatureSet: FeatureSet;
 
@@ -378,7 +380,7 @@ async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: Advan
       if (currentSearchLayerIndex > -1 && featureLayerArray[currentSearchLayerIndex].id === lyrID) {
         featureTable.activeFilters.forEach(af => {
           if (af.type === "selection") {
-            let afSelection = af as {type: string, objectIds: Array<Number>};
+            let afSelection = af as {type: string, objectIds: Array<number>};
             console.log(afSelection);
             ftOidArray = afSelection.objectIds;
             console.log(ftOidArray);
@@ -732,7 +734,7 @@ function buildSQLTextFromSearchFields(sfso: SearchFieldSelectObjects, layer: Adv
   return sqlText;
 }
 
-export function buildSQLText(field: string, collectionOrArray: Collection<number>|Collection<string>|Array<Number>|Array<number>|Array<string>) {
+export function buildSQLText(field: string, collectionOrArray: Collection<number>|Collection<string>|Array<number>|Array<number>|Array<string>) {
   var sqlOIDs: string;
 
   if (collectionOrArray instanceof Collection === true) {

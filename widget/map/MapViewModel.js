@@ -328,7 +328,7 @@ async function addScaleBar(widget, view) {
         returnConfig(configFile, null).then(config => {
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
             var _unit = getWidgetConfigKeyValue(config, "unit", widget.unit ? widget.unit : "dual");
-            var _style = getWidgetConfigKeyValue(config, "style", widget.unit ? widget.unit : "line");
+            var _style = getWidgetConfigKeyValue(config, "style", widget.style ? widget.style : "line");
             _scaleBar.label = widget.id;
             _scaleBar.view = view;
             _scaleBar.visible = _visible;
@@ -446,12 +446,13 @@ async function addExtentNavigator(widget, view) {
         var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
         var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
         var _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true);
-        var _extentNavigator = new ExtentNavigator();
         returnConfig(configFile, null).then(config => {
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
+            var _extentNavigator = new ExtentNavigator({
+                view: view,
+                horizontalAlignButtons: _horizontalAlignButtons
+            });
             _extentNavigator.label = widget.id;
-            _extentNavigator.horizontalAlignButtons = _horizontalAlignButtons;
-            _extentNavigator.view = view;
             _extentNavigator.visible = _visible;
             view.ui.add([
                 {

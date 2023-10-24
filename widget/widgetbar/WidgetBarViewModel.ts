@@ -585,7 +585,6 @@ async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView): Promi
         
         returnConfig(configFile, null).then( config => {
             var measurementT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
-            var _measurement = new MeasurementDNRR();
             var _measurement_expand = new Expand();
             var _visible = getWidgetConfigKeyValue(config as MeasurementWidget, "visible", widget.visible? widget.visible: true) as boolean;
             var _expanded = getWidgetConfigKeyValue(config as MeasurementWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
@@ -602,10 +601,13 @@ async function addMeasurement(widget: WidgetBarWidget, _mapView: MapView): Promi
                 _label = getWidgetLocaleConfigKeyValue(t9nResults as WidgetBarWidgetLocale, "label", lang==="en"? "Sketch": "Dessin") as string;
             }).then(function (){
 
+                var _measurement = new MeasurementDNRR({
+                    view: _mapView,
+                    measurement_map_location: _map_location,
+                    measurement_index_position: _index_pos
+                });
+                
                 _measurement.label = _label;
-                _measurement.view = _mapView;
-                _measurement.measurement_map_location = _map_location;
-                _measurement.measurement_index_position = _index_pos;
     
                 _measurement_expand.id = widget.id;
                 _measurement_expand.view = _mapView;

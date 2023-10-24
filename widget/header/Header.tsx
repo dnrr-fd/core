@@ -1,4 +1,6 @@
 // @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -348,13 +350,13 @@ class Header extends Widget {
     if (menuLinkTag === true) {
       postFix = "_menu"
       var _links = linksArray.map(link => 
-        <div class={linkDivClass}>
+        <div key={`${link.id}_key`} class={linkDivClass}>
           <a id={`${link.id}${postFix}`} class={this.classes(css_esri.esri_widget_anchor, css_theme.default.widget_header_sitemenu__ignore)} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
         </div>
       );
     } else {
       var _links = linksArray.map(link => 
-        <div class={linkDivClass}>
+        <div key={`${link.id}_key`} class={linkDivClass}>
           <a id={`${link.id}${postFix}`} class={css_esri.esri_widget_anchor} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
         </div>
       );
@@ -391,7 +393,7 @@ class Header extends Widget {
 
   private _createReactThemeRBs(themesArray: Array<Theme>, defaultThemeID: string, themeDivClass=null as string|null) {
     var _themes = themesArray.map(theme => 
-      <div class={themeDivClass}>
+      <div key={`${theme.id}_key`} class={themeDivClass}>
         <input type="radio" id={theme.id} class={css_theme.default.widget_header_sitemenu__ignore} checked={theme.id === defaultThemeID ? true : false} name="set_theme" value={theme.id} title={theme.label} tabindex="0" onchange={this._theme_change.bind(this, theme.id as 'light'|'dark')} />
         <label id={`${theme.id}_label`} for={theme.id}>{theme.label}</label>
         <br />
@@ -445,7 +447,7 @@ class Header extends Widget {
 
   private _createReactLanguageRBs(languagesArray: Array<Locale>, defaultLocaleID: string, localeDivClass=null as string|null) {
     var _languages = languagesArray.map(lang => 
-      <div class={localeDivClass}>
+      <div key={`${lang.id}_key`} class={localeDivClass}>
         <input type="radio" id={lang.id} class={css_theme.default.widget_header_sitemenu__ignore} checked={lang.id === defaultLocaleID ? true : false} name="set_language" value={lang.id} title={lang.label} tabindex="0" onchange={this._setLocale.bind(this, lang.id)} />
         <label id={`${lang.id}_label`} for={lang.id}>{lang.label}</label>
         <br />

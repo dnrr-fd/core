@@ -1,4 +1,6 @@
-// @ts-checkselectFeaturesUsingGeometry
+// @ts-check
+import React from 'react';
+
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -165,8 +167,50 @@ class AdvancedSearch extends Widget {
   //--------------------------------------------------------------------------
   //  Public Methods
   //--------------------------------------------------------------------------
+  async postInitialize() {
+    await this.PreLoad().then(searchFieldSelectObjectsArray => {
+      console.log(`searchFieldSelectObjectsArray: ${searchFieldSelectObjectsArray}`);
+      this.Load();
+    });
+  }
 
-  async postInitialize(): Promise<void> {
+  async PreLoad (): Promise<Array<SearchFieldSelectObjects>> {
+    return new Promise(resolve => {
+      // Get the unique values for all layers to populate the select.
+      processFSOArray(this.layers).then(results => {
+        _searchFieldSelectObjectsArray = results as Array<SearchFieldSelectObjects>;
+
+        // Dynamically create search fields.
+        searchFields = this.layers.map(layer =>
+          <div key={`${layer.id}_key`} id={`${layer.id}${postFixes.layerDivID}`} class={this.classes(css.default.widget_advancedsearch_byvalue_searchfield__div)}>
+            {layer.searchfields.map(searchfield => 
+              <div key={`${layer.id}_${searchfield.field}_key`} id={`${layer.id}_${searchfield.field}${postFixes.layerFieldDivID}`} class={css.default.widget_advancedsearch_byvalue_searchfield_fieldsnovalidation__div}>
+                <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields__div}>
+                  <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_items__div}>
+                    <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_label__div}>
+                      <label for={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`}>{searchfield.fieldlabel[_locale as keyof typeof searchfield.fieldlabel]}</label>
+                    </div>
+                    <div class={css.default.widget_advancedsearch_byvalue_fieldinput_asterix__div}>
+                      <input id={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select, `${searchfield.required? css.default.widget_advancedsearch_required__input: ""}`)} list={`${layer.id}_${searchfield.field}${postFixes.layerFieldDataListID}`} placeholder={searchfield.searchhint? searchfield.searchhint: ""} required={searchfield.required? searchfield.required===true? `"${searchfield.required}"`: "false": "false"}></input>
+                      <datalist id={`${layer.id}_${searchfield.field}${postFixes.layerFieldDataListID}`}>
+                        {_searchFieldSelectObjectsArray[_searchFieldSelectObjectsArray.map(function(e) { return e.layerID; }).indexOf(layer.id)].selectObjects[_searchFieldSelectObjectsArray[_searchFieldSelectObjectsArray.map(function(e) { return e.layerID; }).indexOf(layer.id)].selectObjects.map(function(e) { return e.fieldID; }).indexOf(searchfield.field)].options.map(option => option)}
+                      </datalist>
+                      <div id={`${layer.id}_${searchfield.field}${postFixes.layerFieldValidationAsterixDivID}`} class={this.classes(css.default.widget_advancedsearch_error__div, css.default.widget_advancedsearch_error__asterix, css.default.widget_advancedsearch_visible__none)}>*</div>
+                      <input type="hidden" id={`${layer.id}_${searchfield.field}${postFixes.layerFieldHiddenInputID}`} ></input>
+                    </div>
+                  </div>
+                </div>
+                <div id={`${layer.id}_${searchfield.field}${postFixes.layerFieldValidationDivID}`} class={this.classes(css.default.widget_advancedsearch_error__div, css.default.widget_advancedsearch_visible__none)}></div>
+              </div>
+            )}
+          </div>
+        );
+        resolve(_searchFieldSelectObjectsArray);
+      });
+    });
+  }
+
+  async Load() {
     _locale = getNormalizedLocale();
     t9n = (_locale === 'en' ? t9n_en : t9n_fr);
 
@@ -191,7 +235,7 @@ class AdvancedSearch extends Widget {
 
     // Dynamically create search layers.
     searchLayers = this.layers.map(layer =>
-        <option value={layer.id} title={layer.searchlayertitletext[_locale as keyof typeof layer.searchlayertitletext]}>{layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}</option>
+        <option key={`${layer.id}_sl_key`} value={layer.id} title={layer.searchlayertitletext[_locale as keyof typeof layer.searchlayertitletext]}>{layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}</option>
     );
 
     // Set up the sketch view models for the select by shape section
@@ -238,42 +282,9 @@ class AdvancedSearch extends Widget {
                   
             // Get focusable elements
             getFocusableElements(document.getElementById(this.rootFocusElement)!);
-          } else {
-
           }
         });
       }
-    });
-
-    // Get the unique values for all layers to populate the select.
-    await processFSOArray(this.layers).then(results => {
-      _searchFieldSelectObjectsArray = results as Array<SearchFieldSelectObjects>;
-
-      // Dynamically create search fields.
-      searchFields = this.layers.map(layer =>
-        <div id={`${layer.id}${postFixes.layerDivID}`} class={this.classes(css.default.widget_advancedsearch_byvalue_searchfield__div)}>
-          {layer.searchfields.map(searchfield => 
-            <div id={`${layer.id}_${searchfield.field}${postFixes.layerFieldDivID}`} class={css.default.widget_advancedsearch_byvalue_searchfield_fieldsnovalidation__div}>
-              <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields__div}>
-                <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_items__div}>
-                  <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_label__div}>
-                    <label for={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`}>{searchfield.fieldlabel[_locale as keyof typeof searchfield.fieldlabel]}</label>
-                  </div>
-                  <div class={css.default.widget_advancedsearch_byvalue_fieldinput_asterix__div}>
-                    <input id={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select, `${searchfield.required? css.default.widget_advancedsearch_required__input: ""}`)} list={`${layer.id}_${searchfield.field}${postFixes.layerFieldDataListID}`} placeholder={searchfield.searchhint? searchfield.searchhint: ""} required={searchfield.required? searchfield.required===true? `"${searchfield.required}"`: "false": "false"}></input>
-                    <datalist id={`${layer.id}_${searchfield.field}${postFixes.layerFieldDataListID}`}>
-                      {_searchFieldSelectObjectsArray[_searchFieldSelectObjectsArray.map(function(e) { return e.layerID; }).indexOf(layer.id)].selectObjects[_searchFieldSelectObjectsArray[_searchFieldSelectObjectsArray.map(function(e) { return e.layerID; }).indexOf(layer.id)].selectObjects.map(function(e) { return e.fieldID; }).indexOf(searchfield.field)].options.map(option => option)}
-                    </datalist>
-                    <div id={`${layer.id}_${searchfield.field}${postFixes.layerFieldValidationAsterixDivID}`} class={this.classes(css.default.widget_advancedsearch_error__div, css.default.widget_advancedsearch_error__asterix, css.default.widget_advancedsearch_visible__none)}>*</div>
-                    <input type="hidden" id={`${layer.id}_${searchfield.field}${postFixes.layerFieldHiddenInputID}`} ></input>
-                  </div>
-                </div>
-              </div>
-              <div id={`${layer.id}_${searchfield.field}${postFixes.layerFieldValidationDivID}`} class={this.classes(css.default.widget_advancedsearch_error__div, css.default.widget_advancedsearch_visible__none)}></div>
-            </div>
-          )}
-        </div>
-      );
     });
   }
 

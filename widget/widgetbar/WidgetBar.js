@@ -1,5 +1,4 @@
 import { __decorate } from "tslib";
-// @ts-check
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -54,7 +53,7 @@ let WidgetBar = class WidgetBar extends Widget {
         this.theme = getWidgetTheme(elementIDs.esriThemeID, this.theme);
         css_theme = (this.theme === 'dark' ? css_dark : css_light);
         // Create widgetBarWidget scaffold
-        _widgetBarWidgets = this.widgets.map(widget => tsx("div", { id: widget.id, class: self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id], css_theme.default.widget_widgetbar_visible__none) }));
+        _widgetBarWidgets = this.widgets.map(widget => tsx("div", { key: `${widget.id}_key`, id: widget.id, class: self.classes(css_theme.default.widget_widgetbar_widget, css_theme.default[widget.id], css_theme.default.widget_widgetbar_visible__none) }));
         // Watch for changes
         intl.onLocaleChange(async function (locale) {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);

@@ -69,9 +69,6 @@ __decorate([
 ], CookiesWidget.prototype, "expanded", void 0);
 __decorate([
     property()
-], CookiesWidget.prototype, "visible", void 0);
-__decorate([
-    property()
 ], CookiesWidget.prototype, "privacyPolicy", void 0);
 __decorate([
     property()
