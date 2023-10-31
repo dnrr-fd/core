@@ -14,6 +14,7 @@ import ExtentNavigator from "../extentnavigator/ExtentNavigator";
 import Locate from "@arcgis/core/widgets/Locate";
 import Fullscreen from "@arcgis/core/widgets/Fullscreen";
 import LayerList from "@arcgis/core/widgets/LayerList";
+import Slider from "@arcgis/core/widgets/Slider";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import Cookies from "../cookies/Cookies";
 import { Cookie } from "../class/_Cookie";
@@ -446,13 +447,12 @@ async function addExtentNavigator(widget, view) {
         var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
         var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
         var _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true);
+        var _extentNavigator = new ExtentNavigator();
         returnConfig(configFile, null).then(config => {
             var _visible = getWidgetConfigKeyValue(config, "visible", widget.visible ? widget.visible : true);
-            var _extentNavigator = new ExtentNavigator({
-                view: view,
-                horizontalAlignButtons: _horizontalAlignButtons
-            });
             _extentNavigator.label = widget.id;
+            _extentNavigator.horizontalAlignButtons = _horizontalAlignButtons;
+            _extentNavigator.view = view;
             _extentNavigator.visible = _visible;
             view.ui.add([
                 {
@@ -534,7 +534,6 @@ async function addLayerList(widget, view) {
         }
         var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
         var _index = getWidgetConfigKeyValue(widget, "index_position", 4);
-        var _layerList = new LayerList();
         var _layerList_expand = new Expand();
         returnConfig(configFile, null).then(config => {
             var layerListT9nPath = widget.t9nPath ? `${widget.t9nPath}/${lang}.json` : null;
@@ -553,10 +552,38 @@ async function addLayerList(widget, view) {
                 }
                 _label = getWidgetLocaleConfigKeyValue(t9nResults, "label", lang === "en" ? "Layer List" : "Liste des Couches");
             }).then(function () {
-                _layerList.label = _label;
-                _layerList.view = view;
-                _layerList.visible = _visible;
+                const _layerList = new LayerList({
+                    view: view,
+                    visible: _visible,
+                    listItemCreatedFunction: layerListActions
+                });
                 // _layerList.container = mapExpandContainer;
+                _layerList.on("trigger-action", (event) => {
+                    // The layer visible in the view at the time of the trigger.
+                    const visibleLayer = event.item.layer;
+                    // Capture the action id.
+                    const id = event.action.id;
+                    if (id === "full-extent") {
+                        view.goTo(visibleLayer.fullExtent).catch((error) => {
+                            if (error.name != "AbortError") {
+                                console.error(error);
+                            }
+                        });
+                    }
+                    else if (id === "information") {
+                        window.open(visibleLayer.get("url"));
+                    }
+                    else if (id === "increase-opacity") {
+                        if (visibleLayer.opacity < 1) {
+                            visibleLayer.opacity += 0.25;
+                        }
+                    }
+                    else if (id === "decrease-opacity") {
+                        if (visibleLayer.opacity > 0) {
+                            visibleLayer.opacity -= 0.25;
+                        }
+                    }
+                });
                 _layerList_expand.id = widget.id;
                 _layerList_expand.view = view;
                 _layerList_expand.visible = _visible;
@@ -580,6 +607,62 @@ async function addLayerList(widget, view) {
             });
         });
     });
+}
+async function layerListActions(event) {
+    // The event object contains an item property.
+    // is is a ListItem referencing the associated layer
+    // and other properties. You can control the visibility of the
+    // item, its title, and actions using this object.
+    const item = event.item;
+    await item.layer.when();
+    item.actionsSections = [
+        [
+            {
+                title: lang === "fr" ? "Aller à l'Etendue Complète" : "Go to Full Extent",
+                className: "esri-icon-zoom-out-fixed",
+                id: "full-extent"
+            },
+            {
+                title: lang === "fr" ? "Informations sur la Couche" : "Layer Information",
+                className: "esri-icon-description",
+                id: "information"
+            }
+            // ],
+            // [
+            //     {
+            //         title: "Increase opacity",
+            //         className: "esri-icon-up",
+            //         id: "increase-opacity"
+            //     },
+            //     {
+            //         title: "Decrease opacity",
+            //         className: "esri-icon-down",
+            //         id: "decrease-opacity"
+            //     }
+        ]
+    ];
+    // Adds a slider for updating a group layer's opacity
+    // if (item.children.length > 1 && item.parent) {
+    const slider = new Slider({
+        min: 0,
+        max: 100,
+        precision: 0,
+        values: [100],
+        visibleElements: {
+            labels: true,
+            rangeLabels: true
+        }
+    });
+    item.panel = {
+        content: slider,
+        className: "esri-icon-sliders-horizontal",
+        title: "Change layer opacity"
+    };
+    slider.on("thumb-drag", (event) => {
+        const { value } = event;
+        item.layer.opacity = value / 100;
+    });
+    // }
 }
 async function addAdvancedSearch(widget, view) {
     return new Promise(resolve => {

@@ -540,18 +540,20 @@ async function activateFeatureTable(layer: FeatureLayer, resultsTable: FeatureTa
 }
 
 export async function clearFeatureTable(_featureTable: FeatureTable): Promise<void> {
-  let sqlWhere = `${_featureTable.layer.objectIdField} = -9999`;
-  let _lyr = _featureTable.layer as any;
-  let emptyLayer = new FeatureLayer({
-    url: _lyr.parsedUrl.path,
-    definitionExpression: sqlWhere
-  });
-
-  _featureTable.layer = emptyLayer;
-  _featureTable.highlightIds.removeAll
-  _featureTable.clearSelectionFilter();
-  console.log(`Feature Table Selection Filter: ${_featureTable.activeFilters.map(function (af: any) {return af.objectIds})}`);
-  setCurrentSearchLayerIndex(-1);
+  if (_featureTable.layer && _featureTable.layer.fields) {
+    let sqlWhere = `${_featureTable.layer.objectIdField} = -9999`;
+    let _lyr = _featureTable.layer as any;
+    let emptyLayer = new FeatureLayer({
+      url: _lyr.parsedUrl.path,
+      definitionExpression: sqlWhere
+    });
+  
+    _featureTable.layer = emptyLayer;
+    _featureTable.highlightIds.removeAll
+    _featureTable.clearSelectionFilter();
+    console.log(`Feature Table Selection Filter: ${_featureTable.activeFilters.map(function (af: any) {return af.objectIds})}`);
+    setCurrentSearchLayerIndex(-1);
+  }
 
   return;
 }
