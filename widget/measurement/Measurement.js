@@ -10,7 +10,7 @@ import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 import * as css from './assets/css/measurement.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-var t9n = t9n_en;
+let t9n = t9n_en;
 const measurement = new Measurement();
 const css_esri = {
     esri_widget: 'esri-widget',
@@ -36,7 +36,7 @@ let MeasurementDNRR = class MeasurementDNRR extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
@@ -56,19 +56,19 @@ let MeasurementDNRR = class MeasurementDNRR extends Widget {
     render() {
         return (tsx("div", { id: elementIDs.measurement_MainID, class: this.classes(css.default.widget_measurement, css_esri.esri_component, css_esri.esri_widget) },
             tsx("div", { class: css.default.widget_measurement_button__div },
-                tsx("button", { id: elementIDs.measurement_DistanceButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_line), title: t9n.distanceButtonLabel, ariaLabel: t9n.distanceButtonLabel, onclick: this._measureDistance_click.bind(this), tabindex: "0" })),
+                tsx("button", { id: elementIDs.measurement_DistanceButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_line), title: t9n.distanceButtonLabel, "aria-label": t9n.distanceButtonLabel, onclick: this._measureDistance_click.bind(this), tabIndex: "0" })),
             tsx("div", { class: css.default.widget_measurement_button__div },
-                tsx("button", { id: elementIDs.measurement_AreaButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_area), title: t9n.areaButtonLabel, ariaLabel: t9n.areaButtonLabel, onclick: this._measureArea_click.bind(this), tabindex: "1" })),
+                tsx("button", { id: elementIDs.measurement_AreaButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_measure_area), title: t9n.areaButtonLabel, "aria-label": t9n.areaButtonLabel, onclick: this._measureArea_click.bind(this), tabIndex: "1" })),
             tsx("div", { class: css.default.widget_measurement_button__div },
-                tsx("button", { id: elementIDs.measurement_ClearButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash, css.default.widget_measurement_clear__button), title: t9n.clearButtonLabel, ariaLabel: t9n.clearButtonLabel, onclick: this._clearMeasurements_click.bind(this), tabindex: "2" }))));
+                tsx("button", { id: elementIDs.measurement_ClearButtonID, type: "button", class: this.classes(css.default.widget_measurement_button, css_esri.esri_widget_button, css_esri.esri_interactive, css_esri.esri_icon_trash, css.default.widget_measurement_clear__button), title: t9n.clearButtonLabel, "aria-label": t9n.clearButtonLabel, onclick: this._clearMeasurements_click.bind(this), tabIndex: "2" }))));
     }
     //--------------------------------------------------------------------------
     //  Event Methods
     //--------------------------------------------------------------------------
     _measureDistance_click() {
         measurement.activeTool = "distance";
-        let distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
-        let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
+        const distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
+        const areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
         distanceButton_node.classList.add("active");
         distanceButton_node.classList.add(css.default.widget_measurement__button_focus);
         areaButton_node.classList.remove("active");
@@ -76,8 +76,8 @@ let MeasurementDNRR = class MeasurementDNRR extends Widget {
     }
     _measureArea_click() {
         measurement.activeTool = "area";
-        let distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
-        let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
+        const distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
+        const areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
         distanceButton_node.classList.remove("active");
         distanceButton_node.classList.remove(css.default.widget_measurement__button_focus);
         areaButton_node.classList.add("active");
@@ -90,8 +90,8 @@ let MeasurementDNRR = class MeasurementDNRR extends Widget {
     //  Private Methods
     //--------------------------------------------------------------------------
     clear() {
-        let distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
-        let areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
+        const distanceButton_node = document.getElementById(elementIDs.measurement_DistanceButtonID);
+        const areaButton_node = document.getElementById(elementIDs.measurement_AreaButtonID);
         distanceButton_node.classList.remove("active");
         distanceButton_node.classList.remove(css.default.widget_measurement__button_focus);
         areaButton_node.classList.remove("active");

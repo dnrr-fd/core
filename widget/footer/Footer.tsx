@@ -4,6 +4,7 @@ import React from 'react';
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import * as intl from "@arcgis/core/intl";
 import { Email, Link } from '../class/_Common'
 import { getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web'
@@ -17,9 +18,11 @@ import * as css_light from './assets/css/light/footer.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var css_theme = css_dark;
-var t9n = t9n_en;
-var _isFooterExpanded = false;
+let css_theme = css_dark;
+let t9n = t9n_en;
+let _isFooterExpanded = false;
+
+let self: Footer;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -47,8 +50,8 @@ const elementIDs = {
   footer_copyrightID: "footer_copyrightID",
 };
 
-var _links: tsx.JSX.Element;
-var _title: tsx.JSX.Element;
+let _links: tsx.JSX.Element;
+let _title: tsx.JSX.Element;
 
 interface FooterParams extends __esri.WidgetProperties {
   afterFooterCloseFocusElement?: string|HTMLElement;
@@ -118,7 +121,7 @@ class Footer extends Widget {
   //--------------------------------------------------------------------------
 
   postInitialize(): void {
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -126,7 +129,7 @@ class Footer extends Widget {
       t9n = t9n_fr;
     }
 
-    var self = this;
+    self = this as Footer;
 
     this.label = t9n.button.label;
 
@@ -143,20 +146,18 @@ class Footer extends Widget {
       t9n = (locale === 'fr' ? t9n_fr : t9n_en);
     });
 
-    this.watch("theme", function(theme_new: string, theme_old: string){
-      css_theme = (theme_new === 'dark' ? css_dark : css_light);
-      // self.render();
-      // console.log(`Watch: Theme (Footer) is now ${theme_new}`);
+    reactiveUtils.watch(() => self.theme, (theme: string) => {
+      css_theme = (theme === 'dark' ? css_dark : css_light);
     });
 
-    this.watch("links", function(links_new: Array<Array<Link>>, links_old: Array<Array<Link>>){
+    reactiveUtils.watch(() => self.links, (links_new: Array<Array<Link>>, links_old: Array<Array<Link>>) => {
       if (links_old) {
         self._modifyDOMLinks(links_new, elementIDs.footer_linksID);
         self.toggleFooter(self.startExpanded, false);
       }
     });
 
-    this.watch("title", function(title_new: string, title_old: string){
+    reactiveUtils.watch(() => self.title, (title_new: string, title_old: string) => {
       if (title_old) {
         self._modifyDOMTitle(title_new, elementIDs.footer_titleID);
         self.toggleFooter(self.startExpanded, false);
@@ -169,7 +170,7 @@ class Footer extends Widget {
       <div id={elementIDs.footerModalID} afterCreate={this.setFooter} bind={this} class={css_theme.default.widget_footer_modal}>
         <div id={elementIDs.footerID} class={this.classes(css_theme.default.widget_footer, css_theme.default.widget_footer_transition, css_esri.esri_widget, css_theme.default.widget_footer_visibility__visible)}>
           <div id={elementIDs.footer_buttonBarID} class={css_theme.default.widget_footer_button_bar}>
-            <div id={elementIDs.footer_buttonID} class={this.classes(css_theme.default.widget_footer_button, css_esri.esri_widget_button)} role="button" aria-label={t9n.button.collapselabel} title={t9n.button.collapselabel} tabindex='0' onclick={this._footerButton_click.bind(this)} onkeypress={this._footerButton_keypress.bind(this)}>
+            <div id={elementIDs.footer_buttonID} class={this.classes(css_theme.default.widget_footer_button, css_esri.esri_widget_button)} role="button" aria-label={t9n.button.collapselabel} title={t9n.button.collapselabel} tabIndex='0' onclick={this._footerButton_click.bind(this)} onKeyPress={this._footerButton_keypress.bind(this)}>
               <span id={elementIDs.footer_button_iconID} aria-hidden="true" class={this.classes(css_esri.esri_expand_icon_expanded, css_esri.esri_icon_expand, css_theme.default.widget_footer_transform_90_down)}></span>
               <span class={css_esri.esri_icon_font_fallback_text}>{t9n.button.label}</span>
             </div>
@@ -177,7 +178,7 @@ class Footer extends Widget {
           <div id={elementIDs.footer_foregroundID} class={css_theme.default.widget_footer_fg}>
             {_title}
             <div id={elementIDs.footer_bodytextID} class={css_theme.default.widget_footer_bodytext}>
-              <p>{`${this.bodytext?.text? this.bodytext.text: t9n.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor, css_theme.default.widget_footer__ignore)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: t9n.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: t9n.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext} target='_top' tabindex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext}</a>}</p>
+              <p>{`${this.bodytext?.text? this.bodytext.text: t9n.bodytext.text} `}{<a class={this.classes(css_theme.default.widget_footer_bodytext_contact__anchor, css_theme.default.widget_footer__ignore)} href={`mailto:${this.bodytext?.contactemail.emailaddress? this.bodytext.contactemail.emailaddress: t9n.bodytext.contactemail.emailaddress}?Subject=${this.bodytext?.contactemail.subjectline? this.bodytext.contactemail.subjectline: t9n.bodytext.contactemail.subjectline}`} title={this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext} target='_top' tabIndex='0' >{this.bodytext?.contactemail.displayedemailtext? this.bodytext.contactemail.displayedemailtext: t9n.bodytext.contactemail.displayedemailtext}</a>}</p>
             </div>
             <div id={elementIDs.footer_linksID} class={this.classes(css_theme.default.widget_footer_links)}>
               {_links}
@@ -203,10 +204,9 @@ class Footer extends Widget {
   //  Private Methods
   //--------------------------------------------------------------------------
   private setFooter(expandFooter: boolean|Element) {
-    var footerButton_node = document.getElementById(elementIDs.footer_buttonID);
-    var footerModal_node = document.getElementById(elementIDs.footerModalID);
-    var ef = (typeof expandFooter === "boolean"? expandFooter: this.startExpanded? this.startExpanded: false);
-    var self = this;
+    const footerButton_node = document.getElementById(elementIDs.footer_buttonID);
+    const footerModal_node = document.getElementById(elementIDs.footerModalID);
+    const ef = (typeof expandFooter === "boolean"? expandFooter: this.startExpanded? this.startExpanded: false);
 
     if (footerButton_node && footerModal_node) {
       if (typeof expandFooter === "object") {
@@ -217,7 +217,7 @@ class Footer extends Widget {
 
         // Set event listeners
         footerModal_node.addEventListener('keydown', function (e) {
-          let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+          const isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
           if (!isEscapePressed) {
               return;
           } else {
@@ -226,7 +226,7 @@ class Footer extends Widget {
         });
 
         footerButton_node.addEventListener('keydown', function (e) {
-          let isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
+          const isEscapePressed = e.key === 'Escape' || e.keyCode === 27;
   
           if (!isEscapePressed) {
               return;
@@ -247,7 +247,7 @@ class Footer extends Widget {
   }
 
   private _createReactTitle(title: string) {
-    var _title =
+    const _title =
     <div id={elementIDs.footer_titleID} class={css_theme.default.widget_footer_title}>
       <p>{title}</p>
     </div>;
@@ -256,8 +256,8 @@ class Footer extends Widget {
   }
 
   private _modifyDOMTitle(title: string, targetID: string) {
-    let div_node = document.getElementById(targetID);
-    let _paragraphs = div_node?.getElementsByTagName('p') as HTMLCollectionOf<HTMLParagraphElement>;
+    const div_node = document.getElementById(targetID);
+    const _paragraphs = div_node?.getElementsByTagName('p') as HTMLCollectionOf<HTMLParagraphElement>;
 
     if (_paragraphs) {
       _paragraphs[0].innerHTML = title;
@@ -265,11 +265,11 @@ class Footer extends Widget {
   }
 
   private _createReactLinks(linksArray: Array<Array<Link>>, linkLineDivClass=null as string|null, linkDivClass=null as string|null, anchorClass=null as string|null) {
-    var _links = linksArray.map(links => 
-      <div class={linkLineDivClass}>
+    const _links = linksArray.map(links => 
+      <div key={`${linksArray.indexOf(links)}_key`} class={linkLineDivClass}>
         {links.map(link => 
           <div key={`${link.id}_key`} class={linkDivClass}>
-            <a id={link.id} class={this.classes(anchorClass, css_theme.default.widget_footer__ignore)} href={link.url} target={link.target} title={link.title} tabindex='0' >{link.title}</a>
+            <a id={link.id} class={this.classes(anchorClass, css_theme.default.widget_footer__ignore)} href={link.url} target={link.target} title={link.title} tabIndex='0' >{link.title}</a>
           </div>
         )}
       </div>
@@ -279,13 +279,13 @@ class Footer extends Widget {
   }
 
   private _modifyDOMLinks(linksArray: Array<Array<Link>>, targetID: string, linkLineDivClass=null as string|null, linkDivClass=null as string|null, anchorClass=null as string|null) {
-    let div_node = document.getElementById(targetID);
-    let _anchors = div_node?.getElementsByTagName('a') as HTMLCollectionOf<HTMLAnchorElement>;
+    const div_node = document.getElementById(targetID);
+    const _anchors = div_node?.getElementsByTagName('a') as HTMLCollectionOf<HTMLAnchorElement>;
 
     // Re-build the existing link list using the DOM
     linksArray.map(links => {
       links.map(link => {
-        var _a = null as HTMLAnchorElement|null;
+        let _a = null as HTMLAnchorElement|null;
         for (let i=0; i<_anchors.length; i++) {
           if (_anchors[i].id.toLowerCase() === link.id.toLowerCase()) {
             _a = _anchors[i];
@@ -306,18 +306,18 @@ class Footer extends Widget {
 
   private _footerButton_click(e: MouseEvent) {
     e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
-    let ef = (_isFooterExpanded === true? false: true)
+    const ef = (_isFooterExpanded === true? false: true)
     _isFooterExpanded = this.toggleFooter(ef);
     // console.log(`Footer is ${_expanded}`);
   }
 
   private _footerButton_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
-      let ef = (_isFooterExpanded === true? false: true)
+      const ef = (_isFooterExpanded === true? false: true)
       _isFooterExpanded = this.toggleFooter(ef);
       // console.log(`Footer is ${_expanded}`);
     }
@@ -328,14 +328,14 @@ class Footer extends Widget {
   //--------------------------------------------------------------------------
 
   toggleFooter(_expandFooter: boolean, use_transition=true) {
-    var isExpanded = false;
-    var footerModal_node = document.getElementById(elementIDs.footerModalID)!;
-    var footer_node = document.getElementById(elementIDs.footerID)!;
-    var footerButton_node = document.getElementById(elementIDs.footer_buttonID)!;
+    let isExpanded = false;
+    const footerModal_node = document.getElementById(elementIDs.footerModalID)!;
+    const footer_node = document.getElementById(elementIDs.footerID)!;
+    const footerButton_node = document.getElementById(elementIDs.footer_buttonID)!;
 
     if (footerButton_node) {
-      var footerIcon_node = document.getElementById(elementIDs.footer_button_iconID)!;
-      var footerHeight = footer_node.clientHeight as number;
+      const footerIcon_node = document.getElementById(elementIDs.footer_button_iconID)!;
+      const footerHeight = footer_node.clientHeight as number;
 
       if (use_transition === false) {
         footer_node.classList.remove(css_theme.default.widget_footer_transition);
@@ -353,7 +353,7 @@ class Footer extends Widget {
         footerIcon_node.classList.add(css_esri.esri_icon_collapse);
         footerIcon_node.classList.add(css_esri.esri_collapse_icon);
         isExpanded = true;
-        getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])`);
+        getFocusableElements(footer_node, null, false, `button, [href], input, select, textarea, [tabindex]:not([tabIndex="-1"])`);
       }
       else {
         footerButton_node.title = t9n.button.label;
@@ -367,9 +367,9 @@ class Footer extends Widget {
         footerIcon_node.classList.remove(css_esri.esri_collapse_icon);
         if (this.afterFooterCloseFocusElement) {
           if (typeof this.afterFooterCloseFocusElement === "string") {
-            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
+            getFocusableElements(document.getElementById(this.afterFooterCloseFocusElement)!, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabIndex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           } else {
-            getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabindex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
+            getFocusableElements(this.afterFooterCloseFocusElement, null, true, `button:not(.${css_theme.default.widget_footer__ignore}), [href]:not(.${css_theme.default.widget_footer__ignore}), input:not(.${css_theme.default.widget_footer__ignore}), select:not(.${css_theme.default.widget_footer__ignore}), textarea:not(.${css_theme.default.widget_footer__ignore}), [tabindex]:not([tabIndex="-1"]):not(.esri-attribution__sources):not(.${css_theme.default.widget_footer__ignore}):not(.esri-attribution__sources)`);
           }
         }
       }

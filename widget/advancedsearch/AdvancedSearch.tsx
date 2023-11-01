@@ -9,6 +9,7 @@ import FeatureTable from "@arcgis/core/widgets/FeatureTable";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import SketchViewModel from "@arcgis/core/widgets/Sketch/SketchViewModel";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import * as intl from "@arcgis/core/intl";
 import { getWidgetTheme, getFocusableElements } from "@dnrr_fd/util/web";
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
@@ -24,19 +25,19 @@ import * as calcite_light from './assets/css/light/calcite.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-export var _locale: string;
-export var t9n = t9n_en;
-export var featureLayerArray: Array<FeatureLayer>;
+export let _locale: string;
+export let t9n = t9n_en;
+export let featureLayerArray: Array<FeatureLayer>;
 
-var calcite_theme = calcite_dark;
+let calcite_theme = calcite_dark;
 
-var resultsTable: FeatureTable;
-var searchLayers: tsx.JSX.Element;
-var searchFields: tsx.JSX.Element;
-var _searchFieldSelectObjectsArray: Array<SearchFieldSelectObjects>;
+let resultsTable: FeatureTable;
+let searchLayers: tsx.JSX.Element;
+let searchFields: tsx.JSX.Element;
+let _searchFieldSelectObjectsArray: Array<SearchFieldSelectObjects>;
 
-var byShapeGraphicsLayer = new GraphicsLayer();
-var byShapeSketchViewModel: SketchViewModel;
+const byShapeGraphicsLayer = new GraphicsLayer();
+let byShapeSketchViewModel: SketchViewModel;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -172,6 +173,8 @@ class AdvancedSearch extends Widget {
     _locale = getNormalizedLocale();
     t9n = (_locale === 'en' ? t9n_en : t9n_fr);
 
+    const self = this as AdvancedSearch;
+
     this.zoomtosearchresults = this.zoomtosearchresults? this.zoomtosearchresults: true;
     this.graphicalsearchoptions = this.graphicalsearchoptions? this.graphicalsearchoptions: new GraphicalSearchOptions();
 
@@ -187,13 +190,13 @@ class AdvancedSearch extends Widget {
       t9n = (locale === 'en' ? t9n_en : t9n_fr);
     });
 
-    this.watch("theme", function(theme_new: string, theme_old: string){
-      calcite_theme = (theme_new === 'dark' ? calcite_dark : calcite_light);
+    reactiveUtils.watch(() => self.theme, (theme: string) => {
+      calcite_theme = (theme === 'dark' ? calcite_dark : calcite_light);
     });
 
     // Dynamically create search layers.
     searchLayers = this.layers.map(layer =>
-        <option value={layer.id} title={layer.searchlayertitletext[_locale as keyof typeof layer.searchlayertitletext]}>{layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}</option>
+        <option key={`${layer.id}_key`} value={layer.id} title={layer.searchlayertitletext[_locale as keyof typeof layer.searchlayertitletext]}>{layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}</option>
     );
 
     // Set up the sketch view models for the select by shape section
@@ -206,7 +209,7 @@ class AdvancedSearch extends Widget {
     byShapeSketchViewModel.on("create", async (event) => {
       if (event.state === "complete") {
         // Remove the focus from all the tools
-        let toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
+        const toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
         let tool_node: HTMLElement;
         toolsArray.forEach(t => {
           tool_node = document.getElementById(`advancedSearch_ByShapeButton_${t}ID`)!;
@@ -217,7 +220,7 @@ class AdvancedSearch extends Widget {
         this.view.map.remove(byShapeGraphicsLayer);
         console.log(`Select by ${event.tool} is ${event.state}.`);
 
-        let modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+        const modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
         this.toggleNode(modal_node, false)
     
         await selectFeaturesUsingGeometry(this.view, this.layers, event.graphic.geometry, resultsTable).then(result => {
@@ -240,8 +243,6 @@ class AdvancedSearch extends Widget {
                   
             // Get focusable elements
             getFocusableElements(document.getElementById(this.rootFocusElement)!);
-          } else {
-
           }
         });
       }
@@ -253,13 +254,13 @@ class AdvancedSearch extends Widget {
 
       // Dynamically create search fields.
       searchFields = this.layers.map(layer =>
-        <div id={`${layer.id}${postFixes.layerDivID}`} class={this.classes(css.default.widget_advancedsearch_byvalue_searchfield__div)}>
+        <div key={`${layer.id}_searchfields_key`} id={`${layer.id}${postFixes.layerDivID}`} class={this.classes(css.default.widget_advancedsearch_byvalue_searchfield__div)}>
           {layer.searchfields.map(searchfield => 
-            <div id={`${layer.id}_${searchfield.field}${postFixes.layerFieldDivID}`} class={css.default.widget_advancedsearch_byvalue_searchfield_fieldsnovalidation__div}>
+            <div key={`${layer.id}_searchfields_field_key`} id={`${layer.id}_${searchfield.field}${postFixes.layerFieldDivID}`} class={css.default.widget_advancedsearch_byvalue_searchfield_fieldsnovalidation__div}>
               <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields__div}>
                 <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_items__div}>
                   <div class={css.default.widget_advancedsearch_byvalue_searchfield_fields_label__div}>
-                    <label for={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`}>{searchfield.fieldlabel[_locale as keyof typeof searchfield.fieldlabel]}</label>
+                    <label htmlFor={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`}>{searchfield.fieldlabel[_locale as keyof typeof searchfield.fieldlabel]}</label>
                   </div>
                   <div class={css.default.widget_advancedsearch_byvalue_fieldinput_asterix__div}>
                     <input id={`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select, `${searchfield.required? css.default.widget_advancedsearch_required__input: ""}`)} list={`${layer.id}_${searchfield.field}${postFixes.layerFieldDataListID}`} placeholder={searchfield.searchhint? searchfield.searchhint: ""} required={searchfield.required? searchfield.required===true? `"${searchfield.required}"`: "false": "false"}></input>
@@ -285,7 +286,7 @@ class AdvancedSearch extends Widget {
         <div id={elementIDs.advancedsearch_ModalID} class={this.classes(css.default.widget_advancedsearch_loading_modal, css.default.widget_advancedsearch_loading_modal__restored, css.default.widget_advancedsearch_visibility__hidden, calcite_theme.default["modal-background"])}>
           <div class={this.classes(calcite_theme.default.loader, calcite_theme.default["is-active"], calcite_theme.default["padding-leader-3"], calcite_theme.default["padding-trailer-3"])}>
             <div class={calcite_theme.default["loader-bars"]}></div>
-            <div class={calcite_theme.default["loader-text"]} ariaLabel={t9n.loadingText}>{t9n.loadingText}</div>
+            <div class={calcite_theme.default["loader-text"]} aria-label={t9n.loadingText}>{t9n.loadingText}</div>
           </div>
         </div>
         <div class={this.classes(css_esri.esri_widget, css_esri.esri_component)}>
@@ -297,13 +298,13 @@ class AdvancedSearch extends Widget {
                 </div>
 
                 <div id={elementIDs.advancedSearch_TitlebarButtonsDivID} class={css.default.widget_advancedsearch_titlebar_buttons__div}>
-                  <button id={elementIDs.advancedSearch_MinimizeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_titlebar__button)} ariaLabel={t9n.minimizeButtonText} title={t9n.minimizeButtonText} onclick={this._minimizeButton_click.bind(this)} onkeypress={this._minimizeButton_keypress.bind(this)} tabindex="0">
+                  <button id={elementIDs.advancedSearch_MinimizeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_titlebar__button)} aria-label={t9n.minimizeButtonText} title={t9n.minimizeButtonText} onclick={this._minimizeButton_click.bind(this)} onKeyPress={this._minimizeButton_keypress.bind(this)} tabIndex="0">
                     <span id={elementIDs.advancedSearch_MinimizeSpanID} aria-hidden='true' class={css_esri.esri_icon_down} />
                   </button>
-                  <button id={elementIDs.advancedSearch_MaximizeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_titlebar__button)} ariaLabel={t9n.maximizeButtonText} title={t9n.maximizeButtonText} onclick={this._maximizeButton_click.bind(this)} onkeypress={this._maximizeButton_keypress.bind(this)} tabindex="0">
+                  <button id={elementIDs.advancedSearch_MaximizeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_titlebar__button)} aria-label={t9n.maximizeButtonText} title={t9n.maximizeButtonText} onclick={this._maximizeButton_click.bind(this)} onKeyPress={this._maximizeButton_keypress.bind(this)} tabIndex="0">
                     <span id={elementIDs.advancedSearch_MaximizeSpanID} aria-hidden='true' class={css_esri.esri_icon_maximize} />
                   </button>
-                  <button id={elementIDs.advancedSearch_CloseButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_titlebar__button)} ariaLabel={t9n.closeButtonText} title={t9n.closeButtonText} onclick={this._closeButton_click.bind(this)} onkeypress={this._closeButton_keypress.bind(this)} tabindex="0">
+                  <button id={elementIDs.advancedSearch_CloseButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_advancedsearch_titlebar__button)} aria-label={t9n.closeButtonText} title={t9n.closeButtonText} onclick={this._closeButton_click.bind(this)} onKeyPress={this._closeButton_keypress.bind(this)} tabIndex="0">
                     <span id={elementIDs.advancedSearch_CloseSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
                 </div>
@@ -314,37 +315,37 @@ class AdvancedSearch extends Widget {
                   <button id={elementIDs.advancedsearch_ByShapeTabID}
                     class={this.classes(css.default.widget_advancedsearch_tab__button, css_esri.esri_widget_button)}
                     title={t9n.byShapeTabLabel}
-                    ariaLabel={t9n.byShapeTabLabel}
+                    aria-label={t9n.byShapeTabLabel}
                     onclick={this._byShapeTab_click.bind(this)}
-                    tabindex="0"
+                    tabIndex="0"
                   >{t9n.byShapeTabLabel}</button>
                   <button id={elementIDs.advancedsearch_ByValueTabID}
                     class={this.classes(css.default.widget_advancedsearch_tab__button, css_esri.esri_widget_button)}
                     title={t9n.byValueTabLabel}
-                    ariaLabel={t9n.byValueTabLabel}
+                    aria-label={t9n.byValueTabLabel}
                     onclick={this._byValueTab_click.bind(this)}
-                    tabindex="0"
+                    tabIndex="0"
                   >{t9n.byValueTabLabel}</button>
                   <button id={elementIDs.advancedsearch_ResultsTabID}
                     class={this.classes(css.default.widget_advancedsearch_tab__button, css_esri.esri_widget_button)}
                     title={t9n.resultsTabLabel}
-                    ariaLabel={t9n.resultsTabLabel}
+                    aria-label={t9n.resultsTabLabel}
                     onclick={this._resultsTab_click.bind(this)}
-                    tabindex="0"
+                    tabIndex="0"
                   >{t9n.resultsTabLabel}</button>
                 </div>
 
                 <div id={elementIDs.advancedsearch_MainTabcontentID} class={this.classes(css.default.widget_advancedsearch_tabcontent_main__div, css.default.widget_advancedsearch_tabcontent_main__restored)}>
                   <div id={elementIDs.advancedsearch_CommonBarID} class={css.default.widget_advancedsearch_commonbar__div}>
                     <div class={css.default.widget_advancedsearch_commonbar_searchlayer__div}>
-                      <label for={elementIDs.advancedsearch_CommonBarSearchLayerID}>{t9n.commonSearchLayerLabel}</label>
-                      <select id={elementIDs.advancedsearch_CommonBarSearchLayerID} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select)} name={elementIDs.advancedsearch_CommonBarSearchLayerID} onchange={this._searchLayer_change.bind(this)}>
+                      <label htmlFor={elementIDs.advancedsearch_CommonBarSearchLayerID}>{t9n.commonSearchLayerLabel}</label>
+                      <select id={elementIDs.advancedsearch_CommonBarSearchLayerID} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select)} name={elementIDs.advancedsearch_CommonBarSearchLayerID} onChange={this._searchLayer_change.bind(this)}>
                         {searchLayers}
                       </select>
                     </div>
                     <div class={css.default.widget_advancedsearch_commonbar_selectiontype__div}>
-                      <label for={elementIDs.advancedsearch_CommonBarSelectionTypeID}>{t9n.commonSelectTypeLabel}</label>
-                      <select id={elementIDs.advancedsearch_CommonBarSelectionTypeID} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select)} name={elementIDs.advancedsearch_CommonBarSelectionTypeID} onchange={this._selectionType_change.bind(this)}>
+                      <label htmlFor={elementIDs.advancedsearch_CommonBarSelectionTypeID}>{t9n.commonSelectTypeLabel}</label>
+                      <select id={elementIDs.advancedsearch_CommonBarSelectionTypeID} class={this.classes(css_esri.esri_input, css.default.widget_advancedsearch__select)} name={elementIDs.advancedsearch_CommonBarSelectionTypeID} onChange={this._selectionType_change.bind(this)}>
                         <option value={selectTypeOptions.newSelection}>{t9n.commonSelectTypeNewLabel}</option>
                         <option value={selectTypeOptions.addToSelection}>{t9n.commonSelectTypeAddLabel}</option>
                         <option value={selectTypeOptions.removeFromSelection}>{t9n.commonSelectTypeRemoveLabel}</option>
@@ -360,16 +361,16 @@ class AdvancedSearch extends Widget {
                             aria-label={t9n.commonSelectClearText}
                             title={t9n.commonSelectClearText}
                             onclick={this._selectionClearButton_click.bind(this)}
-                            onkeypress={this._selectionClearButton_keypress.bind(this)}
-                            tabindex="0">
+                            onKeyPress={this._selectionClearButton_keypress.bind(this)}
+                            tabIndex="0">
                           <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_erase)} aria-hidden="true"></span>
                           <span class={css_esri.esri_icon_font_fallback_text}>{t9n.commonSelectClearText}</span>
                         </div>
                       </div> */}
-                      <button id={elementIDs.advancedSearch_CommonBarSelectionClearButtonID} type="button" class={this.classes(css_esri.esri_widget_button, css.default.widget_advancedsearch_commonbar_selection_clear__button)} ariaLabel={t9n.commonSelectClearText} title={t9n.commonSelectClearText} onclick={this._selectionClearButton_click.bind(this)} onkeypress={this._selectionClearButton_keypress.bind(this)} tabindex="0">
+                      <button id={elementIDs.advancedSearch_CommonBarSelectionClearButtonID} type="button" class={this.classes(css_esri.esri_widget_button, css.default.widget_advancedsearch_commonbar_selection_clear__button)} aria-label={t9n.commonSelectClearText} title={t9n.commonSelectClearText} onclick={this._selectionClearButton_click.bind(this)} onKeyPress={this._selectionClearButton_keypress.bind(this)} tabIndex="0">
                         <span aria-hidden='true' class={css_esri.esri_icon_erase} />
                       </button>
-                      {/* <button id={elementIDs.advancedSearch_CommonBarSelectionSwapButtonID} type="button" class={this.classes(css_esri.esri_widget_button, css.default.widget_advancedsearch_commonbar_selection_swap__button)} ariaLabel={t9n.commonSelectSwapText} title={t9n.commonSelectSwapText} onclick={this._selectionSwapButton_click.bind(this)} onkeypress={this._selectionSwapButton_keypress.bind(this)} tabindex="0">
+                      {/* <button id={elementIDs.advancedSearch_CommonBarSelectionSwapButtonID} type="button" class={this.classes(css_esri.esri_widget_button, css.default.widget_advancedsearch_commonbar_selection_swap__button)} aria-label={t9n.commonSelectSwapText} title={t9n.commonSelectSwapText} onclick={this._selectionSwapButton_click.bind(this)} onKeyPress={this._selectionSwapButton_keypress.bind(this)} tabIndex="0">
                         <span aria-hidden='true' class={css_esri.esri_icon_swap} />
                       </button> */}
                       <div class={css.default.widget_advancedsearch_commonbar_selection_checkbox__div}>
@@ -378,7 +379,7 @@ class AdvancedSearch extends Widget {
                           type="checkbox"
                           checked>
                         </input>
-                        <label for={elementIDs.advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID} class={css.default.widget_advancedsearch_checkbox__label}>{t9n.commonSelectZoomFirstRecordLabel}</label>
+                        <label htmlFor={elementIDs.advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID} class={css.default.widget_advancedsearch_checkbox__label}>{t9n.commonSelectZoomFirstRecordLabel}</label>
                       </div>
                     </div>
                   </div>
@@ -398,8 +399,8 @@ class AdvancedSearch extends Widget {
                             aria-label={t9n.byShapeRectangle}
                             title={t9n.byShapeRectangle}
                             onclick={(e: MouseEvent) => {this._selectByTool_click(e, "rectangle")}}
-                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}}
-                            tabindex="0">
+                            onKeyPress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}}
+                            tabIndex="0">
                           <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_rectangle)} aria-hidden="true"></span>
                           <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapeRectangle}</span>
                         </div>
@@ -409,11 +410,11 @@ class AdvancedSearch extends Widget {
                           id={elementIDs.advancedSearch_ByShapeRectangleButtonID}
                           class={css.default.widget_advancedsearch_byshape__button}
                           type="button"
-                          ariaLabel={t9n.byShapeRectangle}
+                          aria-label={t9n.byShapeRectangle}
                           title={t9n.byShapeRectangle}
                           onclick={(e: MouseEvent) => {this._selectByTool_click(e, "rectangle")}}
-                          onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}}
-                          tabindex="0">
+                          onKeyPress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "rectangle")}}
+                          tabIndex="0">
                         <span aria-hidden='true' class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_rectangle)} />
                         <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapeRectangle}</span>
                       </button> */}
@@ -426,8 +427,8 @@ class AdvancedSearch extends Widget {
                             aria-label={t9n.byShapePolygon}
                             title={t9n.byShapePolygon}
                             onclick={(e: MouseEvent) => {this._selectByTool_click(e, "polygon")}}
-                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polygon")}}
-                            tabindex="0">
+                            onKeyPress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polygon")}}
+                            tabIndex="0">
                           <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_polygon)} aria-hidden="true"></span>
                           <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapePolygon}</span>
                         </div>
@@ -441,8 +442,8 @@ class AdvancedSearch extends Widget {
                             aria-label={t9n.byShapeCircle}
                             title={t9n.byShapeCircle}
                             onclick={(e: MouseEvent) => {this._selectByTool_click(e, "circle")}}
-                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "circle")}}
-                            tabindex="0">
+                            onKeyPress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "circle")}}
+                            tabIndex="0">
                           <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_circle)} aria-hidden="true"></span>
                           <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapeCircle}</span>
                         </div>
@@ -456,8 +457,8 @@ class AdvancedSearch extends Widget {
                             aria-label={t9n.byShapePolyline}
                             title={t9n.byShapePolyline}
                             onclick={(e: MouseEvent) => {this._selectByTool_click(e, "polyline")}}
-                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polyline")}}
-                            tabindex="0">
+                            onKeyPress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "polyline")}}
+                            tabIndex="0">
                           <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_polyline)} aria-hidden="true"></span>
                           <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapePolyline}</span>
                         </div>
@@ -471,8 +472,8 @@ class AdvancedSearch extends Widget {
                             aria-label={t9n.byShapePoint}
                             title={t9n.byShapePoint}
                             onclick={(e: MouseEvent) => {this._selectByTool_click(e, "point")}}
-                            onkeypress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "point")}}
-                            tabindex="0">
+                            onKeyPress={(e: KeyboardEvent) => {this._selectByTool_keypress(e, "point")}}
+                            tabIndex="0">
                           <span class={this.classes(css_esri.esri_icon, css_esri.esri_icon_draw_point)} aria-hidden="true"></span>
                           <span class={css_esri.esri_icon_font_fallback_text}>{t9n.byShapePoint}</span>
                         </div>
@@ -493,7 +494,7 @@ class AdvancedSearch extends Widget {
 
                     <div class={css.default.widget_advancedsearch_byvalue_search_group__div}>
                       <div class={css.default.widget_advancedsearch_byvalue_search__div}>
-                        <button id={elementIDs.advancedsearch_ByValueSearchButtonID} type="button" class={this.classes(css_esri.esri_button)} aria-label={t9n.byValueSearchButtonLabel} title={t9n.byValueSearchButtonLabel} onclick={this._searchButton_click.bind(this)} onkeypress={this._searchButton_keypress.bind(this)} tabindex="0">
+                        <button id={elementIDs.advancedsearch_ByValueSearchButtonID} type="button" class={this.classes(css_esri.esri_button)} aria-label={t9n.byValueSearchButtonLabel} title={t9n.byValueSearchButtonLabel} onclick={this._searchButton_click.bind(this)} onKeyPress={this._searchButton_keypress.bind(this)} tabIndex="0">
                           {t9n.byValueSearchButtonLabel}
                         </button>
                       </div>
@@ -503,7 +504,7 @@ class AdvancedSearch extends Widget {
                           type="checkbox"
                           checked>
                         </input>
-                        <label for={elementIDs.advancedsearch_ByValueResultsExtentCheckboxID} class={css.default.widget_advancedsearch_checkbox__label}>{t9n.byValueLimitResultsExtentLabel}</label>
+                        <label htmlFor={elementIDs.advancedsearch_ByValueResultsExtentCheckboxID} class={css.default.widget_advancedsearch_checkbox__label}>{t9n.byValueLimitResultsExtentLabel}</label>
                       </div>
                     </div>
 
@@ -534,7 +535,7 @@ class AdvancedSearch extends Widget {
     }
 
     // Keep focus on the tool while graphic is being drawn.
-    let toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
+    const toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
     let tool_node: HTMLElement;
     toolsArray.forEach(t => {
       tool_node = document.getElementById(`advancedSearch_ByShapeButton_${t}ID`)!;
@@ -549,8 +550,8 @@ class AdvancedSearch extends Widget {
   }
   
   private _selectByTool_keypress(e: KeyboardEvent, tool: "rectangle"|"polygon"|"circle"|"polyline"|"point") {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();
@@ -560,7 +561,7 @@ class AdvancedSearch extends Widget {
       }
 
       // Keep focus on the tool while graphic is being drawn.
-      let toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
+      const toolsArray = ["rectangle", "polygon", "circle", "polyline", "point"];
       let tool_node: HTMLElement;
       toolsArray.forEach(t => {
         tool_node = document.getElementById(`advancedSearch_ByShapeButton_${t}ID`)!;
@@ -581,8 +582,8 @@ class AdvancedSearch extends Widget {
   }
   
   private _closeButton_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();
@@ -596,8 +597,8 @@ class AdvancedSearch extends Widget {
   }
   
   private _maximizeButton_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();
@@ -611,8 +612,8 @@ class AdvancedSearch extends Widget {
   }
   
   private _minimizeButton_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();
@@ -621,21 +622,21 @@ class AdvancedSearch extends Widget {
   }
 
   private _byShapeTab_click() {
-    let commonBarDiv_node = document.getElementById(elementIDs.advancedsearch_CommonBarID)!;
+    const commonBarDiv_node = document.getElementById(elementIDs.advancedsearch_CommonBarID)!;
 
-    let byShapeDiv_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabDivID)!;
-    let byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
+    const byShapeDiv_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabDivID)!;
+    const byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
     byShapeButton_node.setAttribute("style", "border-bottom: none;");
 
-    let byValueDiv_node = document.getElementById(elementIDs.advancedsearch_ByValueTabDivID)!;
-    let byValueButton_node = document.getElementById(elementIDs.advancedsearch_ByValueTabID)!;
+    const byValueDiv_node = document.getElementById(elementIDs.advancedsearch_ByValueTabDivID)!;
+    const byValueButton_node = document.getElementById(elementIDs.advancedsearch_ByValueTabID)!;
     byValueButton_node.removeAttribute("style");
 
-    let resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
-    let resultsButton_node = document.getElementById(elementIDs.advancedsearch_ResultsTabID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
+    const resultsButton_node = document.getElementById(elementIDs.advancedsearch_ResultsTabID)!;
     resultsButton_node.removeAttribute("style");
 
-    let mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
+    const mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
     mainTabcontentDiv_node.classList.remove(css.default.widget_advancedsearch_visible__none);
 
     commonBarDiv_node.classList.remove(css.default.widget_advancedsearch_visible__none);
@@ -649,21 +650,21 @@ class AdvancedSearch extends Widget {
 }
 
   private _byValueTab_click() {
-    let commonBarDiv_node = document.getElementById(elementIDs.advancedsearch_CommonBarID)!;
+    const commonBarDiv_node = document.getElementById(elementIDs.advancedsearch_CommonBarID)!;
 
-    let byShapeDiv_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabDivID)!;
-    let byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
+    const byShapeDiv_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabDivID)!;
+    const byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
     byShapeButton_node.removeAttribute("style");
 
-    let byValueDiv_node = document.getElementById(elementIDs.advancedsearch_ByValueTabDivID)!;
-    let byValueButton_node = document.getElementById(elementIDs.advancedsearch_ByValueTabID)!;
+    const byValueDiv_node = document.getElementById(elementIDs.advancedsearch_ByValueTabDivID)!;
+    const byValueButton_node = document.getElementById(elementIDs.advancedsearch_ByValueTabID)!;
     byValueButton_node.setAttribute("style", "border-bottom: none;");
 
-    let resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
-    let resultsButton_node = document.getElementById(elementIDs.advancedsearch_ResultsTabID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
+    const resultsButton_node = document.getElementById(elementIDs.advancedsearch_ResultsTabID)!;
     resultsButton_node.removeAttribute("style");
 
-    let mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
+    const mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
     mainTabcontentDiv_node.classList.remove(css.default.widget_advancedsearch_visible__none);
 
     commonBarDiv_node.classList.remove(css.default.widget_advancedsearch_visible__none);
@@ -680,18 +681,18 @@ class AdvancedSearch extends Widget {
     // let commonBarDiv_node = document.getElementById(elementIDs.advancedsearch_CommonBarID)!;
 
     // let byShapeDiv_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabDivID)!;
-    let byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
+    const byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
     byShapeButton_node.removeAttribute("style");
 
     // let byValueDiv_node = document.getElementById(elementIDs.advancedsearch_ByValueTabDivID)!;
-    let byValueButton_node = document.getElementById(elementIDs.advancedsearch_ByValueTabID)!;
+    const byValueButton_node = document.getElementById(elementIDs.advancedsearch_ByValueTabID)!;
     byValueButton_node.removeAttribute("style");
 
-    let resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
-    let resultsButton_node = document.getElementById(elementIDs.advancedsearch_ResultsTabID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
+    const resultsButton_node = document.getElementById(elementIDs.advancedsearch_ResultsTabID)!;
     resultsButton_node.setAttribute("style", "border-bottom: none;");
 
-    let mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
+    const mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
     mainTabcontentDiv_node.classList.add(css.default.widget_advancedsearch_visible__none);
     resultsDiv_node.classList.remove(css.default.widget_advancedsearch_visible__none);
     // byValueDiv_node.classList.add(css.default.widget_advancedsearch_visible__none);
@@ -708,8 +709,8 @@ class AdvancedSearch extends Widget {
   }
 
   private _selectionClearButton_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();
@@ -718,29 +719,15 @@ class AdvancedSearch extends Widget {
     }
   }
 
-  // private _selectionSwapButton_click(e: MouseEvent) {
-  //   e.preventDefault();
-    
-  // }
-
-  // private _selectionSwapButton_keypress(e: KeyboardEvent) {
-  //   let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-  //   let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
-
-  //   if (isEnterPressed || isSpacePressed) {
-  //     e.preventDefault();
-
-  //   }
-  // }
-
   private async _searchButton_click(e: MouseEvent) {
     e.preventDefault();
 
-    let modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+    const modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
     this.toggleNode(modal_node, false)
 
     await selectFeatures(this.view, this.layers, _searchFieldSelectObjectsArray, resultsTable).then(result => {
       // resultsTable.refresh();
+
       if (result != null) {
         if (result.resultsCount === 0) {
           // No records were returned. Clear the results table of previous results.
@@ -767,17 +754,18 @@ class AdvancedSearch extends Widget {
   }
 
   private async _searchButton_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       e.preventDefault();
   
-      let modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+      const modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
       this.toggleNode(modal_node, false)
 
       await selectFeatures(this.view, this.layers, _searchFieldSelectObjectsArray, resultsTable).then(result => {
         // resultsTable.refresh();
+      
         if (result != null) {
           if (result.resultsCount === 0) {
             // No records were returned. Clear the results table of previous results.
@@ -809,7 +797,7 @@ class AdvancedSearch extends Widget {
   }
 
   private _selectionType_change() {
-    let commonBarSelectionType_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionTypeID) as HTMLSelectElement;
+    const commonBarSelectionType_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionTypeID) as HTMLSelectElement;
     console.log(`Selection Type: ${commonBarSelectionType_node.value}`);
   }
 
@@ -817,20 +805,20 @@ class AdvancedSearch extends Widget {
   //  Private Methods
   //--------------------------------------------------------------------------
   private afterRenderActions() {
-    let resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID) as HTMLDivElement;
-    let modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+    const resultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID) as HTMLDivElement;
+    const modal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+
+    this.toggleNode(modal_node, true)
 
     // Change the title
     this.setTitle(t9n.label);
 
     window.addEventListener("resize", this.setTitle);
 
-    this.toggleNode(modal_node, true)
-
     resultsTable = initializeFeatureTable(this.view, resultsDiv_node, resultsTable);
     resultsTable.visible = false;
 
-    let byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
+    const byShapeButton_node = document.getElementById(elementIDs.advancedsearch_ByShapeTabID)!;
     byShapeButton_node.setAttribute("style", "border-bottom: none;");
 
     setSearchFieldsVisibility();
@@ -840,25 +828,25 @@ class AdvancedSearch extends Widget {
     // Set up event listeners for data lists.
     this.layers.forEach(async layer => {
       // If the layers listed in the config file aren't in the map, add them.
-      let asID = `${layer.id}${postFixes.featureLayerID}`;
+      const asID = `${layer.id}${postFixes.featureLayerID}`;
       await setupFeatureLayer(this.view, layer, asID).then(featureLayer => {
         console.log(`featureLayerReferences - afterRenderActions(): ${featureLayerReferences}`);
         if (featureLayer != null) {
           featureLayer.title = `${layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}`;
           featureLayerArray.push(featureLayer);
           layer.searchfields.forEach(searchfield => {
-            let input_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`)! as HTMLInputElement;
+            const input_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`)! as HTMLInputElement;
             // inputArray.push(input_node);
             if(input_node) {
               input_node.addEventListener('input', function() {
-                let inputValue = input_node.value;
-                let hiddeninput_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldHiddenInputID}`)! as HTMLInputElement;
-                let options = document.querySelectorAll(`#${input_node.getAttribute('list')} option`) as NodeListOf<HTMLOptionElement>;
+                const inputValue = input_node.value;
+                const hiddeninput_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldHiddenInputID}`)! as HTMLInputElement;
+                const options = document.querySelectorAll(`#${input_node.getAttribute('list')} option`) as NodeListOf<HTMLOptionElement>;
     
                 hiddeninput_node.value = inputValue;
     
-                for (var i=0; i<options.length; i++) {
-                  var option = options[i];
+                for (let i=0; i<options.length; i++) {
+                  const option = options[i];
           
                   if(option.innerText === inputValue) {
                     if (option.getAttribute('data-value')) {
@@ -873,7 +861,7 @@ class AdvancedSearch extends Widget {
           });
         }
       }).then(() => {
-        console.log(`featureLayerArray: ${featureLayerArray.map(function (fl: any) { return fl.uid; })}`);
+        console.log(`featureLayerArray: ${featureLayerArray.map(function (fl: FeatureLayer) { return fl.get("uid"); })}`);
       });
     });
     setCurrentSearchLayerIndex(0);
@@ -881,7 +869,7 @@ class AdvancedSearch extends Widget {
 
   private closeWidget() {
     this.visible = false;
-    let content_node = this.container as HTMLDivElement;
+    const content_node = this.container as HTMLDivElement;
     if (content_node.style.display === "") {
       content_node.setAttribute("style", "display: none;");
     }
@@ -897,7 +885,7 @@ class AdvancedSearch extends Widget {
   }
 
   private clearResults() {
-    let resultsNoResultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsNoResultsDivID) as HTMLDivElement;
+    const resultsNoResultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsNoResultsDivID) as HTMLDivElement;
 
     // Clear and hide the feature table
     clearFeatureTable(resultsTable)
@@ -911,11 +899,11 @@ class AdvancedSearch extends Widget {
     // Reset any previous field inputs.
     this.layers.forEach(layer => {
       layer.searchfields.forEach(searchfield => {
-        let input_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`)! as HTMLInputElement;
-        let hiddeninput_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldHiddenInputID}`)! as HTMLInputElement;
+        const input_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldInputID}`)! as HTMLInputElement;
+        const hiddeninput_node = document.getElementById(`${layer.id}_${searchfield.field}${postFixes.layerFieldHiddenInputID}`)! as HTMLInputElement;
         if (input_node && input_node.value != "") {
-          let in_value = input_node.value;
-          let hin_value = hiddeninput_node.value;
+          const in_value = input_node.value;
+          const hin_value = hiddeninput_node.value;
           
           input_node.value = "";
           hiddeninput_node.value = "";
@@ -928,14 +916,14 @@ class AdvancedSearch extends Widget {
 
     // Reset the Search Layer.
     let searchLayer = "";
-    let commonBarSearchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
+    const commonBarSearchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
     for (let i=0; i<commonBarSearchLayer_node.options.length; i++) {
       if (i === 0) {
         commonBarSearchLayer_node.options[i].selected = true;
         searchLayer = commonBarSearchLayer_node.options[i].value;
 
         // Assign the initial layer to the feature table.
-        let slID = `${searchLayer}${postFixes.featureLayerID}`;
+        const slID = `${searchLayer}${postFixes.featureLayerID}`;
         this.view.map.allLayers.forEach(maplayer => {
           if (maplayer.id.toLowerCase() === slID.toLowerCase()) {
             console.log(`Fetaure table layer will change from ${resultsTable.layer.id} to ${maplayer.id}`);
@@ -949,7 +937,7 @@ class AdvancedSearch extends Widget {
     setSearchFieldsVisibility();
 
     // Reset the Selection Type.
-    let commonBarSelectionType_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionTypeID) as HTMLSelectElement;
+    const commonBarSelectionType_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionTypeID) as HTMLSelectElement;
     for (let i=0; i<commonBarSelectionType_node.options.length; i++) {
       if (i === 0) {
         commonBarSelectionType_node.options[i].selected = true;
@@ -959,11 +947,11 @@ class AdvancedSearch extends Widget {
     }
 
     // Reset the zoom to first result checkbox to its default
-    let zoomToFirstRecordCheckbox_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID) as HTMLInputElement
+    const zoomToFirstRecordCheckbox_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID) as HTMLInputElement
     zoomToFirstRecordCheckbox_node.checked = true;
     
     // Reset the extent checkbox to its default
-    let extentCheckbox_node = document.getElementById(elementIDs.advancedsearch_ByValueResultsExtentCheckboxID) as HTMLInputElement
+    const extentCheckbox_node = document.getElementById(elementIDs.advancedsearch_ByValueResultsExtentCheckboxID) as HTMLInputElement
     extentCheckbox_node.checked = true;
     
     // Change the title
@@ -971,19 +959,19 @@ class AdvancedSearch extends Widget {
   }
 
   private maximizeWidget() {
-    let loadingModal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
-    let resultsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
-    let resultsDetailsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID)!;
-    let main_node = document.getElementById(elementIDs.advancedsearch_MainID)!;
-    let mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
+    const loadingModal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+    const resultsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
+    const resultsDetailsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID)!;
+    const main_node = document.getElementById(elementIDs.advancedsearch_MainID)!;
+    const mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
 
-    let maximizeButton_node = document.getElementById(elementIDs.advancedSearch_MaximizeButtonID)!;
-    let maximizeSpan_node = document.getElementById(elementIDs.advancedSearch_MaximizeSpanID)!;
+    const maximizeButton_node = document.getElementById(elementIDs.advancedSearch_MaximizeButtonID)!;
+    const maximizeSpan_node = document.getElementById(elementIDs.advancedSearch_MaximizeSpanID)!;
 
-    let minimizeButton_node = document.getElementById(elementIDs.advancedSearch_MinimizeButtonID)!;
-    let minimizeSpan_node = document.getElementById(elementIDs.advancedSearch_MinimizeSpanID)!;
+    const minimizeButton_node = document.getElementById(elementIDs.advancedSearch_MinimizeButtonID)!;
+    const minimizeSpan_node = document.getElementById(elementIDs.advancedSearch_MinimizeSpanID)!;
 
-    let content_node = document.getElementById(elementIDs.advancedsearch_content)!;
+    const content_node = document.getElementById(elementIDs.advancedsearch_content)!;
 
     // Check if the main_node was minimized
     if (main_node.classList.contains(css.default.widget_advancedsearch__minimized) === true) {
@@ -1039,19 +1027,19 @@ class AdvancedSearch extends Widget {
   }
 
   private minimizeWidget() {
-    let loadingModal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
-    let resultsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
-    let resultsDetailsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID)!;
-    let main_node = document.getElementById(elementIDs.advancedsearch_MainID)!;
-    let mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
+    const loadingModal_node = document.getElementById(elementIDs.advancedsearch_ModalID)!;
+    const resultsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsTabDivID)!;
+    const resultsDetailsTableDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsDetailsDivID)!;
+    const main_node = document.getElementById(elementIDs.advancedsearch_MainID)!;
+    const mainTabcontentDiv_node = document.getElementById(elementIDs.advancedsearch_MainTabcontentID)!;
 
-    let maximizeButton_node = document.getElementById(elementIDs.advancedSearch_MaximizeButtonID)!;
-    let maximizeSpan_node = document.getElementById(elementIDs.advancedSearch_MaximizeSpanID)!;
+    const maximizeButton_node = document.getElementById(elementIDs.advancedSearch_MaximizeButtonID)!;
+    const maximizeSpan_node = document.getElementById(elementIDs.advancedSearch_MaximizeSpanID)!;
 
-    let minimizeButton_node = document.getElementById(elementIDs.advancedSearch_MinimizeButtonID)!;
-    let minimizeSpan_node = document.getElementById(elementIDs.advancedSearch_MinimizeSpanID)!;
+    const minimizeButton_node = document.getElementById(elementIDs.advancedSearch_MinimizeButtonID)!;
+    const minimizeSpan_node = document.getElementById(elementIDs.advancedSearch_MinimizeSpanID)!;
 
-    let content_node = document.getElementById(elementIDs.advancedsearch_content)!;
+    const content_node = document.getElementById(elementIDs.advancedsearch_content)!;
 
     // Check if the main_node was maximized
     if (maximizeSpan_node.classList.contains(css_esri.esri_icon_minimize)) {
@@ -1105,11 +1093,11 @@ class AdvancedSearch extends Widget {
   }
 
   private setTitle(widgetLabel=null as string|Event|null, title=null as string|null) {
-    let titlebarDiv_node = document.getElementById(elementIDs.advancedSearch_TitlebarDivID)!;
-    let titlebarButtonsDiv_node = document.getElementById(elementIDs.advancedSearch_TitlebarButtonsDivID)!;
-    let titlebarTitleSpan_node = document.getElementById(elementIDs.advancedSearch_TitlebarTitleSpanID)!;
+    const titlebarDiv_node = document.getElementById(elementIDs.advancedSearch_TitlebarDivID)!;
+    const titlebarButtonsDiv_node = document.getElementById(elementIDs.advancedSearch_TitlebarButtonsDivID)!;
+    const titlebarTitleSpan_node = document.getElementById(elementIDs.advancedSearch_TitlebarTitleSpanID)!;
 
-    let buttonsDivNodeWidth = titlebarButtonsDiv_node.offsetWidth;
+    const buttonsDivNodeWidth = titlebarButtonsDiv_node.offsetWidth;
     let combinedTitle = "";
 
     if (widgetLabel instanceof Event) {
@@ -1129,8 +1117,8 @@ class AdvancedSearch extends Widget {
       titlebarTitleSpan_node.title = combinedTitle;
     }
 
-    let combinedTitleWidth = getStringPixelWidth(combinedTitle);
-    let t9nTitleWidth = getStringPixelWidth(t9n.label);
+    const combinedTitleWidth = getStringPixelWidth(combinedTitle);
+    const t9nTitleWidth = getStringPixelWidth(t9n.label);
 
     // CHECK THAT WIDTHS MAKE SENSE OTHERWISE JUST PUT A SHORT TITLE.
     if (combinedTitleWidth) {
@@ -1177,14 +1165,11 @@ class AdvancedSearch extends Widget {
       if (element && (element instanceof HTMLElement === true)) {
         style = getComputedStyle(element, null);
   
-        let font_weight,
-            font_size,
-            font_family = "";
-        font_weight = style.getPropertyValue("font-weight");
-        font_size = style.getPropertyValue("font-size");
-        font_family = style.getPropertyValue("font-family");
+        const font_weight = style.getPropertyValue("font-weight")? style.getPropertyValue("font-weight"): "";
+        const font_size = style.getPropertyValue("font-size")? style.getPropertyValue("font-size"): "";
+        const font_family = style.getPropertyValue("font-family")? style.getPropertyValue("font-family"): "";
   
-        let font_style = `${font_weight} ${font_size} ${font_family}`;
+        const font_style = `${font_weight} ${font_size} ${font_family}`;
         // console.log(`Calculated style: ${font_style}`)
 
         const canvas = document.createElement("canvas");
@@ -1192,7 +1177,7 @@ class AdvancedSearch extends Widget {
         if (context) {
           context.font = font_style;
           const metrics = context.measureText(_string);
-          let width = Number(metrics.width.toFixed(0));
+          const width = Number(metrics.width.toFixed(0));
           // console.log(`Element width: ${width}`);
 
           return width;

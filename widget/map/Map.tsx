@@ -14,14 +14,17 @@ import WebMap from "@arcgis/core/WebMap";
 import Color from "@arcgis/core/Color";
 import Popup from "@arcgis/core/widgets/Popup";
 import Extent from "@arcgis/core/geometry/Extent";
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
+import CookiesButton from "../cookies/button/CookiesButton";
+import Cookies from "../cookies/Cookies";
 import { MapConfig, mwObject } from '../class/_Map'
 import { CookiesVM } from "../class/_Cookie";
 import { getWidgetTheme } from '@dnrr_fd/util/web'
 import { getNormalizedLocale } from '@dnrr_fd/util/locale'
 import { loadWidgetsIntoMap, removeWidgetsFromMap } from "./MapViewModel"
 
-export var mapRootURL: string;
-export var mapParentElement: HTMLElement|null;
+export let mapRootURL: string;
+export let mapParentElement: HTMLElement|null;
 
 // Import Assets
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
@@ -30,14 +33,12 @@ import * as css_light from './assets/css/light/map.module.css';
 
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
-import CookiesButton from "../cookies/button/CookiesButton";
-import Cookies from "../cookies/Cookies";
 
-var t9n = t9n_en;
-var css_theme = css_dark;
-var _mapView = new MapView();
-var initialExtent: Extent;
+let t9n = t9n_en;
+let css_theme = css_dark;
+const _mapView = new MapView();
 
+let self: Map;
 
 const elementIDs = {
   esriThemeID: "esriThemeID",
@@ -122,7 +123,7 @@ class Map extends Widget {
     esriConfig.apiKey = this.apiKey;
     // console.log(`API Key: ${esriConfig.apiKey}`);
 
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -131,9 +132,9 @@ class Map extends Widget {
     }
 
     mapRootURL = this.mapRootURL;
-    var self = this;
+    self = this as Map;
     this.mapView = _mapView;
-    var containerElement: HTMLElement|null;
+    let containerElement: HTMLElement|null;
     if (typeof self.container === 'string') {
       containerElement = document.getElementById(self.container as string);
     } else {
@@ -157,7 +158,7 @@ class Map extends Widget {
     esriConfig.portalUrl = this.portalUrl;
     // console.log(`Assets Path: ${esriConfig.assetsPath}`);
 
-    var info = new OAuthInfo({
+    const info = new OAuthInfo({
         appId: this.appid,
         portalUrl: this.map.portalUrl,
         locale: _locale,
@@ -192,11 +193,9 @@ class Map extends Widget {
       });
     });
 
-    this.watch("theme", function(theme_new: string, theme_old: string){
+    reactiveUtils.watch(() => self.theme, (theme_new: string, theme_old: string) => {
       if (theme_old) {
         css_theme = (theme_new === 'dark' ? css_dark : css_light);
-        // self.render();
-        // console.log(`Watch: Theme (Map) is now ${theme_new}`);
       }
     });
   }
@@ -207,7 +206,7 @@ class Map extends Widget {
     // Check for cookies
     this.mapWidgets?.forEach(mapWidget => {
       if (mapWidget.mWidget instanceof CookiesButton) {
-        let _cookies_button = mapWidget.mWidget as CookiesButton;
+        const _cookies_button = mapWidget.mWidget as CookiesButton;
         if (_cookies_button.content instanceof Cookies) {
           this.cookies = _cookies_button.content.cookiesVM;
           return;
@@ -242,15 +241,14 @@ class Map extends Widget {
 
   private async _handleSignIn() {
     return new Promise(resolve => {
-      var portal = new Portal();
-      var self = this;
+      const portal = new Portal();
       portal.authMode = "immediate";
       portal.load().then(() => {
         if (portal.user) {
-          let results = { name: portal.user.fullName, username: portal.user.username };
+          // const results = { name: portal.user.fullName, username: portal.user.username };
           // console.log(results);
           // Set up the sign-out link if the user wishes.
-          var _signoutElement: HTMLAnchorElement;
+          let _signoutElement: HTMLAnchorElement;
           if (this.signoutElement != null && typeof this.signoutElement != "undefined") {
             if (typeof this.signoutElement === "string") {
               _signoutElement = document.getElementById(this.signoutElement) as HTMLAnchorElement;
@@ -276,9 +274,8 @@ class Map extends Widget {
 
   private async _loadContent() {
     return new Promise(resolve => {
-      var self = this;
       //var upper_height = document.body.clientHeight;
-      var upper_height = 125;
+      const upper_height = 125;
   
       // Add the map node content.
       const map = new WebMap({

@@ -52,6 +52,8 @@ let currentEditLayer: FeatureLayer;
 let pickr_outline: Pickr;
 let pickr_main: Pickr;
 
+let self: AddLayer;
+
 // esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
 
 const css_esri = {
@@ -152,6 +154,8 @@ class AddLayer extends Widget {
   postInitialize(): void {
     // esriConfig.apiKey = this.apiKey;
 
+    self = this as AddLayer;
+
     const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
 
@@ -176,7 +180,7 @@ class AddLayer extends Widget {
               class={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
               title={t9n.addFileTabLabel}
               aria-label={t9n.addFileTabLabel}
-              onClick={this._addFileTab_click.bind(this)}
+              onclick={this._addFileTab_click.bind(this)}
               tabIndex="0"
             >{t9n.addFileTabLabel}</button>
             <button id={elementIDs.addlayer_ServiceTabID}
@@ -184,7 +188,7 @@ class AddLayer extends Widget {
               class={this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button)}
               title={t9n.addServiceTabLabel}
               aria-label={t9n.addServiceTabLabel}
-              onClick={this._addServiceTab_click.bind(this)}
+              onclick={this._addServiceTab_click.bind(this)}
               tabIndex="0"
             >{t9n.addServiceTabLabel}</button>
           </div>
@@ -204,7 +208,7 @@ class AddLayer extends Widget {
                     class={this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button)}
                     title={t9n.addFileButtonLabel}
                     aria-label={t9n.addFileButtonLabel}
-                    onClick={this._addFileButton_click.bind(this)}
+                    onclick={this._addFileButton_click.bind(this)}
                     tabIndex="0"
                   >{t9n.addFileButtonLabel}</button>
                 </span>
@@ -221,7 +225,7 @@ class AddLayer extends Widget {
                     class={this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase)}
                     title={t9n.addFileUpdateStatusClearLabel}
                     aria-label={t9n.addFileUpdateStatusClearLabel}
-                    onClick={this._addFileUpdateStatusClearButton_click.bind(this)}
+                    onclick={this._addFileUpdateStatusClearButton_click.bind(this)}
                     tabIndex="0">
                   </button>
                 </div>
@@ -256,7 +260,7 @@ class AddLayer extends Widget {
                   title={t9n.addFileServiceGoLabel}
                   aria-label={t9n.addFileServiceGoLabel}
                   aria-disabled='true'
-                  onClick={this._addFileServiceGoButton_click.bind(this)}
+                  onclick={this._addFileServiceGoButton_click.bind(this)}
                   tabIndex="0">{t9n.addFileServiceGoLabel}
                 </button>
               </div>
@@ -304,7 +308,7 @@ class AddLayer extends Widget {
                       class={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
                       title={t9n.resultsEditSaveButton}
                       aria-label={t9n.resultsEditSaveButton}
-                      onClick={this._resultsEditSaveButton_click.bind(this)}
+                      onclick={this._resultsEditSaveButton_click.bind(this)}
                       tabIndex="0"
                   >{t9n.resultsEditSaveButton}</button>
                   <button id={elementIDs.addlayer_ResultsEdit_CancelButtonID}
@@ -312,7 +316,7 @@ class AddLayer extends Widget {
                       class={this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button)}
                       title={t9n.resultsEditCancelButton}
                       aria-label={t9n.resultsEditCancelButton}
-                      onClick={this._resultsEditCancelButton_click.bind(this)}
+                      onclick={this._resultsEditCancelButton_click.bind(this)}
                       tabIndex="0"
                     >{t9n.resultsEditCancelButton}</button>
                 </div>
@@ -812,7 +816,6 @@ class AddLayer extends Widget {
     const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
     const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
     const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
-    const self = this;
 
     const layers = featureCollection.layers.map((layer: any) => {
       const graphics = layer.featureSet.features.map((feature: Graphic) => {
@@ -848,7 +851,6 @@ class AddLayer extends Widget {
   }
 
   private async addURLServiceToMap(_urlValue: string) {
-    const self = this;
     const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID)!;
     const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID)!;
     const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID)!;
@@ -919,8 +921,7 @@ class AddLayer extends Widget {
     return new URLServiceResult(featureLayer, message);
   }
 
-  private createLayerResultsItem(self: this, _layerID: string, _layerName: string, resultsDiv_node: HTMLElement, resultsEditDiv_node: HTMLElement, modalDiv_node: HTMLElement) {
-    // const self = this;
+  private createLayerResultsItem(self: AddLayer, _layerID: string, _layerName: string, resultsDiv_node: HTMLElement, resultsEditDiv_node: HTMLElement, modalDiv_node: HTMLElement) {
     const layerDiv = document.createElement("div");
     const buttonWrapperDiv = document.createElement("div");
     const buttonDiv = document.createElement("div");

@@ -31,25 +31,23 @@ import AdvancedSearchButton from "../advancedsearch/button/AdvancedSearchButton"
 // Import local assets
 import * as searchT9n_en from '../search/assets/t9n/en.json'
 import * as searchT9n_fr from '../search/assets/t9n/fr.json'
-var search_defaultT9n = searchT9n_en;
+let search_defaultT9n = searchT9n_en;
 
 import * as cookiesT9n_en from '../cookies/assets/t9n/en.json'
 import * as cookiesT9n_fr from '../cookies/assets/t9n/fr.json'
-var cookies_defaultT9n = cookiesT9n_en;
+let cookies_defaultT9n = cookiesT9n_en;
 
 import * as advancedSearchT9n_en from '../advancedsearch/assets/t9n/en.json'
 import * as advancedSearchT9n_fr from '../advancedsearch/assets/t9n/fr.json'
-var advancedSearch_defaultT9n = advancedSearchT9n_en;
+let advancedSearch_defaultT9n = advancedSearchT9n_en;
 
 import * as layerListT9n_en from '../layerlist/assets/t9n/en.json'
 import * as layerListT9n_fr from '../layerlist/assets/t9n/fr.json'
-import Layer from "@arcgis/core/layers/Layer";
-import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
-var layerList_defaultT9n = layerListT9n_en;
+let layerList_defaultT9n = layerListT9n_en;
 
-var mapWidgets = new Array<mwObject>();
-var widgetsAssetsPath: string;
-var lang: string;
+let mapWidgets = new Array<mwObject>();
+let widgetsAssetsPath: string;
+let lang: string;
 
 export async function loadWidgetsIntoMap(_mapView: MapView, mapWidgetArray: Array<MapWidget|ScaleBarWidget|LayerListWidget>): Promise<Array<mwObject>|null> {
     return new Promise(resolve => {
@@ -154,7 +152,7 @@ export function removeWidgetsFromMap(_mapView: MapView) {
     mapWidgets.forEach(mwObj => {
         if (mwObj) {
             _mapView.ui.remove(mwObj.mWidget)
-            var widget_node = document.getElementById(mwObj.mWidget.id) as HTMLDivElement;
+            const widget_node = document.getElementById(mwObj.mWidget.id) as HTMLDivElement;
             if (widget_node) {
                 widget_node.innerHTML = "";
             }
@@ -168,26 +166,25 @@ async function addSearch(widget: SearchWidget, view: MapView): Promise<Search|nu
         // Get the default asset from language.
         search_defaultT9n = (lang === 'fr' ? searchT9n_fr : searchT9n_en);
 
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
-        var _search = new Search();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        const _search = new Search();
 
         returnConfig(configFile, null).then(config => {
-            var searchT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
-            var _visible: boolean;
-            var _label: string;
-            var _allPlaceholder: string;
-            var searchConfig: SearchConfig|null;
-            searchConfig = config as SearchConfig|null;
+            const searchT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
+            let _visible: boolean;
+            let _label: string;
+            let _allPlaceholder: string;
+            const searchConfig = config as SearchConfig|null;
             returnConfig(searchT9nPath, null).then(t9nResults => {
-                var _t9nResults: MapWidgetSearch;
+                let _t9nResults: MapWidgetSearch;
                 if (t9nResults === null) {
                     console.log(`No T9n config file passed for ${widget.id}. Using core default instead.`);
                     _t9nResults = search_defaultT9n as MapWidgetSearch;
@@ -204,13 +201,13 @@ async function addSearch(widget: SearchWidget, view: MapView): Promise<Search|nu
                 return _t9nResults.sources? _t9nResults.sources: null;
             }).then(searchSourcesT9n => {
                 // Add any sources using sources and t9n
-                var _sources = new Collection<LayerSearchSource>();
+                const _sources = new Collection<LayerSearchSource>();
                 if (searchConfig) {
-                    var sources = searchConfig.sources? searchConfig.sources: null as Array<SearchWidgetSource>|null;
+                    const sources = searchConfig.sources? searchConfig.sources: null as Array<SearchWidgetSource>|null;
                     sources?.forEach(source => {
-                        let _source = new LayerSearchSource();
+                        const _source = new LayerSearchSource();
                         if (source.url) {
-                            let lyr = new FeatureLayer({
+                            const lyr = new FeatureLayer({
                                 url: source.url
                             });
                             _source.searchFields = source.searchFields? source.searchFields: [];
@@ -250,33 +247,33 @@ async function addSearch(widget: SearchWidget, view: MapView): Promise<Search|nu
 
 async function addCookies(widget: CookiesWidget, view: MapView): Promise<CookiesButton|null> {
     return new Promise(resolve => {
-        var _cookiesID = "cookiesID";
-        var lang = getNormalizedLocale();
-        var cookiesWidget: Cookies;
+        const _cookiesID = "cookiesID";
+        const lang = getNormalizedLocale();
+        let cookiesWidget: Cookies;
 
         // Get the default asset from language.
         cookies_defaultT9n = (lang === 'fr' ? cookiesT9n_fr : cookiesT9n_en);
 
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
-        var _map_position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        const _map_position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 0);
         
         returnConfig(configFile, null).then(config => {
-            var cookiesT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
-            var _visible = getWidgetConfigKeyValue(config as CookiesWidget, "visible", widget.visible? widget.visible: true) as boolean;
-            var _container = getWidgetConfigKeyValue(config as CookiesWidget, "container", _cookiesID) as string;
-            var _expanded = getWidgetConfigKeyValue(config as CookiesWidget, "expanded", widget.expanded? widget.expanded: true) as boolean;
-            var _cookies = getWidgetConfigKeyValue(config as CookiesWidget, "cookies", widget.cookies? widget.cookies: null) as Array<CookiesVM>;
-            var _privacyPolicy = getWidgetConfigKeyValue(config as CookiesWidget, "privacyPolicy", widget.privacyPolicy? widget.privacyPolicy: null) as WebUrlObject;
-            var _contactUs = getWidgetConfigKeyValue(config as CookiesWidget, "contactUs", widget.contactUs? widget.contactUs: null) as WebObject;
-            var _position = getWidgetConfigKeyValue(config as CookiesWidget, "position", widget.position? widget.position: "bottom") as "top"|"bottom";
-            var _label: string;
-            var _cookiesT9n: Array<CookiesWidgetSourceT9n>;
+            const cookiesT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
+            const _visible = getWidgetConfigKeyValue(config as CookiesWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _container = getWidgetConfigKeyValue(config as CookiesWidget, "container", _cookiesID) as string;
+            const _expanded = getWidgetConfigKeyValue(config as CookiesWidget, "expanded", widget.expanded? widget.expanded: true) as boolean;
+            const _cookies = getWidgetConfigKeyValue(config as CookiesWidget, "cookies", widget.cookies? widget.cookies: null) as Array<CookiesVM>;
+            const _privacyPolicy = getWidgetConfigKeyValue(config as CookiesWidget, "privacyPolicy", widget.privacyPolicy? widget.privacyPolicy: null) as WebUrlObject;
+            const _contactUs = getWidgetConfigKeyValue(config as CookiesWidget, "contactUs", widget.contactUs? widget.contactUs: null) as WebObject;
+            const _position = getWidgetConfigKeyValue(config as CookiesWidget, "position", widget.position? widget.position: "bottom") as "top"|"bottom";
+            let _label: string;
+            let _cookiesT9n: Array<CookiesWidgetSourceT9n>;
 
             returnConfig(cookiesT9nPath, null).then(async t9nResults => {
                 if (t9nResults === null) {
@@ -286,7 +283,7 @@ async function addCookies(widget: CookiesWidget, view: MapView): Promise<Cookies
                 _label = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetCookies, "allPlaceholder", lang==="en"? "Cookies Settings": "Paramètres des Cookies") as string;
                 _cookiesT9n = getWidgetLocaleConfigKeyValue(t9nResults as MapWidgetCookies, "cookies", null) as Array<CookiesWidgetSourceT9n>;
                 // Create the cookies widget and set its properties.
-                var cookie_array = new Array<Cookie>();
+                const cookie_array = new Array<Cookie>();
 
                 _cookies.forEach(conf_cookie => {
                     _cookiesT9n.forEach(t9n_cookie => {
@@ -315,7 +312,7 @@ async function addCookies(widget: CookiesWidget, view: MapView): Promise<Cookies
 
             }).then(function (){
                 cookiesWidget.label = _label;
-                var _cookies_button = new CookiesButton({
+                const _cookies_button = new CookiesButton({
                     id: widget.id,
                     visible: _visible,
                     content: cookiesWidget,
@@ -346,21 +343,21 @@ async function addCookies(widget: CookiesWidget, view: MapView): Promise<Cookies
 
 async function addScaleBar(widget: ScaleBarWidget, view: MapView): Promise<ScaleBar|null> {
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
-        var _scaleBar = new ScaleBar();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        const _scaleBar = new ScaleBar();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as ScaleBarWidget, "visible", widget.visible? widget.visible: true) as boolean;
-            var _unit = getWidgetConfigKeyValue(config as ScaleBarWidget, "unit", widget.unit? widget.unit: "dual") as "non-metric"|"metric"|"dual";
-            var _style = getWidgetConfigKeyValue(config as ScaleBarWidget, "style", widget.style? widget.style: "line") as "ruler"|"line";
+            const _visible = getWidgetConfigKeyValue(config as ScaleBarWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _unit = getWidgetConfigKeyValue(config as ScaleBarWidget, "unit", widget.unit? widget.unit: "dual") as "non-metric"|"metric"|"dual";
+            const _style = getWidgetConfigKeyValue(config as ScaleBarWidget, "style", widget.style? widget.style: "line") as "ruler"|"line";
 
             _scaleBar.label = widget.id;
             _scaleBar.view = view;
@@ -382,19 +379,19 @@ async function addScaleBar(widget: ScaleBarWidget, view: MapView): Promise<Scale
 
 async function addCoordinateConversion(widget: MapWidget, view: MapView): Promise<CoordinateConversion|null> {
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
-        var _coordinateConversion = new CoordinateConversion();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        const _coordinateConversion = new CoordinateConversion();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _coordinateConversion.label = widget.id;
             _coordinateConversion.view = view;
@@ -419,19 +416,19 @@ async function addCoordinateConversion(widget: MapWidget, view: MapView): Promis
 
 async function addHome(widget: MapWidget, view: MapView): Promise<Home|null>{
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
-        var _home = new Home();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        const _home = new Home();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _home.label = widget.id;
             _home.view = view;
@@ -451,19 +448,19 @@ async function addHome(widget: MapWidget, view: MapView): Promise<Home|null>{
 
 async function addZoom(widget: MapWidget, view: MapView): Promise<Zoom|null>{
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
-        var _zoom = new Zoom();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 1);
+        const _zoom = new Zoom();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _zoom.label = widget.id;
             _zoom.view = view;
@@ -483,20 +480,20 @@ async function addZoom(widget: MapWidget, view: MapView): Promise<Zoom|null>{
 
 async function addExtentNavigator(widget: ExtentNavigationWidget, view: MapView): Promise<ExtentNavigator|null>{
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 1);
-        var _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true) as boolean;
-        var _extentNavigator = new ExtentNavigator();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 1);
+        const _horizontalAlignButtons = getWidgetConfigKeyValue(widget, "horizontal_align_buttons", true) as boolean;
+        const _extentNavigator = new ExtentNavigator();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _extentNavigator.label = widget.id;
             _extentNavigator.horizontalAlignButtons = _horizontalAlignButtons;
@@ -517,19 +514,19 @@ async function addExtentNavigator(widget: ExtentNavigationWidget, view: MapView)
 
 async function addLocate(widget: MapWidget, view: MapView): Promise<Locate|null>{
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 2);
-        var _locate = new Locate();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 2);
+        const _locate = new Locate();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _locate.label = widget.id;
             _locate.view = view;
@@ -549,19 +546,19 @@ async function addLocate(widget: MapWidget, view: MapView): Promise<Locate|null>
 
 async function addFullscreen(widget: MapWidget, view: MapView): Promise<Fullscreen|null>{
     return new Promise(resolve => {
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
         
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 3);
-        var _fullscreen = new Fullscreen();
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 3);
+        const _fullscreen = new Fullscreen();
 
         returnConfig(configFile, null).then(config => {
-            var _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _visible = getWidgetConfigKeyValue(config as MapWidget, "visible", widget.visible? widget.visible: true) as boolean;
 
             _fullscreen.label = widget.id;
             _fullscreen.view = view;
@@ -584,25 +581,25 @@ async function addLayerList(widget: LayerListWidget, view: MapView): Promise<Exp
         // Get the default asset from language.
         layerList_defaultT9n = (lang === 'fr' ? layerListT9n_fr : layerListT9n_en);
 
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
-        var _position = getWidgetConfigKeyValue(widget, "map_location", "top-left") as string;
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 4);
+        const _position = getWidgetConfigKeyValue(widget, "map_location", "top-left") as string;
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 4);
 
-        var _layerList_expand = new Expand();
+        const _layerList_expand = new Expand();
 
         returnConfig(configFile, null).then(config => {
-            var layerListT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
-            var _visible = getWidgetConfigKeyValue(config as LayerListWidget, "visible", widget.visible? widget.visible: true) as boolean;
-            var _expanded = getWidgetConfigKeyValue(config as LayerListWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
-            var _group = getWidgetConfigKeyValue(config as LayerListWidget, "group", widget.group? widget.group: `${_position}-group`) as string;
-            var _label: string;
+            const layerListT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
+            const _visible = getWidgetConfigKeyValue(config as LayerListWidget, "visible", widget.visible? widget.visible: true) as boolean;
+            const _expanded = getWidgetConfigKeyValue(config as LayerListWidget, "expanded", widget.expanded? widget.expanded: false) as boolean;
+            const _group = getWidgetConfigKeyValue(config as LayerListWidget, "group", widget.group? widget.group: `${_position}-group`) as string;
+            let _label: string;
 
-            var collapse_icon = "esri-icon-left";
+            let collapse_icon = "esri-icon-left";
             if (_position.toUpperCase().includes("RIGHT")) {
                 collapse_icon = "esri-icon-right"
             }
@@ -737,32 +734,32 @@ async function layerListActions (event: { item: any; }) {
 
 async function addAdvancedSearch(widget: AdvancedSearchWidget, view: MapView): Promise<AdvancedSearchButton|null> {
     return new Promise(resolve => {
-        var _advancedSearchID = "advancedSearchID";
-        var lang = getNormalizedLocale();
-        var advancedSearchWidget: AdvancedSearch;
+        const _advancedSearchID = "advancedSearchID";
+        const lang = getNormalizedLocale();
+        let advancedSearchWidget: AdvancedSearch;
 
         // Get the default asset from language.
         advancedSearch_defaultT9n = (lang === 'fr' ? advancedSearchT9n_fr : advancedSearchT9n_en);
 
-        var configFile: string|null;
+        let configFile: string|null;
         if (widget.config && typeof widget.config === "string") {
             configFile = widget.config;
         } else {
             configFile = null;
         }
-        var _map_position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
-        var _index = getWidgetConfigKeyValue(widget, "index_position", 0);
-        var advancedSearchT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
-        var _visible = getWidgetConfigKeyValue(widget, "visible", widget.visible? widget.visible: true) as boolean;
-        var _container = getWidgetConfigKeyValue(widget, "advancedSearchContainer", _advancedSearchID) as string;
-        var _rootFocusElement = getWidgetConfigKeyValue(widget, "rootFocusElement", widget.rootFocusElement? widget.rootFocusElement: "mainID") as string;
-        var _expanded = getWidgetConfigKeyValue(widget, "expanded", widget.expanded? widget.expanded: true) as boolean;
-        var _label: string;
+        const _map_position = getWidgetConfigKeyValue(widget, "map_location", "bottom-left");
+        const _index = getWidgetConfigKeyValue(widget, "index_position", 0);
+        const advancedSearchT9nPath = widget.t9nPath? `${widget.t9nPath}/${lang}.json`: null as string|null;
+        const _visible = getWidgetConfigKeyValue(widget, "visible", widget.visible? widget.visible: true) as boolean;
+        const _container = getWidgetConfigKeyValue(widget, "advancedSearchContainer", _advancedSearchID) as string;
+        const _rootFocusElement = getWidgetConfigKeyValue(widget, "rootFocusElement", widget.rootFocusElement? widget.rootFocusElement: "mainID") as string;
+        const _expanded = getWidgetConfigKeyValue(widget, "expanded", widget.expanded? widget.expanded: true) as boolean;
+        let _label: string;
     
         returnConfig(configFile, null).then(config => {
-            var asConfig = config as AdvancedSearchObject;
-            var _addMissingSearchLayers = asConfig.addMissingSearchLayers? asConfig.addMissingSearchLayers: true as boolean;
-            var _layers = asConfig.layers? asConfig.layers: null as Array<AdvancedSearchLayer>|null;
+            const asConfig = config as AdvancedSearchObject;
+            const _addMissingSearchLayers = asConfig.addMissingSearchLayers? asConfig.addMissingSearchLayers: true as boolean;
+            const _layers = asConfig.layers? asConfig.layers: null as Array<AdvancedSearchLayer>|null;
 
             if (_layers === null) {
                 resolve(null);
@@ -780,15 +777,15 @@ async function addAdvancedSearch(widget: AdvancedSearchWidget, view: MapView): P
                     }
 
                     // Check if the container exists and if it is empty
-                    let containerElement = document.getElementById(_container);
+                    const containerElement = document.getElementById(_container);
                     if (containerElement) {
                         if (containerElement.innerHTML.length > 0) {
                             containerElement.innerHTML = "";
                         }
                     } else {
-                        let rootElement = document.getElementById(_rootFocusElement);
+                        const rootElement = document.getElementById(_rootFocusElement);
                         if (rootElement) {
-                            let ce = document.createElement("div");
+                            const ce = document.createElement("div");
                             ce.id = _container;
                             rootElement.appendChild(ce);
                         } else {
@@ -807,7 +804,7 @@ async function addAdvancedSearch(widget: AdvancedSearchWidget, view: MapView): P
     
                 }).then(function (){
                     advancedSearchWidget.label = _label;
-                    var _advancedSearch_button = new AdvancedSearchButton({
+                    const _advancedSearch_button = new AdvancedSearchButton({
                         id: widget.id,
                         visible: _visible,
                         content: advancedSearchWidget,
@@ -839,9 +836,9 @@ async function addAdvancedSearch(widget: AdvancedSearchWidget, view: MapView): P
 }
 
 function getWidgetConfigKeyValue(widget: MapWidget, configKey: string, defaultValue=null as any) {
-    var result = defaultValue;
+    let result = defaultValue;
     if (widget) {
-        var keys = Object.keys(widget);
+        const keys = Object.keys(widget);
         if (keys.includes(configKey)) {
             result = widget[configKey as keyof typeof widget];
         }
@@ -850,9 +847,9 @@ function getWidgetConfigKeyValue(widget: MapWidget, configKey: string, defaultVa
 }
 
 function getWidgetLocaleConfigKeyValue(widgetLocale: MapWidgetLocale, configKey: string, defaultValue=null as any) {
-    var result = defaultValue;
+    let result = defaultValue;
     if (widgetLocale) {
-        var keys = Object.keys(widgetLocale);
+        const keys = Object.keys(widgetLocale);
         if (keys.includes(configKey)) {
             result = widgetLocale[configKey as keyof typeof widgetLocale];
         }

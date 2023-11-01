@@ -9,7 +9,7 @@ import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 import * as css from './assets/css/disclaimer.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-var t9n = t9n_en;
+let t9n = t9n_en;
 const css_esri = {
     esri_widget: 'esri-widget',
     esri_button: 'esri-button',
@@ -31,7 +31,7 @@ let Disclaimer = class Disclaimer extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     postInitialize() {
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
@@ -46,19 +46,19 @@ let Disclaimer = class Disclaimer extends Widget {
         });
     }
     render() {
-        var message = t9n.messages.map(p => tsx("p", null,
+        const message = t9n.messages.map(p => tsx("p", { key: `${t9n.title}_key` },
             p.map(obj => this._getElemValue(obj.element, obj.value)),
             " "));
         return (tsx("div", { id: this.id },
             tsx("div", { id: elementIDs.disclaimerModalID, afterCreate: this.setElementFocus, bind: this, class: css.default.widget_disclaimer_modal },
                 tsx("div", { id: elementIDs.disclaimerContentID, class: this.classes(css.default.widget_disclaimer, css.default.widget_disclaimer_content, css_esri.esri_widget) },
                     tsx("div", { class: css.default.widget_disclaimer_title__div },
-                        tsx("h1", { role: 'heading', ariaLevel: '1' }, t9n.title)),
+                        tsx("h1", { role: 'heading', "aria-level": '1' }, t9n.title)),
                     tsx("div", { class: css.default.widget_disclaimer_message__div },
                         tsx("div", null, message)),
                     tsx("div", { class: css.default.widget_disclaimer_checkbox__div },
-                        tsx("input", { id: elementIDs.disclaimerAgreementCheckboxID, type: 'checkbox', value: 'agree', class: css.default.widget_disclaimer_checkbox, ariaLabel: t9n.agreeText, title: t9n.agreeText, onclick: this._agreementCheckbox_click.bind(this) }),
-                        tsx("label", { for: elementIDs.disclaimerAgreementCheckboxID, class: css.default.widget_disclaimer_checkbox__label }, t9n.agreeText)),
+                        tsx("input", { id: elementIDs.disclaimerAgreementCheckboxID, type: 'checkbox', value: 'agree', class: css.default.widget_disclaimer_checkbox, "aria-label": t9n.agreeText, title: t9n.agreeText, onclick: this._agreementCheckbox_click.bind(this) }),
+                        tsx("label", { htmlFor: elementIDs.disclaimerAgreementCheckboxID, class: css.default.widget_disclaimer_checkbox__label }, t9n.agreeText)),
                     tsx("div", { class: css.default.widget_disclaimer_button__div },
                         tsx("button", { id: elementIDs.disclaimerAgreementConfirmID, type: "button", class: this.classes(css.default.widget_disclaimer_button__disabled, css_esri.esri_button, css_esri.esri_button_third, css_esri.esri_button_disabled), "aria-disabled": 'true', onclick: this._confirmButton_click.bind(this) }, t9n.confirmButtonText))))));
     }

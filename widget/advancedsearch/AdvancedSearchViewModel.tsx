@@ -20,10 +20,10 @@ import { getNormalizedLocale } from '@dnrr_fd/util/locale';
 
 import * as css from './assets/css/advancedsearch.module.css';
 
-var flIDsArray = new Array<string>();
+const flIDsArray = new Array<string>();
 
-export var featureLayerReferences = new Array<FeatureLayerReferences>();
-export var currentSearchLayerIndex = -1;
+export const featureLayerReferences = new Array<FeatureLayerReferences>();
+export let currentSearchLayerIndex = -1;
 
 export function setCurrentSearchLayerIndex(idx: number) {
   currentSearchLayerIndex = idx;
@@ -51,10 +51,10 @@ export function initializeFeatureTable(view: MapView, container_node: HTMLElemen
 }
 
 function keywordReplace(searchString: string, searchKeyword: string, replacementValue: string) {
-  let searchStringUpper = searchString.toUpperCase();
-  let searchKeywordUpper = searchKeyword.toUpperCase();
+  const searchStringUpper = searchString.toUpperCase();
+  const searchKeywordUpper = searchKeyword.toUpperCase();
   let idx = searchStringUpper.indexOf(searchKeywordUpper, 0);
-  let idxArray = new Array<number>();
+  const idxArray = new Array<number>();
 
   while (idx >= 0) {
     idxArray.push(idx);
@@ -73,11 +73,11 @@ function keywordReplace(searchString: string, searchKeyword: string, replacement
 }
 
 export function setSearchFieldsVisibility() {
-  let searchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
-  let options = searchLayer_node.options;
+  const searchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
+  const options = searchLayer_node.options;
 
-  for (var i = 0; i < options.length; i++) {
-    let searchFields_node = document.getElementById(`${options[i].value}${postFixes.layerDivID}`) as HTMLSelectElement;
+  for (let i = 0; i < options.length; i++) {
+    const searchFields_node = document.getElementById(`${options[i].value}${postFixes.layerDivID}`) as HTMLSelectElement;
     if (options[i].value === searchLayer_node.value) {
       if (searchFields_node.classList.contains(css.default.widget_advancedsearch_visible__none)) {
         searchFields_node.classList.remove(css.default.widget_advancedsearch_visible__none);
@@ -109,10 +109,10 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
   return new Promise(async resolve => {
     const _locale = getNormalizedLocale();
 
-    let _searchFieldSOA = new Array<SearchFieldSelectObjects>();
+    const _searchFieldSOA = new Array<SearchFieldSelectObjects>();
 
     aslAsyncForEach(layers, async (layer: AdvancedSearchLayer) => {
-      let fl = new FeatureLayer({
+      const fl = new FeatureLayer({
         title: `${layer.searchlayerlabel[_locale as keyof typeof layer.searchlayerlabel]}`,
         url: layer.url
       });
@@ -135,13 +135,13 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
   async function loadFSOArray(fl: FeatureLayer, layer: AdvancedSearchLayer): Promise<SearchFieldSelectObjects> {
     return new Promise(async resolve => {
       await fl.load().then(function () {
-        let _selectObjects = new Array<SelectObject>();
+        const _selectObjects = new Array<SelectObject>();
         asfAsyncForEach(layer.searchfields, async (searchField: AdvancedSearchField) => {
           await createSelectOptions(searchField, fl).then(_selectObject => {
             _selectObjects.push(_selectObject);
           });
         }).then(function() {
-          let _searchFieldSelectObjects = new SearchFieldSelectObjects({
+          const _searchFieldSelectObjects = new SearchFieldSelectObjects({
             layerID: layer.id,
             selectObjects: _selectObjects
           });
@@ -156,7 +156,7 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
   async function createSelectOptions(searchField: AdvancedSearchField, fl: FeatureLayer): Promise<SelectObject> {
     return new Promise(async resolve => {
       let _selectOptions = new Array<tsx.JSX.Element>();
-      let _selectObject = new SelectObject();
+      const _selectObject = new SelectObject();
       _selectObject.fieldID = searchField.field? searchField.field: "";
       _selectObject.fieldType = searchField.fieldtype? searchField.fieldtype: "string";
       _selectObject.sqlText = searchField.sqltext? searchField.sqltext: "1=1";
@@ -166,22 +166,22 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
       if (_selectObject.fieldID != "") {
         if (searchField.userlist && searchField.userlist.length > 0) {
           _selectOptions = searchField.userlist.map(item => 
-            <option key={`${item.replace(' ', '')}_key`} data-value={item} text={item} defaultSelected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
+            <option key={`${item.replace(' ', '')}_key`} data-value={item} value={item} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
           );
           _selectObject.options = _selectOptions;
           resolve(_selectObject);
         } else {
           // See if the field has a coded value domain
-          let _field = fl.getField(searchField.field);
+          const _field = fl.getField(searchField.field);
           if (_field.domain && _field.domain.type === "coded-value") {
             _selectOptions = _field.domain.codedValues.map(codedValue => 
-              <option key={`${codedValue.code}_key`} data-value={codedValue.code.toString()} text={codedValue.name} defaultSelected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false}>{codedValue.name}</option>
+              <option key={`${codedValue.code}_key`} data-value={codedValue.code.toString()} value={codedValue.name} selected={searchField.defaultvalue? codedValue.code === searchField.defaultvalue? true: false: false}>{codedValue.name}</option>
             );
             _selectObject.options = _selectOptions;
             resolve(_selectObject);
           } else if (searchField.usedistinctvalues && searchField.usedistinctvalues === true) {
             // Perform the query on the feature layer to get the distinct results
-            let featureQuery = new Query({
+            const featureQuery = new Query({
               where: "1=1",
               outFields: [searchField.field],
               returnDistinctValues: true,
@@ -189,7 +189,7 @@ export async function processFSOArray(layers: Array<AdvancedSearchLayer>): Promi
             });
             await queryFeatureLayer(fl, featureQuery).then(function (results: Array<string>) {
               _selectOptions = results.map(item => 
-                <option key={`${item.replace(' ', '')}_key`} data-value={item} text={item} defaultSelected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
+                <option key={`${item.replace(' ', '')}_key`} data-value={item} value={item} selected={searchField.defaultvalue? item === searchField.defaultvalue? true: false: false}>{item}</option>
               );
               _selectObject.options = _selectOptions;
               resolve(_selectObject);
@@ -219,7 +219,7 @@ async function returnFeatureSetWithinExtent(featureSet: FeatureSet, extent=null 
   return new Promise(async resolve => {
 
     if (extent) {
-      var result = new FeatureSet({
+      const result = new FeatureSet({
         spatialReference: featureSet.spatialReference,
         geometryType: featureSet.geometryType,
         displayFieldName: featureSet.displayFieldName,
@@ -227,14 +227,13 @@ async function returnFeatureSetWithinExtent(featureSet: FeatureSet, extent=null 
       });
       
       featuresAsyncForEach(featureSet.features, async (feature: Graphic) => {
-        var testFeature: Graphic;
-        testFeature = feature;
+        const testFeature = feature as Graphic;
   
         if (testFeature.geometry.extent.spatialReference != extent.spatialReference) {
-          var geometry = projection.project(testFeature.geometry, extent.spatialReference);
+          const geometry = projection.project(testFeature.geometry, extent.spatialReference);
 
           if (Array.isArray(geometry) === true) {
-            var geom = new Array<any>;
+            let geom = new Array<any>;
             geom = geometry as Array<any>;
             if (geom.find(g => g instanceof Geometry)) {
               testFeature.geometry = await geometryEngineAsync.union(geometry as Array<Geometry>);
@@ -261,17 +260,16 @@ async function returnFeatureSetWithinExtent(featureSet: FeatureSet, extent=null 
 async function returnFeatureOIDs(featureSet: FeatureSet, extent=null as Extent|null): Promise<Collection<number>> {
   return new Promise(async resolve => {
 
-    var result = new Collection<number>();
+    const result = new Collection<number>();
     featuresAsyncForEach(featureSet.features, async (feature: Graphic) => {
-      var testFeature: Graphic;
-      testFeature = feature;
+      const testFeature = feature as Graphic;
 
       if (extent) {
         if (testFeature.geometry.extent.spatialReference != extent.spatialReference) {
-          var geometry = projection.project(testFeature.geometry, extent.spatialReference);
+          const geometry = projection.project(testFeature.geometry, extent.spatialReference);
 
           if (Array.isArray(geometry) === true) {
-            var geom = new Array<any>;
+            let geom = new Array<any>;
             geom = geometry as Array<any>;
             if (geom.find(g => g instanceof Geometry)) {
               testFeature.geometry = await geometryEngineAsync.union(geometry as Array<Geometry>);
@@ -299,14 +297,14 @@ async function returnFeatureOIDs(featureSet: FeatureSet, extent=null as Extent|n
 async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSearchLayer, viewExtent: Extent, featureTable: FeatureTable): Promise<FeatureSet> {
   return new Promise(async resolve => {
     let extent: Extent;
-    let extentCheckbox_node = document.getElementById(elementIDs.advancedsearch_ByValueResultsExtentCheckboxID) as HTMLInputElement
+    const extentCheckbox_node = document.getElementById(elementIDs.advancedsearch_ByValueResultsExtentCheckboxID) as HTMLInputElement
     let ftOidArray: Array<number>;
     let afSqlWhere = "";
     let afFeatureSet: FeatureSet;
 
     // SEE IF THERE ARE EXISTING FEATURES IN THE FEATURE TABLE.
     let lyrID: string;
-    let result = getLayerID(layer, postFixes.featureLayerID);
+    const result = getLayerID(layer, postFixes.featureLayerID);
     if (typeof result === "string") {
       lyrID = result;
     } else {
@@ -316,7 +314,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
     if (currentSearchLayerIndex > -1 && featureLayerArray[currentSearchLayerIndex].id === lyrID) {
       featureTable.activeFilters.forEach(af => {
         if (af.type === "selection") {
-          let afSelection = af as {type: string, objectIds: Array<number>};
+          const afSelection = af as {type: string, objectIds: Array<number>};
           console.log(afSelection);
           ftOidArray = afSelection.objectIds;
           console.log(ftOidArray);
@@ -325,7 +323,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
     }
     
     // Start with the definition query formed by the Field DDLs
-    let queryFL = new FeatureLayer({
+    const queryFL = new FeatureLayer({
       url: layer.url
     });
 
@@ -333,7 +331,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
 
       if (ftOidArray) {
         afSqlWhere = buildSQLText(queryFL.objectIdField, ftOidArray);
-        let afQuery = new Query({
+        const afQuery = new Query({
           where: afSqlWhere,
           outFields: [queryFL.objectIdField],
           returnGeometry: true
@@ -342,7 +340,7 @@ async function getFeatureSetUsingSQLandExtent(sqlText: string, layer: AdvancedSe
         afFeatureSet = await queryFL.queryFeatures(afQuery);
       }
 
-      let query = new Query({
+      const query = new Query({
         where: sqlText,
         outFields: [queryFL.objectIdField],
         returnGeometry: true
@@ -374,7 +372,7 @@ async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: Advan
 
       // SEE IF THERE ARE EXISTING FEATURES IN THE FEATURE TABLE.
       let lyrID: string;
-      let result = getLayerID(layer, postFixes.featureLayerID);
+      const result = getLayerID(layer, postFixes.featureLayerID);
       if (typeof result === "string") {
         lyrID = result;
       } else {
@@ -384,7 +382,7 @@ async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: Advan
       if (currentSearchLayerIndex > -1 && featureLayerArray[currentSearchLayerIndex].id === lyrID) {
         featureTable.activeFilters.forEach(af => {
           if (af.type === "selection") {
-            let afSelection = af as {type: string, objectIds: Array<number>};
+            const afSelection = af as {type: string, objectIds: Array<number>};
             console.log(afSelection);
             ftOidArray = afSelection.objectIds;
             console.log(ftOidArray);
@@ -392,14 +390,14 @@ async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: Advan
         });
       }
 
-      let queryFL = new FeatureLayer({
+      const queryFL = new FeatureLayer({
         url: layer.url,
       });
   
       queryFL.load().then(async () => {
         if (ftOidArray) {
           ftSqlWhere = buildSQLText(queryFL.objectIdField, ftOidArray);
-          let afQuery = new Query({
+          const afQuery = new Query({
             where: ftSqlWhere,
             outFields: [queryFL.objectIdField],
             returnGeometry: true
@@ -408,7 +406,7 @@ async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: Advan
           ftFeatureSet = await queryFL.queryFeatures(afQuery);
         }
   
-        let query = new Query({
+        const query = new Query({
           geometry: _geometry,
           outFields: [queryFL.objectIdField],
           returnGeometry: true
@@ -429,8 +427,8 @@ async function getFeatureSetUsingGeometry(_geometry: Geometry|null, layer: Advan
 async function getResultsFeatureSet(featureSet: FeatureSet, extent: Extent|null, existingFeatureSet: FeatureSet): Promise<FeatureSet> {
   return new Promise(async resolve => {
     await returnFeatureSetWithinExtent(featureSet, extent).then(function (results: FeatureSet) {
-      let selectionType_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionTypeID) as HTMLSelectElement;
-      let filteredFeatureSet = getselectionFeatureSet(results, existingFeatureSet, selectionType_node);
+      const selectionType_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionTypeID) as HTMLSelectElement;
+      const filteredFeatureSet = getselectionFeatureSet(results, existingFeatureSet, selectionType_node);
       resolve(filteredFeatureSet);
     });
   });
@@ -447,7 +445,7 @@ function getselectionFeatureSet(_featureSet: FeatureSet, _existingFeatureSet: Fe
 
 
       // Concatenate then sort the graphic features
-      let concatArray = _featureSet.features.concat(_existingFeatureSet.features);
+      const concatArray = _featureSet.features.concat(_existingFeatureSet.features);
       // Ascending
       concatArray.sort((a: Graphic, b: Graphic) => a.getObjectId() - b.getObjectId());
       // Descending
@@ -468,9 +466,9 @@ function getselectionFeatureSet(_featureSet: FeatureSet, _existingFeatureSet: Fe
 
   } else if (_selectionTypeNode.value === selectTypeOptions.removeFromSelection) {
     if (efOIDs.length > 0) {
-      let features = _existingFeatureSet.features.map(graphic => {return graphic;});
+      const features = _existingFeatureSet.features.map(graphic => {return graphic;});
       for (let idx=0; idx<_featureSet.features.length; idx++) {
-        let gOID = _featureSet.features[idx].getObjectId();
+        const gOID = _featureSet.features[idx].getObjectId();
         if (efOIDs.includes(gOID)) {
           features.splice(idx, 1);
         }
@@ -481,9 +479,9 @@ function getselectionFeatureSet(_featureSet: FeatureSet, _existingFeatureSet: Fe
     }
 
   } else if (_selectionTypeNode.value === selectTypeOptions.subsetOfSelection) {
-    let features = new Array<Graphic>();
+    const features = new Array<Graphic>();
     _featureSet.features.forEach(graphic => {
-      let gOID = graphic.getObjectId();
+      const gOID = graphic.getObjectId();
       if (efOIDs.includes(gOID) === true) {
         features.push(graphic);
       }
@@ -499,8 +497,8 @@ function getselectionFeatureSet(_featureSet: FeatureSet, _existingFeatureSet: Fe
 
 async function activateFeatureTable(layer: FeatureLayer, resultsTable: FeatureTable, firstResultID: number, filteringFeatureSet =null as FeatureSet|null): Promise<void> {
   return new Promise(async resolve => {
-    let zoomToFirstRecordCheckbox_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID) as HTMLInputElement;
-    let noResultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsNoResultsDivID) as HTMLDivElement;
+    const zoomToFirstRecordCheckbox_node = document.getElementById(elementIDs.advancedsearch_CommonBarSelectionZoomToFirstRecordCheckboxID) as HTMLInputElement;
+    const noResultsDiv_node = document.getElementById(elementIDs.advancedsearch_ResultsNoResultsDivID) as HTMLDivElement;
 
     resultsTable.visible = true;
     resultsTable.layer = layer;
@@ -528,7 +526,7 @@ async function activateFeatureTable(layer: FeatureLayer, resultsTable: FeatureTa
       });
     } else {
       if (zoomToFirstRecordCheckbox_node.checked === true && firstResultID) {
-        let zoomId = new Collection<number>();
+        const zoomId = new Collection<number>();
         zoomId.add(firstResultID);
         resultsTable.highlightIds = zoomId;
         console.log(`Selected ID : ${firstResultID}`);
@@ -541,9 +539,9 @@ async function activateFeatureTable(layer: FeatureLayer, resultsTable: FeatureTa
 
 export async function clearFeatureTable(_featureTable: FeatureTable): Promise<void> {
   if (_featureTable.layer && _featureTable.layer.fields) {
-    let sqlWhere = `${_featureTable.layer.objectIdField} = -9999`;
-    let _lyr = _featureTable.layer as any;
-    let emptyLayer = new FeatureLayer({
+    const sqlWhere = `${_featureTable.layer.objectIdField} = -9999`;
+    const _lyr = _featureTable.layer as any;
+    const emptyLayer = new FeatureLayer({
       url: _lyr.parsedUrl.path,
       definitionExpression: sqlWhere
     });
@@ -559,11 +557,11 @@ export async function clearFeatureTable(_featureTable: FeatureTable): Promise<vo
 }
 
 function populateDisplayFields(asLayer: AdvancedSearchLayer, fLayer: FeatureLayer) {
-  let _fields = new Array<Field>();
+  const _fields = new Array<Field>();
   if (asLayer.displayfields) {
     asLayer.displayfields.forEach(displayField => {
       // Check if the user field actually exists.
-      let _field = fLayer.getField(displayField.name);
+      const _field = fLayer.getField(displayField.name);
 
       if (_field) {
         if (displayField.alias && displayField.alias.length > 0) {
@@ -580,22 +578,22 @@ function populateDisplayFields(asLayer: AdvancedSearchLayer, fLayer: FeatureLaye
 }
 
 function validateSearchFields(sfso: SearchFieldSelectObjects, layer: AdvancedSearchLayer) {
-  let validationErrors = new Array<string>();
+  const validationErrors = new Array<string>();
   sfso.selectObjects.forEach(selectObject => {
-    let fieldDiv_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldDivID}`) as HTMLDivElement;
-    let field_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldInputID}`) as HTMLInputElement;
-    let fieldvalidation_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldValidationDivID}`) as HTMLDivElement;
-    let fieldvalidationasterix_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldValidationAsterixDivID}`) as HTMLDivElement;
+    const fieldDiv_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldDivID}`) as HTMLDivElement;
+    const field_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldInputID}`) as HTMLInputElement;
+    const fieldvalidation_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldValidationDivID}`) as HTMLDivElement;
+    const fieldvalidationasterix_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldValidationAsterixDivID}`) as HTMLDivElement;
 
     let fieldname = selectObject.fieldID;
 
     if (layer.displayfields) {
-      let idx = layer.displayfields.map(function(e) { return e.name; }).indexOf(selectObject.fieldID);
+      const idx = layer.displayfields.map(function(e) { return e.name; }).indexOf(selectObject.fieldID);
       if (idx > -1 && layer.displayfields[idx].alias) {
         fieldname = layer.displayfields[idx].alias;
       }
     }
-    var errorMsg = keywordReplace(t9n.byValueFieldValidationMessage, "[field]", fieldname);
+    const errorMsg = keywordReplace(t9n.byValueFieldValidationMessage, "[field]", fieldname);
     field_node.setCustomValidity(errorMsg);
     field_node.checkValidity();
 
@@ -619,10 +617,10 @@ function validateSearchFields(sfso: SearchFieldSelectObjects, layer: AdvancedSea
 
 export async function setupFeatureLayer(view: MapView, layer: AdvancedSearchLayer, featureLayerID: string): Promise<FeatureLayer|null> {
   return new Promise(async resolve => {
-    var featureLayer = new FeatureLayer();
-    var _orderBy = layer.orderbyfields? layer.orderbyfields: undefined;
-    var exactMatchID = null as string|null;
-    var matchID = null as string|null;
+    let featureLayer = new FeatureLayer();
+    const _orderBy = layer.orderbyfields? layer.orderbyfields: undefined;
+    let exactMatchID = null as string|null;
+    let matchID = null as string|null;
 
     view.map.allLayers.forEach(function (mapLayer: any) {
       // Check if AS layer is in the map
@@ -654,16 +652,18 @@ export async function setupFeatureLayer(view: MapView, layer: AdvancedSearchLaye
           relatedLayerIDs: new Array<string>()
         }));
 
-        resolve(featureLayer);
+        featureLayer.when(() => {
+          resolve(featureLayer);
+        });
       });
     } else if (exactMatchID === null && matchID != null && flIDsArray.includes(matchID) === true) {
       // Match found with different but valid ID
       featureLayer = view.map.allLayers.getItemAt(view.map.allLayers.map(function(lyr) { return lyr.id; }).indexOf(matchID)) as FeatureLayer
 
-      let matchIdx = featureLayerReferences.map(function(lyr) { return lyr.layerID; }).indexOf(matchID);
+      const matchIdx = featureLayerReferences.map(function(lyr) { return lyr.layerID; }).indexOf(matchID);
       featureLayerReferences[matchIdx].relatedLayerIDs.push(featureLayerID);
 
-      let featureLayerIdx = featureLayerReferences.map(function(lyr) { return lyr.layerID; }).indexOf(featureLayerID);
+      const featureLayerIdx = featureLayerReferences.map(function(lyr) { return lyr.layerID; }).indexOf(featureLayerID);
       if (featureLayerIdx > -1) {
         featureLayerReferences[matchIdx].relatedLayerIDs.push(matchID)
       } else {
@@ -711,7 +711,7 @@ function buildSQLTextFromSearchFields(sfso: SearchFieldSelectObjects, layer: Adv
   let sqlText = "";
   sfso.selectObjects.forEach(selectObject => {
     selectObject.sqlText;
-    let field_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldHiddenInputID}`) as HTMLOptionElement;
+    const field_node = document.getElementById(`${layer.id}_${selectObject.fieldID}${postFixes.layerFieldHiddenInputID}`) as HTMLOptionElement;
     if (selectObject.sqlText === "1=1") {
       if (sqlText === "") {
         if (selectObject.fieldType && selectObject.fieldType === "number") {
@@ -727,7 +727,7 @@ function buildSQLTextFromSearchFields(sfso: SearchFieldSelectObjects, layer: Adv
         }
       }
     } else {
-      let sqlText_tmp = keywordReplace(selectObject.sqlText, replacementKeyword, field_node.value);
+      const sqlText_tmp = keywordReplace(selectObject.sqlText, replacementKeyword, field_node.value);
 
       if (sqlText === "") {
         sqlText += `${sqlText_tmp}`;
@@ -741,10 +741,10 @@ function buildSQLTextFromSearchFields(sfso: SearchFieldSelectObjects, layer: Adv
 }
 
 export function buildSQLText(field: string, collectionOrArray: Collection<number>|Collection<string>|Array<number>|Array<number>|Array<string>) {
-  var sqlOIDs: string;
+  let sqlOIDs: string;
 
   if (collectionOrArray instanceof Collection === true) {
-    var coll = new Collection<any>;
+    let coll = new Collection<any>;
     coll = collectionOrArray as Collection<any>;
     if (coll.find(c => (typeof c === "string"))) {
       sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.map(item => {return `'${item}'`}).join(",")})`;
@@ -752,7 +752,7 @@ export function buildSQLText(field: string, collectionOrArray: Collection<number
       sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.join(",")})`;
     }
   } else if (Array.isArray(collectionOrArray) === true) {
-    var arr = new Array<any>;
+    let arr = new Array<any>;
     arr = collectionOrArray as Array<any>;
     if (arr.find(a => (typeof a === "string"))) {
       sqlOIDs = `${field.toLowerCase()} IN (${collectionOrArray.map(item => {return `'${item}'`}).join(",")})`;
@@ -773,11 +773,11 @@ export function buildSQLText(field: string, collectionOrArray: Collection<number
 
 export async function sqlFromFeatureSet(field: string, _featureSet: FeatureSet): Promise<string> {
   return new Promise(async resolve => {
-    var sqlWhere = "";
+    let sqlWhere = "";
     returnFeatureOIDs(_featureSet).then(collection => {
 
       if (collection instanceof Collection === true) {
-        var coll = new Collection<any>;
+        let coll = new Collection<any>;
         coll = collection as Collection<any>;
         if (coll.find(c => (typeof c === "string"))) {
           sqlWhere = `${field.toLowerCase()} IN (${collection.map(item => {return `'${item}'`}).join(",")})`;
@@ -808,28 +808,28 @@ export function filterFeatureTableByFeatureSet(_featureTable: FeatureTable, filt
 
 export async function selectFeatures(view: MapView, layers: Array<AdvancedSearchLayer>, searchFieldSelectObjectsArray: Array<SearchFieldSelectObjects>, resultsTable: FeatureTable): Promise<{ layerID: string, layerTitle: string, resultsCount: number }|null> {
   return new Promise(async resolve => {
-    let searchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
+    const searchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
 
-    var layer = layers[layers.map(function(e) { return e.id; }).indexOf(searchLayer_node.value)] as AdvancedSearchLayer;
+    const layer = layers[layers.map(function(e) { return e.id; }).indexOf(searchLayer_node.value)] as AdvancedSearchLayer;
     if (layer.id === searchLayer_node.value) {
 
       // Create the SQL definition query based on the config and user input.
-      let sfso = searchFieldSelectObjectsArray[searchFieldSelectObjectsArray.map(function(e) { return e.layerID; }).indexOf(layer.id)];
+      const sfso = searchFieldSelectObjectsArray[searchFieldSelectObjectsArray.map(function(e) { return e.layerID; }).indexOf(layer.id)];
 
       // Validation
-      let validationErrors = validateSearchFields(sfso, layer);
+      const validationErrors = validateSearchFields(sfso, layer);
       if (validationErrors.length > 0) {
         resolve(null)
       } else {
         // Build the SQL query.
-        var sqlText = buildSQLTextFromSearchFields(sfso, layer);
-        let asID = `${layer.id}${postFixes.featureLayerID}`;
+        const sqlText = buildSQLTextFromSearchFields(sfso, layer);
+        const asID = `${layer.id}${postFixes.featureLayerID}`;
 
         getFeatureSetUsingSQLandExtent(sqlText, layer, view.extent, resultsTable).then(async filteringFeatureSet => {
           console.log(`Results returned: ${filteringFeatureSet.features.length}`);
 
-          var featureLayer: FeatureLayer|null;
-          var idx = featureLayerArray.map(function(fl) { return fl.id.toLowerCase(); }).indexOf(asID.toLowerCase());
+          let featureLayer: FeatureLayer|null;
+          let idx = featureLayerArray.map(function(fl) { return fl.id.toLowerCase(); }).indexOf(asID.toLowerCase());
           // Check to see if the layers were loaded on startup.
           if (idx != -1) {
             featureLayer = featureLayerArray[idx];
@@ -867,20 +867,20 @@ export async function selectFeatures(view: MapView, layers: Array<AdvancedSearch
 
 export async function selectFeaturesUsingGeometry(view: MapView, layers: Array<AdvancedSearchLayer>, geometry: Geometry, resultsTable: FeatureTable): Promise<{ layerID: string, layerTitle: string, resultsCount: number }|null> {
   return new Promise(async resolve => {
-    let searchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
+    const searchLayer_node = document.getElementById(elementIDs.advancedsearch_CommonBarSearchLayerID) as HTMLSelectElement;
 
-    var layer = layers[layers.map(function(e) { return e.id; }).indexOf(searchLayer_node.value)]as AdvancedSearchLayer;
+    const layer = layers[layers.map(function(e) { return e.id; }).indexOf(searchLayer_node.value)]as AdvancedSearchLayer;
     if (layer.id === searchLayer_node.value) {
 
       // Build the SQL query.
-      let asID = `${layer.id}${postFixes.featureLayerID}`;
+      const asID = `${layer.id}${postFixes.featureLayerID}`;
 
       getFeatureSetUsingGeometry(geometry, layer, resultsTable).then(async filteringFeatureSet => {
         console.log(`Results returned: ${filteringFeatureSet.features.length}`);
         console.log(filteringFeatureSet.features.map(graphic => {return graphic.getObjectId();}));
 
-        var featureLayer: FeatureLayer|null;
-        var idx = featureLayerArray.map(function(fl) { return fl.id.toLowerCase(); }).indexOf(asID.toLowerCase());
+        let featureLayer: FeatureLayer|null;
+        let idx = featureLayerArray.map(function(fl) { return fl.id.toLowerCase(); }).indexOf(asID.toLowerCase());
         // Check to see if the layers were loaded on startup.
         if (idx != -1) {
           featureLayer = featureLayerArray[idx];
@@ -918,11 +918,11 @@ export async function selectFeaturesUsingGeometry(view: MapView, layers: Array<A
 }
 
 function getLayerID(layer: AdvancedSearchLayer, layerPostfix: string): string|Array<string> {
-  let lyrID = `${layer.id}${layerPostfix}`;
+  const lyrID = `${layer.id}${layerPostfix}`;
 
   // Use featureLayerReferences to check for related layers in featureLayerArray
   if (featureLayerArray[currentSearchLayerIndex].id != lyrID) {
-    let flrIdx = featureLayerReferences.map(flr => { return flr.layerID; }).indexOf(lyrID);
+    const flrIdx = featureLayerReferences.map(flr => { return flr.layerID; }).indexOf(lyrID);
     if (flrIdx > -1 && featureLayerReferences[flrIdx].relatedLayerIDs.length > 0 && featureLayerReferences[flrIdx].relatedLayerIDs.includes(featureLayerArray[currentSearchLayerIndex].id)) {
       // let rlIDs = featureLayerReferences[flrIdx].relatedLayerIDs;
       // let rlIdIdx = rlIDs.indexOf(featureLayerArray[currentSearchLayerIndex].id);

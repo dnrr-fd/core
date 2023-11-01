@@ -9,7 +9,7 @@ import { getWidgetTheme } from '@dnrr_fd/util/web';
 import * as css from './assets/css/loading.module.css';
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-var t9n = t9n_en;
+let t9n = t9n_en;
 const css_esri = {
     esri_widget: 'esri-widget',
 };

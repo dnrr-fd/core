@@ -11,7 +11,7 @@ import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 
-var t9n = t9n_en;
+let t9n = t9n_en;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -67,7 +67,7 @@ class AdvancedSearchButton extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
   postInitialize(): void {
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -102,7 +102,7 @@ class AdvancedSearchButton extends Widget {
   render() {
     return (
       <div class={css_esri.esri_widget}>
-        <div id={this.id} class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget)} role="button" aria-label={buttonLabel} title={buttonLabel} tabindex="0" onclick={this._button_click.bind(this)} onkeypress={this._button_keypress.bind(this)}>
+        <div id={this.id} class={this.classes(css_esri.esri_widget_button, css_esri.esri_widget)} role="button" aria-label={buttonLabel} title={buttonLabel} tabIndex="0" onclick={this._button_click.bind(this)} onKeyPress={this._button_keypress.bind(this)}>
           <span id={`${this.id}_iconID`} class={this.classes(css_esri.esri_icon, buttonIconClass)} aria-hidden="true"></span>
           <span class={css_esri.esri_icon_font_fallback_text}>{buttonLabel}</span>
         </div>
@@ -119,8 +119,8 @@ class AdvancedSearchButton extends Widget {
   }
 
   _button_keypress(e: KeyboardEvent) {
-    let isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
-    let isSpacePressed = e.key === 'Space' || e.keyCode === 32;
+    const isEnterPressed = e.key === 'Enter' || e.keyCode === 13;
+    const isSpacePressed = e.key === 'Space' || e.keyCode === 32;
 
     if (isEnterPressed || isSpacePressed) {
       // e.preventDefault();  // Prevent the default keypress action, i.e. space = scroll
@@ -134,7 +134,7 @@ class AdvancedSearchButton extends Widget {
       this.content.visible = true;
 
       // Backup in case esri content.visible doesn't work
-      let content_node = this.content.container as HTMLDivElement;
+      const content_node = this.content.container as HTMLDivElement;
       if (content_node.style) {
         content_node.removeAttribute("style");
       }

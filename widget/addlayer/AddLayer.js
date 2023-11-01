@@ -35,6 +35,7 @@ const addedLayers = new Array();
 let currentEditLayer;
 let pickr_outline;
 let pickr_main;
+let self;
 // esriConfig.apiKey = "AAPK7b2388bee8e84255972305a56f1d1eb3pT4KCLkHcACj4k0lPHEjERRSP-6aNzBgClNib1uj6uYE8vh-AGy4_pU5AH_ZOTzz";
 const css_esri = {
     esri_widget: 'esri-widget',
@@ -98,6 +99,7 @@ let AddLayer = class AddLayer extends Widget {
     //--------------------------------------------------------------------------
     postInitialize() {
         // esriConfig.apiKey = this.apiKey;
+        self = this;
         const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         t9n = (_locale === 'en' ? t9n_en : t9n_fr);
@@ -112,8 +114,8 @@ let AddLayer = class AddLayer extends Widget {
             tsx("div", { id: elementIDs.addlayer_ModalID, class: this.classes(css.default.widget_addlayer_modal, css.default.widget_addlayer_visible__none) }),
             tsx("div", { id: elementIDs.addlayer_MainID, class: css.default.widget_addlayer, afterCreate: this.afterRenderActions, bind: this },
                 tsx("div", { class: css.default.widget_addlayer_tab__div },
-                    tsx("button", { id: elementIDs.addlayer_FileTabID, type: "button", class: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addFileTabLabel, "aria-label": t9n.addFileTabLabel, onClick: this._addFileTab_click.bind(this), tabIndex: "0" }, t9n.addFileTabLabel),
-                    tsx("button", { id: elementIDs.addlayer_ServiceTabID, type: "button", class: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addServiceTabLabel, "aria-label": t9n.addServiceTabLabel, onClick: this._addServiceTab_click.bind(this), tabIndex: "0" }, t9n.addServiceTabLabel)),
+                    tsx("button", { id: elementIDs.addlayer_FileTabID, type: "button", class: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addFileTabLabel, "aria-label": t9n.addFileTabLabel, onclick: this._addFileTab_click.bind(this), tabIndex: "0" }, t9n.addFileTabLabel),
+                    tsx("button", { id: elementIDs.addlayer_ServiceTabID, type: "button", class: this.classes(css.default.widget_addlayer_tab__button, css_esri.esri_widget_button), title: t9n.addServiceTabLabel, "aria-label": t9n.addServiceTabLabel, onclick: this._addServiceTab_click.bind(this), tabIndex: "0" }, t9n.addServiceTabLabel)),
                 tsx("div", { id: elementIDs.addlayer_FileTabDivID, class: this.classes(css.default.widget_addlayer_tabcontent__div) },
                     tsx("h3", null, t9n.addFileHeaderLabel),
                     tsx("p", { class: css.default.widget_addlayer_p }, t9n.addFileSelectionText),
@@ -125,13 +127,13 @@ let AddLayer = class AddLayer extends Widget {
                             tsx("label", { htmlFor: elementIDs.addlayer_FileFileID, class: css.default.widget_addlayer_buttontitle__label }, t9n.addFileButtonSectionLabel),
                             tsx("input", { id: elementIDs.addlayer_FileFileID, class: css.default.widget_addlayer_visible__none, type: "file", name: "addlayer_file" }),
                             tsx("span", null,
-                                tsx("button", { id: elementIDs.addlayer_FileButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button), title: t9n.addFileButtonLabel, "aria-label": t9n.addFileButtonLabel, onClick: this._addFileButton_click.bind(this), tabIndex: "0" }, t9n.addFileButtonLabel)))),
+                                tsx("button", { id: elementIDs.addlayer_FileButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_file__button), title: t9n.addFileButtonLabel, "aria-label": t9n.addFileButtonLabel, onclick: this._addFileButton_click.bind(this), tabIndex: "0" }, t9n.addFileButtonLabel)))),
                     tsx("span", null,
                         tsx("div", { id: elementIDs.addlayer_FileUpdateStatusDivID, class: this.classes(css.default.widget_addlayer_file_uploadstatus__div, css.default.widget_addlayer_visible__none) },
                             tsx("div", null,
                                 tsx("p", { id: elementIDs.addlayer_FileUpdateStatusID, class: css.default.widget_addlayer_file_uploadstatus__p })),
                             tsx("div", { class: css.default.widget_addlayer_file_uploadstatus_clear_button__div },
-                                tsx("button", { id: elementIDs.addlayer_FileUpdateStatusClearID, type: "button", class: this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase), title: t9n.addFileUpdateStatusClearLabel, "aria-label": t9n.addFileUpdateStatusClearLabel, onClick: this._addFileUpdateStatusClearButton_click.bind(this), tabIndex: "0" })))),
+                                tsx("button", { id: elementIDs.addlayer_FileUpdateStatusClearID, type: "button", class: this.classes(css.default.widget_addlayer_file_uploadstatus_clear__button, css_esri.esri_widget_button, css_esri.esri_icon_erase), title: t9n.addFileUpdateStatusClearLabel, "aria-label": t9n.addFileUpdateStatusClearLabel, onclick: this._addFileUpdateStatusClearButton_click.bind(this), tabIndex: "0" })))),
                     tsx("div", { class: css.default.widget_addlayer_file_fileinfo__div },
                         tsx("p", { id: elementIDs.addlayer_FileInfoID, class: css.default.widget_addlayer_p }))),
                 tsx("div", { id: elementIDs.addlayer_ServiceTabDivID, class: this.classes(css.default.widget_addlayer_tabcontent__div, css.default.widget_addlayer_visible__none) },
@@ -142,7 +144,7 @@ let AddLayer = class AddLayer extends Widget {
                             tsx("label", { htmlFor: elementIDs.addlayer_ServiceInputID }, t9n.addServiceInputLabel),
                             tsx("input", { id: elementIDs.addlayer_ServiceInputID, class: this.classes(css_esri.esri_input, css.default.widget_addlayer_service__input), type: "text", title: t9n.addServiceInputLabel, "aria-label": t9n.addServiceInputLabel, tabIndex: "0" })),
                         tsx("div", { class: css.default.widget_addlayer_service_button__div },
-                            tsx("button", { id: elementIDs.addlayer_ServiceGoButtonID, type: "button", class: this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled), title: t9n.addFileServiceGoLabel, "aria-label": t9n.addFileServiceGoLabel, "aria-disabled": 'true', onClick: this._addFileServiceGoButton_click.bind(this), tabIndex: "0" }, t9n.addFileServiceGoLabel))),
+                            tsx("button", { id: elementIDs.addlayer_ServiceGoButtonID, type: "button", class: this.classes(css.default.widget_addlayer_service_go__button, css_esri.esri_button_third, css_esri.esri_button_disabled), title: t9n.addFileServiceGoLabel, "aria-label": t9n.addFileServiceGoLabel, "aria-disabled": 'true', onclick: this._addFileServiceGoButton_click.bind(this), tabIndex: "0" }, t9n.addFileServiceGoLabel))),
                     tsx("div", { id: elementIDs.addlayer_ServiceInfoDivID, class: this.classes(css.default.widget_addlayer_service_serviceInfo__div, css.default.widget_addlayer_visible__none) },
                         tsx("p", { id: elementIDs.addlayer_ServiceInfoID, class: css.default.widget_addlayer_p }))),
                 tsx("div", null,
@@ -160,8 +162,8 @@ let AddLayer = class AddLayer extends Widget {
                                     tsx("label", { id: elementIDs.addlayer_ResultsEditOutlineColourLabelID, class: css.default.widget_addlayer__disabled, "aria-label": t9n.resultsEditOutlineColourLabel }, t9n.resultsEditOutlineColourLabel),
                                     tsx("div", { class: css_pickr.pickr_outline }))),
                             tsx("div", { class: css.default.widget_addlayer_results_edit_content__div },
-                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_SaveButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditSaveButton, "aria-label": t9n.resultsEditSaveButton, onClick: this._resultsEditSaveButton_click.bind(this), tabIndex: "0" }, t9n.resultsEditSaveButton),
-                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_CancelButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditCancelButton, "aria-label": t9n.resultsEditCancelButton, onClick: this._resultsEditCancelButton_click.bind(this), tabIndex: "0" }, t9n.resultsEditCancelButton))))))));
+                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_SaveButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditSaveButton, "aria-label": t9n.resultsEditSaveButton, onclick: this._resultsEditSaveButton_click.bind(this), tabIndex: "0" }, t9n.resultsEditSaveButton),
+                                tsx("button", { id: elementIDs.addlayer_ResultsEdit_CancelButtonID, type: "button", class: this.classes(css_esri.esri_button, css.default.widget_addlayer_results_edit__button), title: t9n.resultsEditCancelButton, "aria-label": t9n.resultsEditCancelButton, onclick: this._resultsEditCancelButton_click.bind(this), tabIndex: "0" }, t9n.resultsEditCancelButton))))))));
     }
     //--------------------------------------------------------------------------
     //  Event Methods
@@ -583,7 +585,6 @@ let AddLayer = class AddLayer extends Widget {
         const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
         const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
         const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
-        const self = this;
         const layers = featureCollection.layers.map((layer) => {
             const graphics = layer.featureSet.features.map((feature) => {
                 return Graphic.fromJSON(feature);
@@ -614,7 +615,6 @@ let AddLayer = class AddLayer extends Widget {
         this.removeFile();
     }
     async addURLServiceToMap(_urlValue) {
-        const self = this;
         const modalDiv_node = document.getElementById(elementIDs.addlayer_ModalID);
         const resultsDiv_node = document.getElementById(elementIDs.addlayer_ResultsDivID);
         const resultsEditDiv_node = document.getElementById(elementIDs.addlayer_ResultsEditDivID);
@@ -680,7 +680,6 @@ let AddLayer = class AddLayer extends Widget {
         return new URLServiceResult(featureLayer, message);
     }
     createLayerResultsItem(self, _layerID, _layerName, resultsDiv_node, resultsEditDiv_node, modalDiv_node) {
-        // const self = this;
         const layerDiv = document.createElement("div");
         const buttonWrapperDiv = document.createElement("div");
         const buttonDiv = document.createElement("div");

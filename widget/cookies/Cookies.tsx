@@ -16,7 +16,7 @@ import * as css from './assets/css/cookies.module.css'
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var t9n = t9n_en;
+let t9n = t9n_en;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -54,7 +54,7 @@ const elementIDs = {
   cookiesSettings_switchPostfixID: "_switchID"
 };
 
-var switches: tsx.JSX.Element;
+let switches: tsx.JSX.Element;
 
 interface CookiesParams extends __esri.WidgetProperties {
   afterHideFocusElement?: string|HTMLElement;
@@ -119,8 +119,8 @@ class Cookies extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
   async postInitialize(): Promise<void> {
-    var self = this;
-    var _locale = getNormalizedLocale();
+    const self = this as Cookies;
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -153,8 +153,8 @@ class Cookies extends Widget {
           <span>{cookie.label}</span>
         </div>
         <div class={css.default.widget_cookies_all_switch__toggle}>
-          <input type='checkbox' checked={cookie.accepted} name={cookie.id} value={cookie.id} id={cookie.id + elementIDs.cookiesSettings_switchPostfixID} onchange={this._switchToggle_change.bind(this, `${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`)}/>
-          <label for={cookie.id + elementIDs.cookiesSettings_switchPostfixID} aria-label={cookie.label} title={cookie.label}></label>
+          <input type='checkbox' checked={cookie.accepted} name={cookie.id} value={cookie.id} id={cookie.id + elementIDs.cookiesSettings_switchPostfixID} onChange={this._switchToggle_change.bind(this, `${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`)}/>
+          <label htmlFor={cookie.id + elementIDs.cookiesSettings_switchPostfixID} aria-label={cookie.label} title={cookie.label}></label>
         </div>
       </div>
     );
@@ -163,7 +163,7 @@ class Cookies extends Widget {
 
   render() {
     // Set the main cookies dialog position
-    var cookiesMain_content_position: string;
+    let cookiesMain_content_position: string;
     if (this.position === 'top') {
       cookiesMain_content_position = css.default.widget_cookies_main_content__top;
     } else {
@@ -179,12 +179,12 @@ class Cookies extends Widget {
             <div class={css.default.widget_cookies_all_header}>
               <div class={css.default.widget_cookies_all_header__div}>
                 <div class={css.default.widget_cookies_all_header_close__div}>
-                  <button id={elementIDs.cookiesMain_closeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_cookies_all_header_close__button)} ariaLabel={t9n.closeButtonLabel_mainDialog} title={t9n.closeButtonLabel_mainDialog} onclick={this._main_closeButton_click.bind(this)} tabindex="0">
+                  <button id={elementIDs.cookiesMain_closeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_cookies_all_header_close__button)} aria-label={t9n.closeButtonLabel_mainDialog} title={t9n.closeButtonLabel_mainDialog} onclick={this._main_closeButton_click.bind(this)} tabIndex="0">
                     <span id={elementIDs.cookiesMain_closeSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
                 </div>
                 <div class={css.default.widget_cookies_all_header_heading__div}>
-                  <h1 role='heading' ariaLevel='1'>{t9n.title_mainDialog}</h1>
+                  <h1 role='heading' aria-level='1'>{t9n.title_mainDialog}</h1>
                 </div>
               </div>
             </div>
@@ -192,16 +192,16 @@ class Cookies extends Widget {
               <div class={css.default.widget_cookies_all_content_message__div}>
                 <p>
                   {t9n.message_mainDialog}
-                  <button id={elementIDs.cookiesMain_manageButtonID} type="button" class={this.classes(css_esri.esri_widget_anchor, css.default.widget_cookies_all_links__button)} aria-label={t9n.manageButtonText_mainDialog} title={t9n.manageButtonText_mainDialog} onclick={this._main_manageButton_click.bind(this)} tabindex="0">
+                  <button id={elementIDs.cookiesMain_manageButtonID} type="button" class={this.classes(css_esri.esri_widget_anchor, css.default.widget_cookies_all_links__button)} aria-label={t9n.manageButtonText_mainDialog} title={t9n.manageButtonText_mainDialog} onclick={this._main_manageButton_click.bind(this)} tabIndex="0">
                     {t9n.manageButtonText_mainDialog}
                   </button>
                 </p>
               </div>
               <div class={css.default.widget_cookies_main_buttons__div}>
-                <button id={elementIDs.cookiesMain_acceptAllButtonID} type="button" class={this.classes(css_esri.esri_button, css.default.widget_cookies_main_buttons_accept__button)} aria-label={t9n.agreeButtonText_allDialogs} title={t9n.agreeButtonText_allDialogs} onclick={this._acceptAllButton_click.bind(this)} tabindex="0">
+                <button id={elementIDs.cookiesMain_acceptAllButtonID} type="button" class={this.classes(css_esri.esri_button, css.default.widget_cookies_main_buttons_accept__button)} aria-label={t9n.agreeButtonText_allDialogs} title={t9n.agreeButtonText_allDialogs} onclick={this._acceptAllButton_click.bind(this)} tabIndex="0">
                   {t9n.agreeButtonText_allDialogs}
                 </button>
-                <button id={elementIDs.cookiesMain_rejectAllButtonID} type="button" class={css_esri.esri_button} aria-label={t9n.rejectButtonText_allDialogs} title={t9n.rejectButtonText_allDialogs} onclick={this._rejectAllButton_click.bind(this)} tabindex="0">
+                <button id={elementIDs.cookiesMain_rejectAllButtonID} type="button" class={css_esri.esri_button} aria-label={t9n.rejectButtonText_allDialogs} title={t9n.rejectButtonText_allDialogs} onclick={this._rejectAllButton_click.bind(this)} tabIndex="0">
                   {t9n.rejectButtonText_allDialogs}
                 </button>
               </div>
@@ -215,12 +215,12 @@ class Cookies extends Widget {
             <div class={css.default.widget_cookies_all_header}>
               <div class={css.default.widget_cookies_all_header__div}>
                 <div class={css.default.widget_cookies_all_header_close__div}>
-                  <button id={elementIDs.cookiesSettings_closeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_cookies_all_header_close__button)} ariaLabel={t9n.closeButtonLabel_settingsDialog} title={t9n.closeButtonLabel_settingsDialog} onclick={this._settings_closeButton_click.bind(this)} tabindex="0">
+                  <button id={elementIDs.cookiesSettings_closeButtonID} type="button" class={this.classes(css_esri.esri_button_tertiary, css.default.widget_cookies_all_header_close__button)} aria-label={t9n.closeButtonLabel_settingsDialog} title={t9n.closeButtonLabel_settingsDialog} onclick={this._settings_closeButton_click.bind(this)} tabIndex="0">
                     <span id={elementIDs.cookiesSettings_closeSpanID} aria-hidden='true' class={css_esri.esri_icon_close} />
                   </button>
                 </div>
                 <div class={css.default.widget_cookies_all_header_heading__div}>
-                  <h1 role='heading' ariaLevel='1'>
+                  <h1 role='heading' aria-level='1'>
                     {t9n.header_settingsDialog}
                   </h1>
                 </div>
@@ -229,7 +229,7 @@ class Cookies extends Widget {
             <div class={css.default.widget_cookies_settings_subcontent}>
               <div class={css.default.widget_cookies_settings_content__div}>
                 <div class={css.default.widget_cookies_settings_subcontent_title}>
-                  <h2 role='heading' ariaLevel='2'>
+                  <h2 role='heading' aria-level='2'>
                     {t9n.title_settingsDialog}
                   </h2>
                 </div>
@@ -239,7 +239,7 @@ class Cookies extends Widget {
                     {this._getPrivacyPolicyButton()}
                   </p>
                   <div id={elementIDs.cookiesSettings_privacyPolicyTextID} class={this.classes(css.default.widget_cookies_all_visible__none, css.default.widget_cookies_settings_content_privacy__div)}>
-                    <h3 role='heading' ariaLevel='3'>
+                    <h3 role='heading' aria-level='3'>
                       {t9n.privacyPolicyButtonText_settingsDialog}:
                     </h3>
                     <p>
@@ -253,7 +253,7 @@ class Cookies extends Widget {
               </div>
               <div class={css.default.widget_cookies_settings_subcontent__div}>
                 <div class={css.default.widget_cookies_settings_subcontent_title}>
-                  <h2 role='heading' ariaLevel='2'>
+                  <h2 role='heading' aria-level='2'>
                     {t9n.subtitle_settingsDialog}
                   </h2>
                 </div>
@@ -263,7 +263,7 @@ class Cookies extends Widget {
                     {this._getContactUsButton()}
                   </p>
                   <div id={elementIDs.cookiesSettings_contactUsTextID} class={this.classes(css.default.widget_cookies_all_visible__none, css.default.widget_cookies_settings_buttons)}>
-                    <h3 role='heading' ariaLevel='3'>
+                    <h3 role='heading' aria-level='3'>
                       {t9n.contactUsButtonText_settingsDialog}:
                     </h3>
                     <p>
@@ -276,17 +276,17 @@ class Cookies extends Widget {
             <div class={css.default.widget_cookies_settings_buttons}>
               <div class={css.default.widget_cookies_settings_buttons__div}>
                 <div class={css.default.widget_cookies_settings_buttons_accept__div}>
-                  <button id={elementIDs.cookiesSettings_acceptAllButtonID} type="button" class={this.classes(css_esri.esri_button)} aria-label={t9n.agreeButtonText_allDialogs} title={t9n.agreeButtonText_allDialogs} onclick={this._acceptAllButton_click.bind(this)} tabindex="0">
+                  <button id={elementIDs.cookiesSettings_acceptAllButtonID} type="button" class={this.classes(css_esri.esri_button)} aria-label={t9n.agreeButtonText_allDialogs} title={t9n.agreeButtonText_allDialogs} onclick={this._acceptAllButton_click.bind(this)} tabIndex="0">
                     {t9n.agreeButtonText_allDialogs}
                   </button>
                 </div>
                 <div class={css.default.widget_cookies_settings_buttons_reject__div}>
-                  <button id={elementIDs.cookiesSettings_rejectAllButtonID} type="button" class={this.classes(css_esri.esri_button)} aria-label={t9n.rejectButtonText_allDialogs} title={t9n.rejectButtonText_allDialogs} onclick={this._rejectAllButton_click.bind(this)} tabindex="0">
+                  <button id={elementIDs.cookiesSettings_rejectAllButtonID} type="button" class={this.classes(css_esri.esri_button)} aria-label={t9n.rejectButtonText_allDialogs} title={t9n.rejectButtonText_allDialogs} onclick={this._rejectAllButton_click.bind(this)} tabIndex="0">
                     {t9n.rejectButtonText_allDialogs}
                   </button>
                 </div>
                 <div class={css.default.widget_cookies_settings_buttons_save__div}>
-                  <button id={elementIDs.cookiesSettings_saveButtonID} type="button" class={this.classes(css.default.widget_cookies_all_buttons__disabled, css_esri.esri_button, css_esri.esri_button_disabled)} aria-disabled='true' aria-label={t9n.saveButtonText_allDialogs} title={t9n.saveButtonText_allDialogs} onclick={this._settings_saveButton_click.bind(this)} tabindex="0">
+                  <button id={elementIDs.cookiesSettings_saveButtonID} type="button" class={this.classes(css.default.widget_cookies_all_buttons__disabled, css_esri.esri_button, css_esri.esri_button_disabled)} aria-disabled='true' aria-label={t9n.saveButtonText_allDialogs} title={t9n.saveButtonText_allDialogs} onclick={this._settings_saveButton_click.bind(this)} tabIndex="0">
                     {t9n.saveButtonText_allDialogs}
                   </button>
                 </div>
@@ -352,7 +352,7 @@ class Cookies extends Widget {
   }
 
   private _getPrivacyPolicyButton(): tsx.JSX.Element {
-    var privacyPolicyButton: tsx.JSX.Element =
+    let privacyPolicyButton: tsx.JSX.Element =
       <button
         type="button"
         id={elementIDs.cookiesSettings_privacyPolicyButtonID}
@@ -360,7 +360,7 @@ class Cookies extends Widget {
         aria-label={t9n.privacyPolicyButtonText_settingsDialog}
         title={t9n.privacyPolicyButtonText_settingsDialog}
         onclick={this._settings_privacyButton_click.bind(this)}
-        tabindex="0">
+        tabIndex="0">
         {t9n.privacyPolicyButtonText_settingsDialog}
       </button>;
 
@@ -380,7 +380,7 @@ class Cookies extends Widget {
   }
 
   private _getContactUsButton(): tsx.JSX.Element {
-    var contactUsButton: tsx.JSX.Element =
+    let contactUsButton: tsx.JSX.Element =
       <button
         type="button"
         id={elementIDs.cookiesSettings_contactUsButtonID}
@@ -388,7 +388,7 @@ class Cookies extends Widget {
         aria-label={t9n.contactUsButtonText_settingsDialog}
         title={t9n.contactUsButtonText_settingsDialog}
         onclick={this._settings_contactButton_click.bind(this)}
-        tabindex="0">
+        tabIndex="0">
           {t9n.contactUsButtonText_settingsDialog}
       </button>
 
@@ -489,9 +489,9 @@ class Cookies extends Widget {
   private _saveButtonAction(acceptMessage: string, rejectMessage: string) {
     const cookiesSettings_saveButtonNode = document.getElementById(elementIDs.cookiesSettings_saveButtonID) as HTMLInputElement;
     
-    var resultObj = [];
-    for (var cookie of this.cookiesVM) {
-      var switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`) as HTMLInputElement;
+    const resultObj = [];
+    for (const cookie of this.cookiesVM) {
+      const switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`) as HTMLInputElement;
       let _message: string;
       if (switchToggleCheckbox.checked === true) {
         cookie.setCookie();
@@ -501,7 +501,7 @@ class Cookies extends Widget {
         _message = rejectMessage;
       }
 
-      let messageObj = {
+      const messageObj = {
         label: cookie.id,
         message: _message
       };
@@ -510,8 +510,8 @@ class Cookies extends Widget {
     ariaDisable(cookiesSettings_saveButtonNode, [css.default.widget_cookies_all_buttons__disabled, css_esri.esri_button_disabled], true);
 
     // Build the alert message
-    var alertMessage = "The following cookies were set:\n";
-    for (let result of resultObj) {
+    let alertMessage = "The following cookies were set:\n";
+    for (const result of resultObj) {
       alertMessage += `\n     ${result.label}: ${result.message}.`;
     }
     alert(alertMessage);
@@ -527,20 +527,20 @@ class Cookies extends Widget {
   }
 
   private _setCookies() {
-    for (var cookie of this.cookiesVM) {
+    for (const cookie of this.cookiesVM) {
       cookie.setCookie();
     }
   }
 
   private _deleteCookies() {
-    for (var cookie of this.cookiesVM) {
+    for (const cookie of this.cookiesVM) {
       cookie.deleteCookie();
     }
   }
 
   private _setCookieSwitch() {
-    for (var cookie of this.cookiesVM) {
-      var switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`) as HTMLInputElement;
+    for (const cookie of this.cookiesVM) {
+      const switchToggleCheckbox = document.getElementById(`${cookie.id}${elementIDs.cookiesSettings_switchPostfixID}`) as HTMLInputElement;
       if (cookie.accepted === true) {
         switchToggleCheckbox.checked = true;
       } else {
@@ -550,10 +550,10 @@ class Cookies extends Widget {
   }
 
   async initCookies() {
-    var _cookiesVM = new Array<CookiesVM>();
+    const _cookiesVM = new Array<CookiesVM>();
     // Build the cookie object.
-    for (let conf_cookie of this.cookies) {
-      var _cookie = new CookiesVM();
+    for (const conf_cookie of this.cookies) {
+      const _cookie = new CookiesVM();
       _cookie.id = conf_cookie.id;
       _cookie.label = conf_cookie.label;
       _cookie.accepted = false;
@@ -588,7 +588,7 @@ class Cookies extends Widget {
   }
 
   private _toggleElementListDisplay(element_list: Array<HTMLElement>, visible=true as boolean, elementID_focus=null as string|null) {
-    var elementToFocus = null;
+    let elementToFocus = null;
     element_list.forEach(function(element) {
         if (visible === true) {
             element.classList.remove(css.default.widget_cookies_all_visible__none)

@@ -2,6 +2,8 @@ import { __decorate } from "tslib";
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
+import Expand from "@arcgis/core/widgets/Expand";
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import * as intl from "@arcgis/core/intl";
 import { createWidgetsForWidgetBar, removeWidgetsFromWidgetBar } from './WidgetBarViewModel';
 import { getElementPosition, getFocusableElements, getWidgetTheme } from '@dnrr_fd/util/web';
@@ -10,15 +12,14 @@ import { getNormalizedLocale } from "@dnrr_fd/util/locale";
 /* https://stackoverflow.com/questions/40382842/cant-import-css-scss-modules-typescript-says-cannot-find-module */
 import * as css_dark from './assets/css/dark/widgetbar.module.css';
 import * as css_light from './assets/css/light/widgetbar.module.css';
-export var widgetBarRootURL;
-export var widgetBarWidgetCloseFocusElement;
+export let widgetBarRootURL;
+export let widgetBarWidgetCloseFocusElement;
 import * as t9n_en from './assets/t9n/en.json';
 import * as t9n_fr from './assets/t9n/fr.json';
-import Expand from "@arcgis/core/widgets/Expand";
-var t9n = t9n_en;
-var css_theme = css_dark;
-var _widgetBarWidgets;
-var afterWidgetCloseFocusElement;
+let t9n = t9n_en;
+let css_theme = css_dark;
+let _widgetBarWidgets;
+let afterWidgetCloseFocusElement;
 const elementIDs = {
     esriThemeID: "esriThemeID",
     widgetBarID: "_widgetBarID",
@@ -32,7 +33,7 @@ let WidgetBar = class WidgetBar extends Widget {
     //  Public Methods
     //--------------------------------------------------------------------------
     async postInitialize() {
-        var _locale = getNormalizedLocale();
+        const _locale = getNormalizedLocale();
         // console.log(`_LOCALE: ${_locale}`);
         if (_locale === "en") {
             t9n = t9n_en;
@@ -41,8 +42,7 @@ let WidgetBar = class WidgetBar extends Widget {
             t9n = t9n_fr;
         }
         widgetBarRootURL = this.widgetBarRootURL;
-        var self = this;
-        var widgetBar = this;
+        const self = this;
         this.rendered = false;
         afterWidgetCloseFocusElement = this.afterWidgetCloseFocusElement;
         this.label = t9n.title;
@@ -59,20 +59,19 @@ let WidgetBar = class WidgetBar extends Widget {
             t9n = (locale === 'fr' ? t9n_fr : t9n_en);
             self.locale = locale;
             removeWidgetsFromWidgetBar(self.mapView);
-            await createWidgetsForWidgetBar(widgetBar).then(_widgetBarWidgets => {
+            await createWidgetsForWidgetBar(self).then(_widgetBarWidgets => {
                 self.widgetBarWidgets = _widgetBarWidgets;
                 self.widgetStylize(_widgetBarWidgets);
             });
         });
-        this.watch("theme", function (theme_new, theme_old) {
+        reactiveUtils.watch(() => self.theme, (theme_new, theme_old) => {
             if (theme_old) {
                 css_theme = (theme_new === 'dark' ? css_dark : css_light);
-                // self.render();
                 // console.log(`Watch: Theme (WidgetBar) is now ${theme_new}`);
             }
         });
         // Create widget bar widgets
-        await createWidgetsForWidgetBar(widgetBar).then(_widgetBarWidgets => {
+        await createWidgetsForWidgetBar(self).then(_widgetBarWidgets => {
             self.widgetBarWidgets = _widgetBarWidgets;
             this.widgetStylize(_widgetBarWidgets);
         });
@@ -95,12 +94,12 @@ let WidgetBar = class WidgetBar extends Widget {
         if (_widgetBarWidgets) {
             _widgetBarWidgets.forEach(wbObj => {
                 // Make valid widget bar widget styling changes.
-                var wbw_node = document.getElementById(wbObj.wbWidget.id);
+                const wbw_node = document.getElementById(wbObj.wbWidget.id);
                 if (wbw_node) {
-                    var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
-                    var wbwcc_node = document.getElementById(wbwccID);
+                    const wbwccID = `${wbObj.wbWidget.id}_controls_content`;
+                    const wbwcc_node = document.getElementById(wbwccID);
                     if (wbwcc_node) {
-                        var wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
+                        const wbwccClass = `widget_widgetbar_widget__${wbwccID}`;
                         wbwcc_node.classList.add(css_theme.default[wbwccClass]);
                     }
                     wbw_node.classList.remove(css_theme.default.widget_widgetbar_visible__none);
@@ -108,21 +107,22 @@ let WidgetBar = class WidgetBar extends Widget {
             });
             _widgetBarWidgets.forEach(wbObj => {
                 // Adjust the expand menus after final render from above class changes.
-                var button_node = document.getElementById(wbObj.wbWidget.id);
+                const button_node = document.getElementById(wbObj.wbWidget.id);
                 if (button_node) {
-                    var wbwccID = `${wbObj.wbWidget.id}_controls_content`;
-                    var wbwcc_node = document.getElementById(wbwccID);
+                    const wbwccID = `${wbObj.wbWidget.id}_controls_content`;
+                    const wbwcc_node = document.getElementById(wbwccID);
                     if (wbwcc_node) {
-                        var windowWidth = window.innerWidth;
-                        var pos = getElementPosition(button_node);
-                        var right_offset = windowWidth - pos.xMax;
+                        const windowWidth = window.innerWidth;
+                        const pos = getElementPosition(button_node);
+                        const right_offset = windowWidth - pos.xMax;
                         wbwcc_node.setAttribute("style", "right: -" + right_offset + "px!important;");
                         // console.log(`${wbObj.wbWidget.id}  Position - xMax: ${pos.xMax}, xMin: ${pos.xMin}, yMin: ${pos.yMin}, yMax: ${pos.yMax} { right: -${right_offset}px!important; }`);
                     }
                     if (wbObj.fireEvent === true) {
                         if (wbObj.wbWidget instanceof Expand) {
-                            wbObj.wbWidget.watch("expanded", function (expanded_new, expanded_old) {
-                                wbObj.wbWidget.renderNow();
+                            const wbwExpand = wbObj.wbWidget;
+                            reactiveUtils.watch(() => wbwExpand.expanded, () => {
+                                wbwExpand.renderNow();
                                 if (afterWidgetCloseFocusElement) {
                                     if (typeof afterWidgetCloseFocusElement === "string") {
                                         getFocusableElements(document.getElementById(afterWidgetCloseFocusElement));

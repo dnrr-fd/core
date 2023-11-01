@@ -17,15 +17,15 @@ let SupportViewModel = class SupportViewModel extends Accessor {
         // Request the authentication header
         this._getAuthHeader().then(response => {
             if (response === true) {
-                var feedbackData = {
+                const feedbackData = {
                     ContactName: this.formData.ContactName,
                     EmailAddress: this.formData.EmailAddress,
                     PhoneNumber: this.formData.PhoneNumber,
                     Comment: this.formData.Comment
                 };
                 // Get the authentication token from session storage
-                var auth = JSON.parse(sessionStorage.getItem('auth') || '{}');
-                var xhttpSend = new XMLHttpRequest();
+                const auth = JSON.parse(sessionStorage.getItem('auth') || '{}');
+                const xhttpSend = new XMLHttpRequest();
                 xhttpSend.onreadystatechange = function () {
                     if (this.readyState == 4) {
                         alert(`Thank you for contacting us. Your support request will be answered in priority sequence.`);
@@ -49,8 +49,8 @@ let SupportViewModel = class SupportViewModel extends Accessor {
     }
     async _getAuthHeader() {
         return new Promise(resolve => {
-            var self = this;
-            var xhr = new XMLHttpRequest();
+            const self = this;
+            const xhr = new XMLHttpRequest();
             xhr.open('GET', this.serviceURL, true);
             xhr.setRequestHeader('api-key', this.privateKey);
             xhr.onload = function () {
@@ -60,7 +60,7 @@ let SupportViewModel = class SupportViewModel extends Accessor {
                 resolve(true);
             };
             xhr.onerror = function () {
-                let error = 'XHR Returned an Error.';
+                const error = 'XHR Returned an Error.';
                 console.log(error);
                 throw error;
             };

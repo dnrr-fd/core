@@ -14,7 +14,7 @@ import * as css from './assets/css/disclaimer.module.css';
 import * as t9n_en from './assets/t9n/en.json'
 import * as t9n_fr from './assets/t9n/fr.json'
 
-var t9n = t9n_en;
+let t9n = t9n_en;
 
 const css_esri = {
   esri_widget: 'esri-widget',
@@ -55,7 +55,7 @@ class Disclaimer extends Widget {
   //  Public Methods
   //--------------------------------------------------------------------------
   postInitialize(): void {
-    var _locale = getNormalizedLocale();
+    const _locale = getNormalizedLocale();
     // console.log(`_LOCALE: ${_locale}`);
     if (_locale === "en") {
       t9n = t9n_en;
@@ -72,21 +72,21 @@ class Disclaimer extends Widget {
 }
 
   render() {
-    var message = t9n.messages.map(p => <p>{p.map(obj => this._getElemValue(obj.element, obj.value))} </p>)
+    const message = t9n.messages.map(p => <p  key={`${t9n.title}_key`}>{p.map(obj => this._getElemValue(obj.element, obj.value))} </p>)
 
     return (
       <div id={this.id}>
         <div id={elementIDs.disclaimerModalID} afterCreate={this.setElementFocus} bind={this} class={css.default.widget_disclaimer_modal}>
           <div id={elementIDs.disclaimerContentID} class={this.classes(css.default.widget_disclaimer, css.default.widget_disclaimer_content, css_esri.esri_widget)}>
             <div class={css.default.widget_disclaimer_title__div}>
-              <h1 role='heading' ariaLevel='1'>{t9n.title}</h1>
+              <h1 role='heading' aria-level='1'>{t9n.title}</h1>
             </div>
             <div class={css.default.widget_disclaimer_message__div}>
               <div>{message}</div>
             </div>
             <div class={css.default.widget_disclaimer_checkbox__div}>
-              <input id={elementIDs.disclaimerAgreementCheckboxID} type='checkbox' value='agree' class={css.default.widget_disclaimer_checkbox} ariaLabel={t9n.agreeText} title={t9n.agreeText} onclick={this._agreementCheckbox_click.bind(this)}/>
-              <label for={elementIDs.disclaimerAgreementCheckboxID} class={css.default.widget_disclaimer_checkbox__label}>{t9n.agreeText}</label>
+              <input id={elementIDs.disclaimerAgreementCheckboxID} type='checkbox' value='agree' class={css.default.widget_disclaimer_checkbox} aria-label={t9n.agreeText} title={t9n.agreeText} onclick={this._agreementCheckbox_click.bind(this)}/>
+              <label htmlFor={elementIDs.disclaimerAgreementCheckboxID} class={css.default.widget_disclaimer_checkbox__label}>{t9n.agreeText}</label>
             </div>
             <div class={css.default.widget_disclaimer_button__div}>
               <button id={elementIDs.disclaimerAgreementConfirmID} type="button" class={this.classes(css.default.widget_disclaimer_button__disabled, css_esri.esri_button, css_esri.esri_button_third, css_esri.esri_button_disabled)} aria-disabled='true' onclick={this._confirmButton_click.bind(this)}>{t9n.confirmButtonText}</button>
